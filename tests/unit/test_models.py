@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -9,6 +9,8 @@ from app.core.models import (
     ItineraryOption,
     OptionId,
     PlaceCandidate,
+    ReplanChange,
+    ReplanPatch,
     ScheduleItem,
     SourceSignal,
     SourceType,
@@ -169,6 +171,8 @@ def test_itinerary_bundle_accepts_three_option_ids() -> None:
         OptionId.KID_EXPERIENCE,
         OptionId.FOOD_REST,
     ]
+    assert bundle.selected_option_id is None
+    assert isinstance(bundle.generated_at, datetime)
 
 
 def test_itinerary_bundle_rejects_duplicate_option_ids() -> None:
@@ -189,3 +193,36 @@ def test_itinerary_bundle_rejects_duplicate_option_ids() -> None:
             emergency_playbook={"late_night": "Use taxi and call 119 for emergencies."},
             source_audit=[source],
         )
+
+
+def test_place_candidate_address_defaults_to_none() -> None:
+    source = _source_signal()
+    place = _place_candidate(source)
+
+    assert place.address is None
+
+
+def test_replan_patch_uses_spec_fields() -> None:
+    source = _source_signal()
+    place = _place_candidate(source)
+    item = _schedule_item(place, source)
+    change = ReplanChange(
+        operation="replace",
+        day=date(2026, 8, 17),
+        explanation="Rain forecast requires an indoor alternative.",
+    )
+
+    patch = ReplanPatch(
+        user_request="Move rainy day plans indoors.",
+        affected_days=[date(2026, 8, 17)],
+        changes=[change],
+        updated_schedule_items=[item],
+        explanation="Updated one day for weather.",
+        source_audit=[source],
+    )
+
+    assert patch.user_request == "Move rainy day plans indoors."
+    assert patch.affected_days == [date(2026, 8, 17)]
+    assert patch.changes == [change]
+    assert patch.updated_schedule_items == [item]
+    assert patch.source_audit == [source]

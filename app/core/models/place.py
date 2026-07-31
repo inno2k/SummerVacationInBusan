@@ -13,6 +13,7 @@ class Coordinates(BaseModel):
 class PlaceCandidate(BaseModel):
     name: str
     area: str
+    address: str | None = None
     category: str
     tags: list[str] = Field(default_factory=list)
     coordinates: Coordinates | None = None

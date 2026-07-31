@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import StrEnum
 from typing import Self
 
@@ -47,23 +47,26 @@ class ItineraryOption(BaseModel):
 
 
 class ReplanChange(BaseModel):
-    target_date: date
-    reason: str
-    original_summary: str
-    replacement_summary: str
-    source_refs: list[str] = Field(default_factory=list)
+    operation: str
+    day: date
+    explanation: str
 
 
 class ReplanPatch(BaseModel):
-    trigger: str
+    user_request: str
+    affected_days: list[date] = Field(default_factory=list)
     changes: list[ReplanChange] = Field(default_factory=list)
-    updated_assumptions: list[str] = Field(default_factory=list)
+    updated_schedule_items: list[ScheduleItem] = Field(default_factory=list)
+    explanation: str
+    source_audit: list[SourceSignal] = Field(default_factory=list)
 
 
 class ItineraryBundle(BaseModel):
     request_summary: str
     assumptions: list[str] = Field(default_factory=list)
     options: list[ItineraryOption]
+    selected_option_id: OptionId | None = None
+    generated_at: datetime = Field(default_factory=datetime.utcnow)
     emergency_playbook: dict[str, str] = Field(default_factory=dict)
     source_audit: list[SourceSignal] = Field(default_factory=list)
 
