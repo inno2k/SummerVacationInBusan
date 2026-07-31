@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Busan Aquarium",
+    "area": "Haeundae",
+    "category": "indoor",
+    "tags": ["aquarium", "kids", "rain", "marine"],
+    "transit_note": "Works as a same-area swap for Haeundae Beach when heavy rain arrives."
+  },
+  {
+    "name": "Shinsegae Centum City",
+    "area": "Centum City",
+    "category": "indoor",
+    "tags": ["shopping", "food court", "spa", "rain"],
+    "transit_note": "Line 2 access and enough food/rest buffers for a tired family day."
+  },
+  {
+    "name": "Busan Station Museum and Cafe Buffer",
+    "area": "Busan Station",
+    "category": "buffer",
+    "tags": ["museum", "cafe", "arrival", "rain"],
+    "transit_note": "Use near KTX arrival or departure to avoid long wet transfers."
+  }
+]

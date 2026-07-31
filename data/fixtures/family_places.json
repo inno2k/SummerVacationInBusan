@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Haeundae Beach",
+    "area": "Haeundae",
+    "address": "Haeundae-gu, Busan",
+    "category": "experience",
+    "tags": ["beach", "sand", "family", "ocean", "summer"],
+    "coordinates": {"latitude": 35.1587, "longitude": 129.1604},
+    "family_score": 0.92,
+    "food_score": 0.45,
+    "weather_suitability": "outdoor",
+    "fatigue_impact": "medium",
+    "confidence": 0.82
+  },
+  {
+    "name": "Busan Aquarium",
+    "area": "Haeundae",
+    "address": "266 Haeundaehaebyeon-ro, Haeundae-gu, Busan",
+    "category": "experience",
+    "tags": ["aquarium", "indoor", "kids", "rainy day", "marine"],
+    "coordinates": {"latitude": 35.1595, "longitude": 129.1612},
+    "family_score": 0.9,
+    "food_score": 0.25,
+    "weather_suitability": "indoor",
+    "fatigue_impact": "low",
+    "confidence": 0.84
+  },
+  {
+    "name": "Songdo Marine Cable Car",
+    "area": "Songdo",
+    "address": "171 Songdohaebyeon-ro, Seo-gu, Busan",
+    "category": "experience",
+    "tags": ["cable car", "ocean", "view", "family"],
+    "coordinates": {"latitude": 35.0767, "longitude": 129.0186},
+    "family_score": 0.82,
+    "food_score": 0.28,
+    "weather_suitability": "clear weather",
+    "fatigue_impact": "medium",
+    "confidence": 0.76
+  },
+  {
+    "name": "Gamcheon Culture Village",
+    "area": "Saha",
+    "address": "Gamnae 2-ro, Saha-gu, Busan",
+    "category": "experience",
+    "tags": ["culture", "photo", "village", "walk", "family"],
+    "coordinates": {"latitude": 35.0975, "longitude": 129.0106},
+    "family_score": 0.74,
+    "food_score": 0.35,
+    "weather_suitability": "outdoor",
+    "fatigue_impact": "high",
+    "confidence": 0.72
+  }
+]

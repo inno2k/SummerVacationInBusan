@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Busan food family picks 2026: milmyeon and dwaeji gukbap",
+    "url": "https://www.youtube.com/watch?v=busan-food-2026",
+    "published_at": "2026-05-18",
+    "channel_name": "Busan Family Travel Notes",
+    "extracted_keywords": ["Busan food", "milmyeon", "dwaeji gukbap", "family lunch"],
+    "matched_place_names": ["Haeundae Milmyeon Candidate", "Seomyeon Dwaeji Gukbap Candidate"],
+    "confidence_impact": 0.18
+  },
+  {
+    "title": "Haeundae with kids in summer 2026",
+    "url": "https://www.youtube.com/watch?v=haeundae-kids-2026",
+    "published_at": "2026-06-22",
+    "channel_name": "Korea Family Routes",
+    "extracted_keywords": ["Haeundae", "kids", "beach", "aquarium"],
+    "matched_place_names": ["Haeundae Beach", "Busan Aquarium"],
+    "confidence_impact": 0.16
+  }
+]

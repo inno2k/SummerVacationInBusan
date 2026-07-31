@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Haeundae",
+    "strengths": ["beach", "family attractions", "resort hotels"],
+    "transit_note": "Good subway access on Line 2; taxis are convenient for short family hops."
+  },
+  {
+    "name": "Gwangalli",
+    "strengths": ["ocean view", "cafes", "evening bridge view"],
+    "transit_note": "Line 2 access via Gwangan Station, then a short taxi or walk to the beach."
+  },
+  {
+    "name": "Seomyeon",
+    "strengths": ["food", "shopping", "central transfers"],
+    "transit_note": "Strong transfer point between Line 1 and Line 2 for cross-city routing."
+  },
+  {
+    "name": "Busan Station",
+    "strengths": ["KTX arrival", "harbor access", "short buffers"],
+    "transit_note": "Best for arrival and departure buffers, with Line 1 subway and taxi queues."
+  }
+]

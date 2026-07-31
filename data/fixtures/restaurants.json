@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Haeundae Milmyeon Candidate",
+    "area": "Haeundae",
+    "address": "Haeundae-gu, Busan",
+    "category": "food",
+    "tags": ["milmyeon", "noodles", "Busan food", "lunch"],
+    "coordinates": {"latitude": 35.163, "longitude": 129.1636},
+    "family_score": 0.72,
+    "food_score": 0.86,
+    "weather_suitability": "indoor",
+    "fatigue_impact": "low",
+    "confidence": 0.68
+  },
+  {
+    "name": "Seomyeon Dwaeji Gukbap Candidate",
+    "area": "Seomyeon",
+    "address": "Busanjin-gu, Busan",
+    "category": "food",
+    "tags": ["dwaeji gukbap", "pork soup", "Busan food", "dinner"],
+    "coordinates": {"latitude": 35.1579, "longitude": 129.0592},
+    "family_score": 0.66,
+    "food_score": 0.88,
+    "weather_suitability": "indoor",
+    "fatigue_impact": "low",
+    "confidence": 0.7
+  },
+  {
+    "name": "Gwangalli Ocean View Cafe Candidate",
+    "area": "Gwangalli",
+    "address": "Gwanganhaebyeon-ro, Suyeong-gu, Busan",
+    "category": "food",
+    "tags": ["cafe", "ocean view", "dessert", "rest"],
+    "coordinates": {"latitude": 35.1532, "longitude": 129.1187},
+    "family_score": 0.78,
+    "food_score": 0.73,
+    "weather_suitability": "indoor",
+    "fatigue_impact": "low",
+    "confidence": 0.69
+  }
+]
