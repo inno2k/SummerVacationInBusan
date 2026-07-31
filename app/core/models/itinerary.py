@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from enum import StrEnum
 from typing import Self
 
@@ -66,7 +66,7 @@ class ItineraryBundle(BaseModel):
     assumptions: list[str] = Field(default_factory=list)
     options: list[ItineraryOption]
     selected_option_id: OptionId | None = None
-    generated_at: datetime = Field(default_factory=datetime.utcnow)
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     emergency_playbook: dict[str, str] = Field(default_factory=dict)
     source_audit: list[SourceSignal] = Field(default_factory=list)
 

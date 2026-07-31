@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from enum import StrEnum
 from typing import Self
 
@@ -24,17 +24,13 @@ class SourceSignal(BaseModel):
     confidence_impact: float = Field(ge=-1.0, le=1.0)
     notes: str | None = None
     live_signal: bool = False
-    last_checked: datetime = Field(default_factory=datetime.utcnow)
+    last_checked: datetime = Field(default_factory=lambda: datetime.now(UTC))
     fallback_used: bool = False
 
     @model_validator(mode="after")
     def validate_live_youtube_recency(self) -> Self:
         """Require live YouTube source signals to come from the 2026 planning year."""
-        if (
-            self.source_type == SourceType.YOUTUBE
-            and self.live_signal
-            and self.published_at is not None
-            and self.published_at.year != 2026
-        ):
-            raise ValueError("live YouTube source signals must be published in 2026")
+        if self.source_type == SourceType.YOUTUBE and self.live_signal:
+            if self.published_at is None or self.published_at.year != 2026:
+                raise ValueError("live YouTube source signals must be published in 2026")
         return self

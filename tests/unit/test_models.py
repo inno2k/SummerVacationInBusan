@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -118,6 +118,16 @@ def test_youtube_signal_requires_2026_when_live() -> None:
         )
 
 
+def test_youtube_signal_rejects_undated_live_signal() -> None:
+    with pytest.raises(ValidationError):
+        SourceSignal(
+            source_type=SourceType.YOUTUBE,
+            title="Undated Busan food video",
+            live_signal=True,
+            confidence_impact=0.2,
+        )
+
+
 def test_youtube_signal_accepts_2026_when_live() -> None:
     signal = SourceSignal(
         source_type=SourceType.YOUTUBE,
@@ -129,6 +139,7 @@ def test_youtube_signal_accepts_2026_when_live() -> None:
 
     assert signal.published_at == date(2026, 7, 1)
     assert signal.live_signal is True
+    assert signal.last_checked.tzinfo is UTC
 
 
 def test_itinerary_bundle_requires_three_option_ids() -> None:
@@ -173,6 +184,7 @@ def test_itinerary_bundle_accepts_three_option_ids() -> None:
     ]
     assert bundle.selected_option_id is None
     assert isinstance(bundle.generated_at, datetime)
+    assert bundle.generated_at.tzinfo is UTC
 
 
 def test_itinerary_bundle_rejects_duplicate_option_ids() -> None:
