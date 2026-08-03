@@ -1,7 +1,8 @@
 from datetime import date
 
+from app.core.data_sources.youtube_data_api import YouTubeDataApiSource
 from app.core.models import SourceSignal, SourceType
-from app.core.scoring.confidence import clamp_confidence
+from app.core.scoring.confidence import clamp_confidence, signal_score
 from app.core.tools.youtube import filter_2026_youtube_signals, rank_video_signals
 
 
@@ -79,3 +80,62 @@ def test_clamp_confidence_clamps_below_zero_and_above_one() -> None:
     assert clamp_confidence(-0.2) == 0.0
     assert clamp_confidence(1.2) == 1.0
     assert clamp_confidence(0.7) == 0.7
+
+
+def test_signal_score_rewards_2026_freshness() -> None:
+    fresh = _signal(SourceType.YOUTUBE, "Fresh", date(2026, 8, 1), True)
+    stale = _signal(SourceType.YOUTUBE, "Stale", date(2025, 8, 1), False)
+
+    assert signal_score(fresh, []) > signal_score(stale, [])
+
+
+class _FakeResponse:
+    def __init__(self, status_code: int, payload: dict) -> None:
+        self.status_code = status_code
+        self._payload = payload
+
+    def json(self) -> dict:
+        return self._payload
+
+
+class _FakeClient:
+    def __init__(self) -> None:
+        self.params: dict | None = None
+
+    def get(self, url: str, params: dict) -> _FakeResponse:
+        self.params = params
+        return _FakeResponse(
+            200,
+            {
+                "items": [
+                    {
+                        "id": {"videoId": "abc123"},
+                        "snippet": {
+                            "title": "Busan family travel 2026",
+                            "publishedAt": "2026-07-01T00:00:00Z",
+                            "channelTitle": "Travel Channel",
+                        },
+                    },
+                    {
+                        "id": {"videoId": "old"},
+                        "snippet": {
+                            "title": "Busan family travel 2025",
+                            "publishedAt": "2025-07-01T00:00:00Z",
+                            "channelTitle": "Old Channel",
+                        },
+                    },
+                ]
+            },
+        )
+
+
+def test_youtube_data_api_source_exposes_search_travel_videos() -> None:
+    client = _FakeClient()
+    source = YouTubeDataApiSource(api_key="key", client=client)
+
+    signals = source.search_travel_videos("Busan family", max_results=3)
+
+    assert client.params is not None
+    assert client.params["publishedAfter"] == "2026-01-01T00:00:00Z"
+    assert client.params["maxResults"] == 3
+    assert [signal.title for signal in signals] == ["Busan family travel 2026"]

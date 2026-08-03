@@ -24,7 +24,9 @@ class YouTubeDataApiSource:
         self.client = client or httpx.Client(timeout=10.0)
         self.max_results = max_results
 
-    def search_youtube(self, query: str) -> list[SourceSignal]:
+    def search_travel_videos(
+        self, query: str, max_results: int | None = None
+    ) -> list[SourceSignal]:
         """Return valid live 2026 YouTube source signals for a query."""
         response = self.client.get(
             YOUTUBE_SEARCH_URL,
@@ -33,7 +35,7 @@ class YouTubeDataApiSource:
                 "type": "video",
                 "q": query,
                 "key": self.api_key,
-                "maxResults": self.max_results,
+                "maxResults": max_results or self.max_results,
                 "publishedAfter": PUBLISHED_AFTER_2026,
             },
         )
