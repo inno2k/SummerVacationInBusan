@@ -1,0 +1,880 @@
+﻿{
+  "assumptions": [
+    "Runs with local fixture fallback when API keys are absent.",
+    "KTX, restaurants, and venue hours must be confirmed before travel.",
+    "No booking automation is included in the MVP."
+  ],
+  "emergency_playbook": {
+    "default": "For immediate danger in Korea, call 119. For police help, call 112. Keep hotel address, passports, and one charged phone ready.",
+    "late_night_pharmacy": "For a late night pharmacy, ask hotel staff to call 119 or check the nearest emergency pharmacy, then travel by taxi and keep medicine names written down.",
+    "lost_item": "For a lost item, retrace the last transit point, ask station staff, and file a lost property report with place, time, and item photos.",
+    "tired_child": "For a tired child, shorten the route, move to the nearest cafe or hotel rest buffer, hydrate, and choose a taxi over transfers."
+  },
+  "generated_at": "2026-08-03T08:01:10.975876Z",
+  "options": [
+    {
+      "cautions": [
+        "Confirm current operating hours, reservations, and transit status before visiting.",
+        "Treat fixture-backed suggestions as planning guidance, not booking confirmation."
+      ],
+      "confidence": 0.7,
+      "days": [
+        {
+          "date": "2026-08-16",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Haeundae Beach with a food/rest buffer near Haeundae Milmyeon Candidate.",
+              "child_friendliness": 0.92,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "medium",
+              "food_hint": "Consider Haeundae Milmyeon Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "Haeundae-gu, Busan",
+                "area": "Haeundae",
+                "category": "experience",
+                "confidence": 0.82,
+                "coordinates": {
+                  "latitude": 35.1587,
+                  "longitude": 129.1604
+                },
+                "family_score": 0.92,
+                "fatigue_impact": "medium",
+                "food_score": 0.45,
+                "name": "Haeundae Beach",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.974818Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Haeundae Beach",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "beach",
+                  "sand",
+                  "family",
+                  "ocean",
+                  "summer"
+                ],
+                "weather_suitability": "outdoor"
+              },
+              "source_refs": [
+                "local fixture: Haeundae Beach",
+                "local fixture: Haeundae Milmyeon Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Arrival and beach"
+        },
+        {
+          "date": "2026-08-17",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Busan Aquarium with a food/rest buffer near Seomyeon Dwaeji Gukbap Candidate.",
+              "child_friendliness": 0.9,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "low",
+              "food_hint": "Consider Seomyeon Dwaeji Gukbap Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "266 Haeundaehaebyeon-ro, Haeundae-gu, Busan",
+                "area": "Haeundae",
+                "category": "experience",
+                "confidence": 0.84,
+                "coordinates": {
+                  "latitude": 35.1595,
+                  "longitude": 129.1612
+                },
+                "family_score": 0.9,
+                "fatigue_impact": "low",
+                "food_score": 0.25,
+                "name": "Busan Aquarium",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.974818Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Busan Aquarium",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "aquarium",
+                  "indoor",
+                  "kids",
+                  "rainy day",
+                  "marine"
+                ],
+                "weather_suitability": "indoor"
+              },
+              "source_refs": [
+                "local fixture: Busan Aquarium",
+                "local fixture: Seomyeon Dwaeji Gukbap Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "East Busan family sights"
+        },
+        {
+          "date": "2026-08-18",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Songdo Marine Cable Car with a food/rest buffer near Gwangalli Ocean View Cafe Candidate.",
+              "child_friendliness": 0.82,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "medium",
+              "food_hint": "Consider Gwangalli Ocean View Cafe Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "171 Songdohaebyeon-ro, Seo-gu, Busan",
+                "area": "Songdo",
+                "category": "experience",
+                "confidence": 0.76,
+                "coordinates": {
+                  "latitude": 35.0767,
+                  "longitude": 129.0186
+                },
+                "family_score": 0.82,
+                "fatigue_impact": "medium",
+                "food_score": 0.28,
+                "name": "Songdo Marine Cable Car",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.975322Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Songdo Marine Cable Car",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "cable car",
+                  "ocean",
+                  "view",
+                  "family"
+                ],
+                "weather_suitability": "clear weather"
+              },
+              "source_refs": [
+                "local fixture: Songdo Marine Cable Car",
+                "local fixture: Gwangalli Ocean View Cafe Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Culture and local food"
+        },
+        {
+          "date": "2026-08-19",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Gamcheon Culture Village with a food/rest buffer near Haeundae Milmyeon Candidate.",
+              "child_friendliness": 0.74,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "high",
+              "food_hint": "Consider Haeundae Milmyeon Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "Gamnae 2-ro, Saha-gu, Busan",
+                "area": "Saha",
+                "category": "experience",
+                "confidence": 0.72,
+                "coordinates": {
+                  "latitude": 35.0975,
+                  "longitude": 129.0106
+                },
+                "family_score": 0.74,
+                "fatigue_impact": "high",
+                "food_score": 0.35,
+                "name": "Gamcheon Culture Village",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.975322Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Gamcheon Culture Village",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "culture",
+                  "photo",
+                  "village",
+                  "walk",
+                  "family"
+                ],
+                "weather_suitability": "outdoor"
+              },
+              "source_refs": [
+                "local fixture: Gamcheon Culture Village",
+                "local fixture: Haeundae Milmyeon Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Departure buffer"
+        }
+      ],
+      "estimated_budget_range": "medium",
+      "id": "balanced",
+      "positioning": "Representative sights, local food, efficient movement, and rest.",
+      "pros": [
+        "API keys are optional for the demo path.",
+        "Each day keeps one main movement block.",
+        "Fallback guidance is included."
+      ],
+      "recommended_stay_area": "Haeundae",
+      "title": "Balanced Family Busan"
+    },
+    {
+      "cautions": [
+        "Confirm current operating hours, reservations, and transit status before visiting.",
+        "Treat fixture-backed suggestions as planning guidance, not booking confirmation."
+      ],
+      "confidence": 0.7,
+      "days": [
+        {
+          "date": "2026-08-16",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Haeundae Beach with a food/rest buffer near Gwangalli Ocean View Cafe Candidate.",
+              "child_friendliness": 0.92,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "medium",
+              "food_hint": "Consider Gwangalli Ocean View Cafe Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "Haeundae-gu, Busan",
+                "area": "Haeundae",
+                "category": "experience",
+                "confidence": 0.82,
+                "coordinates": {
+                  "latitude": 35.1587,
+                  "longitude": 129.1604
+                },
+                "family_score": 0.92,
+                "fatigue_impact": "medium",
+                "food_score": 0.45,
+                "name": "Haeundae Beach",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.974818Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Haeundae Beach",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "beach",
+                  "sand",
+                  "family",
+                  "ocean",
+                  "summer"
+                ],
+                "weather_suitability": "outdoor"
+              },
+              "source_refs": [
+                "local fixture: Haeundae Beach",
+                "local fixture: Gwangalli Ocean View Cafe Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Arrival and aquarium"
+        },
+        {
+          "date": "2026-08-17",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Busan Aquarium with a food/rest buffer near Haeundae Milmyeon Candidate.",
+              "child_friendliness": 0.9,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "low",
+              "food_hint": "Consider Haeundae Milmyeon Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "266 Haeundaehaebyeon-ro, Haeundae-gu, Busan",
+                "area": "Haeundae",
+                "category": "experience",
+                "confidence": 0.84,
+                "coordinates": {
+                  "latitude": 35.1595,
+                  "longitude": 129.1612
+                },
+                "family_score": 0.9,
+                "fatigue_impact": "low",
+                "food_score": 0.25,
+                "name": "Busan Aquarium",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.974818Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Busan Aquarium",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "aquarium",
+                  "indoor",
+                  "kids",
+                  "rainy day",
+                  "marine"
+                ],
+                "weather_suitability": "indoor"
+              },
+              "source_refs": [
+                "local fixture: Busan Aquarium",
+                "local fixture: Haeundae Milmyeon Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Active family day"
+        },
+        {
+          "date": "2026-08-18",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Songdo Marine Cable Car with a food/rest buffer near Seomyeon Dwaeji Gukbap Candidate.",
+              "child_friendliness": 0.82,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "medium",
+              "food_hint": "Consider Seomyeon Dwaeji Gukbap Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "171 Songdohaebyeon-ro, Seo-gu, Busan",
+                "area": "Songdo",
+                "category": "experience",
+                "confidence": 0.76,
+                "coordinates": {
+                  "latitude": 35.0767,
+                  "longitude": 129.0186
+                },
+                "family_score": 0.82,
+                "fatigue_impact": "medium",
+                "food_score": 0.28,
+                "name": "Songdo Marine Cable Car",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.975322Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Songdo Marine Cable Car",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "cable car",
+                  "ocean",
+                  "view",
+                  "family"
+                ],
+                "weather_suitability": "clear weather"
+              },
+              "source_refs": [
+                "local fixture: Songdo Marine Cable Car",
+                "local fixture: Seomyeon Dwaeji Gukbap Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Indoor fallback day"
+        },
+        {
+          "date": "2026-08-19",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Haeundae; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Gamcheon Culture Village with a food/rest buffer near Gwangalli Ocean View Cafe Candidate.",
+              "child_friendliness": 0.74,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "high",
+              "food_hint": "Consider Gwangalli Ocean View Cafe Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "Gamnae 2-ro, Saha-gu, Busan",
+                "area": "Saha",
+                "category": "experience",
+                "confidence": 0.72,
+                "coordinates": {
+                  "latitude": 35.0975,
+                  "longitude": 129.0106
+                },
+                "family_score": 0.74,
+                "fatigue_impact": "high",
+                "food_score": 0.35,
+                "name": "Gamcheon Culture Village",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.975322Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Gamcheon Culture Village",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "culture",
+                  "photo",
+                  "village",
+                  "walk",
+                  "family"
+                ],
+                "weather_suitability": "outdoor"
+              },
+              "source_refs": [
+                "local fixture: Gamcheon Culture Village",
+                "local fixture: Gwangalli Ocean View Cafe Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Easy departure"
+        }
+      ],
+      "estimated_budget_range": "medium",
+      "id": "kid_experience",
+      "positioning": "Child-friendly activities, beach time, and indoor fallback safety.",
+      "pros": [
+        "API keys are optional for the demo path.",
+        "Each day keeps one main movement block.",
+        "Fallback guidance is included."
+      ],
+      "recommended_stay_area": "Haeundae",
+      "title": "Kid Experience Busan"
+    },
+    {
+      "cautions": [
+        "Confirm current operating hours, reservations, and transit status before visiting.",
+        "Treat fixture-backed suggestions as planning guidance, not booking confirmation."
+      ],
+      "confidence": 0.7,
+      "days": [
+        {
+          "date": "2026-08-16",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Gwangalli; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Busan Aquarium with a food/rest buffer near Seomyeon Dwaeji Gukbap Candidate.",
+              "child_friendliness": 0.9,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "low",
+              "food_hint": "Consider Seomyeon Dwaeji Gukbap Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "266 Haeundaehaebyeon-ro, Haeundae-gu, Busan",
+                "area": "Haeundae",
+                "category": "experience",
+                "confidence": 0.84,
+                "coordinates": {
+                  "latitude": 35.1595,
+                  "longitude": 129.1612
+                },
+                "family_score": 0.9,
+                "fatigue_impact": "low",
+                "food_score": 0.25,
+                "name": "Busan Aquarium",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.974818Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Busan Aquarium",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "aquarium",
+                  "indoor",
+                  "kids",
+                  "rainy day",
+                  "marine"
+                ],
+                "weather_suitability": "indoor"
+              },
+              "source_refs": [
+                "local fixture: Busan Aquarium",
+                "local fixture: Seomyeon Dwaeji Gukbap Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Arrival and ocean cafe"
+        },
+        {
+          "date": "2026-08-17",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Gwangalli; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Haeundae Beach with a food/rest buffer near Haeundae Milmyeon Candidate.",
+              "child_friendliness": 0.92,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "medium",
+              "food_hint": "Consider Haeundae Milmyeon Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "Haeundae-gu, Busan",
+                "area": "Haeundae",
+                "category": "experience",
+                "confidence": 0.82,
+                "coordinates": {
+                  "latitude": 35.1587,
+                  "longitude": 129.1604
+                },
+                "family_score": 0.92,
+                "fatigue_impact": "medium",
+                "food_score": 0.45,
+                "name": "Haeundae Beach",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.974818Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Haeundae Beach",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "beach",
+                  "sand",
+                  "family",
+                  "ocean",
+                  "summer"
+                ],
+                "weather_suitability": "outdoor"
+              },
+              "source_refs": [
+                "local fixture: Haeundae Beach",
+                "local fixture: Haeundae Milmyeon Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Local food focus"
+        },
+        {
+          "date": "2026-08-18",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Gwangalli; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Gamcheon Culture Village with a food/rest buffer near Gwangalli Ocean View Cafe Candidate.",
+              "child_friendliness": 0.74,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "high",
+              "food_hint": "Consider Gwangalli Ocean View Cafe Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "Gamnae 2-ro, Saha-gu, Busan",
+                "area": "Saha",
+                "category": "experience",
+                "confidence": 0.72,
+                "coordinates": {
+                  "latitude": 35.0975,
+                  "longitude": 129.0106
+                },
+                "family_score": 0.74,
+                "fatigue_impact": "high",
+                "food_score": 0.35,
+                "name": "Gamcheon Culture Village",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.975322Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Gamcheon Culture Village",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "culture",
+                  "photo",
+                  "village",
+                  "walk",
+                  "family"
+                ],
+                "weather_suitability": "outdoor"
+              },
+              "source_refs": [
+                "local fixture: Gamcheon Culture Village",
+                "local fixture: Gwangalli Ocean View Cafe Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Slow beach day"
+        },
+        {
+          "date": "2026-08-19",
+          "fallback_plan": "If weather, queues, or fatigue become an issue, switch to Busan Aquarium, Centum City, or a cafe rest block.",
+          "route_summary": "Base around Gwangalli; keep one major cross-city movement block.",
+          "schedule_items": [
+            {
+              "activity": "Visit Songdo Marine Cable Car with a food/rest buffer near Seomyeon Dwaeji Gukbap Candidate.",
+              "child_friendliness": 0.82,
+              "estimated_cost_level": "medium",
+              "fatigue_level": "medium",
+              "food_hint": "Consider Seomyeon Dwaeji Gukbap Candidate; confirm current hours before visiting.",
+              "place": {
+                "address": "171 Songdohaebyeon-ro, Seo-gu, Busan",
+                "area": "Songdo",
+                "category": "experience",
+                "confidence": 0.76,
+                "coordinates": {
+                  "latitude": 35.0767,
+                  "longitude": 129.0186
+                },
+                "family_score": 0.82,
+                "fatigue_impact": "medium",
+                "food_score": 0.28,
+                "name": "Songdo Marine Cable Car",
+                "source_signals": [
+                  {
+                    "channel_name": null,
+                    "confidence_impact": 0.1,
+                    "extracted_keywords": [],
+                    "fallback_used": true,
+                    "last_checked": "2026-08-03T08:01:10.975322Z",
+                    "live_signal": false,
+                    "matched_place_names": [],
+                    "notes": null,
+                    "published_at": null,
+                    "source_type": "local_fixture",
+                    "title": "local fixture: Songdo Marine Cable Car",
+                    "url": null
+                  }
+                ],
+                "tags": [
+                  "cable car",
+                  "ocean",
+                  "view",
+                  "family"
+                ],
+                "weather_suitability": "clear weather"
+              },
+              "source_refs": [
+                "local fixture: Songdo Marine Cable Car",
+                "local fixture: Seomyeon Dwaeji Gukbap Candidate"
+              ],
+              "time_window": "10:00-14:00",
+              "transport_hint": "Use subway for predictable routes and taxi when family fatigue rises."
+            }
+          ],
+          "theme": "Departure meal"
+        }
+      ],
+      "estimated_budget_range": "medium",
+      "id": "food_rest",
+      "positioning": "Lower-fatigue meals, cafes, ocean views, and calmer routes.",
+      "pros": [
+        "API keys are optional for the demo path.",
+        "Each day keeps one main movement block.",
+        "Fallback guidance is included."
+      ],
+      "recommended_stay_area": "Gwangalli",
+      "title": "Food and Rest Busan"
+    }
+  ],
+  "request_summary": "Seoul Station to Busan, 2026-08-16 to 2026-08-19, family of 3",
+  "selected_option_id": null,
+  "source_audit": [
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.974818Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Haeundae Beach",
+      "url": null
+    },
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.974818Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Busan Aquarium",
+      "url": null
+    },
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.975322Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Songdo Marine Cable Car",
+      "url": null
+    },
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.975322Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Gamcheon Culture Village",
+      "url": null
+    },
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.975360Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Haeundae Milmyeon Candidate",
+      "url": null
+    },
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.975360Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Seomyeon Dwaeji Gukbap Candidate",
+      "url": null
+    },
+    {
+      "channel_name": null,
+      "confidence_impact": 0.1,
+      "extracted_keywords": [],
+      "fallback_used": true,
+      "last_checked": "2026-08-03T08:01:10.975360Z",
+      "live_signal": false,
+      "matched_place_names": [],
+      "notes": null,
+      "published_at": null,
+      "source_type": "local_fixture",
+      "title": "local fixture: Gwangalli Ocean View Cafe Candidate",
+      "url": null
+    }
+  ]
+}

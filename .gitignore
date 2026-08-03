@@ -8,6 +8,10 @@ htmlcov/
 .venv/
 .env
 *.egg-info/
+streamlit-*.log
 outputs/*.json
 outputs/*.md
+!outputs/sample-busan-family-plan.json
+!outputs/sample-busan-family-plan.md
+!outputs/.gitkeep
 .superpowers/

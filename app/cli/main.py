@@ -21,7 +21,10 @@ cli = typer.Typer(help="Busan family travel planner.")
 
 @cli.command()
 def plan(
-    output: Annotated[OutputFormat, typer.Option("--output", "-o")] = OutputFormat.MARKDOWN,
+    output: Annotated[
+        OutputFormat,
+        typer.Option("--output", "--format", "-o"),
+    ] = OutputFormat.MARKDOWN,
     selected_option: Annotated[OptionId | None, typer.Option("--selected-option")] = None,
 ) -> None:
     """Generate the default Seoul-to-Busan family itinerary."""
@@ -43,7 +46,10 @@ def replan(
         OptionId,
         typer.Option("--selected-option"),
     ] = OptionId.BALANCED,
-    output: Annotated[OutputFormat, typer.Option("--output", "-o")] = OutputFormat.MARKDOWN,
+    output: Annotated[
+        OutputFormat,
+        typer.Option("--output", "--format", "-o"),
+    ] = OutputFormat.MARKDOWN,
 ) -> None:
     """Generate a small patch for weather, fatigue, closure, or general travel changes."""
     bundle = PlannerEngine.fixture_only().generate(TripRequest.default_family_trip())
@@ -69,3 +75,7 @@ def _parse_target_date(value: str | None) -> date | None:
 def main() -> None:
     """Run the Typer CLI application."""
     cli()
+
+
+if __name__ == "__main__":
+    main()
