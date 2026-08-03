@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Any
 
 import httpx
 
@@ -28,23 +27,31 @@ class YouTubeDataApiSource:
         self, query: str, max_results: int | None = None
     ) -> list[SourceSignal]:
         """Return valid live 2026 YouTube source signals for a query."""
-        response = self.client.get(
-            YOUTUBE_SEARCH_URL,
-            params={
-                "part": "snippet",
-                "type": "video",
-                "q": query,
-                "key": self.api_key,
-                "maxResults": max_results or self.max_results,
-                "publishedAfter": PUBLISHED_AFTER_2026,
-            },
-        )
+        try:
+            response = self.client.get(
+                YOUTUBE_SEARCH_URL,
+                params={
+                    "part": "snippet",
+                    "type": "video",
+                    "q": query,
+                    "key": self.api_key,
+                    "maxResults": max_results or self.max_results,
+                    "publishedAfter": PUBLISHED_AFTER_2026,
+                },
+            )
+        except httpx.HTTPError as exc:
+            raise DataSourceError("YouTube Data API search request failed.") from exc
+
         if response.status_code >= 400:
             raise DataSourceError(
                 f"YouTube Data API search failed with status {response.status_code}"
             )
 
-        data = response.json()
+        try:
+            data = response.json()
+        except ValueError as exc:
+            raise DataSourceError("YouTube Data API response was not valid JSON.") from exc
+
         items = data.get("items", [])
         if not isinstance(items, list):
             raise DataSourceError("YouTube Data API response items must be a list.")
@@ -58,7 +65,7 @@ class YouTubeDataApiSource:
                 signals.append(signal)
         return signals
 
-    def _signal_from_item(self, item: dict[str, Any]) -> SourceSignal | None:
+    def _signal_from_item(self, item: dict[str, object]) -> SourceSignal | None:
         snippet = item.get("snippet")
         if not isinstance(snippet, dict):
             return None

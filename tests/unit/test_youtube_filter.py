@@ -1,5 +1,9 @@
 from datetime import date
 
+import httpx
+import pytest
+
+from app.core.data_sources.base import DataSourceError
 from app.core.data_sources.youtube_data_api import YouTubeDataApiSource
 from app.core.models import SourceSignal, SourceType
 from app.core.scoring.confidence import clamp_confidence, signal_score
@@ -90,20 +94,26 @@ def test_signal_score_rewards_2026_freshness() -> None:
 
 
 class _FakeResponse:
-    def __init__(self, status_code: int, payload: dict) -> None:
+    def __init__(self, status_code: int, payload: dict, invalid_json: bool = False) -> None:
         self.status_code = status_code
         self._payload = payload
+        self._invalid_json = invalid_json
 
     def json(self) -> dict:
+        if self._invalid_json:
+            raise ValueError("invalid json")
         return self._payload
 
 
 class _FakeClient:
-    def __init__(self) -> None:
+    def __init__(self, response: _FakeResponse | None = None) -> None:
         self.params: dict | None = None
+        self.response = response
 
     def get(self, url: str, params: dict) -> _FakeResponse:
         self.params = params
+        if self.response is not None:
+            return self.response
         return _FakeResponse(
             200,
             {
@@ -139,3 +149,25 @@ def test_youtube_data_api_source_exposes_search_travel_videos() -> None:
     assert client.params["publishedAfter"] == "2026-01-01T00:00:00Z"
     assert client.params["maxResults"] == 3
     assert [signal.title for signal in signals] == ["Busan family travel 2026"]
+
+
+class _FailingClient:
+    def get(self, url: str, params: dict) -> _FakeResponse:
+        raise httpx.ConnectError("network unavailable")
+
+
+def test_youtube_data_api_source_wraps_transport_errors() -> None:
+    source = YouTubeDataApiSource(api_key="key", client=_FailingClient())
+
+    with pytest.raises(DataSourceError):
+        source.search_travel_videos("Busan family")
+
+
+def test_youtube_data_api_source_wraps_invalid_json() -> None:
+    source = YouTubeDataApiSource(
+        api_key="key",
+        client=_FakeClient(_FakeResponse(200, {}, invalid_json=True)),
+    )
+
+    with pytest.raises(DataSourceError):
+        source.search_travel_videos("Busan family")

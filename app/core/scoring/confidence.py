@@ -1,4 +1,4 @@
-from app.core.models import SourceSignal
+from app.core.models import SourceSignal, SourceType
 
 
 def clamp_confidence(value: float) -> float:
@@ -17,11 +17,13 @@ def signal_score(signal: SourceSignal, preferred_keywords: list[str]) -> float:
     )
     place_bonus = 0.1 if signal.matched_place_names else 0.0
     live_bonus = 0.1 if signal.live_signal else 0.0
-    freshness_bonus = (
-        0.2
-        if signal.published_at is not None and signal.published_at.year == 2026
-        else -0.5
-    )
+    freshness_bonus = 0.0
+    if signal.source_type == SourceType.YOUTUBE:
+        freshness_bonus = (
+            0.2
+            if signal.published_at is not None and signal.published_at.year == 2026
+            else -0.5
+        )
     keyword_bonus = min(0.4, keyword_matches * 0.15)
 
     return clamp_confidence(
