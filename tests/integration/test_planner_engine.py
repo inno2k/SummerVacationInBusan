@@ -1,6 +1,6 @@
 from datetime import date
 
-from app.core.models import OptionId, TripRequest
+from app.core.models import OptionId, Traveler, TripRequest
 from app.core.orchestration.planner_engine import PlannerEngine
 
 
@@ -25,3 +25,18 @@ def test_planner_engine_generates_three_options_without_api_keys() -> None:
         for day in option.days
         for item in day.schedule_items
     )
+
+
+def test_planner_engine_generates_one_day_per_requested_date() -> None:
+    request = TripRequest(
+        origin="Seoul Station",
+        destination="Busan",
+        start_date=date(2026, 8, 16),
+        end_date=date(2026, 8, 20),
+        travelers=[Traveler(label="Father", age=46)],
+    )
+
+    bundle = PlannerEngine.fixture_only().generate(request)
+
+    assert all(len(option.days) == len(request.trip_dates) for option in bundle.options)
+    assert bundle.options[0].days[-1].date == date(2026, 8, 20)

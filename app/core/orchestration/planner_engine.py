@@ -182,7 +182,8 @@ class PlannerEngine:
                 "Departure meal",
             ],
         }
-        return themes[option_id][day_index]
+        option_themes = themes[option_id]
+        return option_themes[day_index % len(option_themes)]
 
     def _emergency_playbook(self) -> dict[str, str]:
         return {
