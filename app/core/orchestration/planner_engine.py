@@ -30,7 +30,7 @@ class PlannerEngine:
     def generate(self, request: TripRequest) -> ItineraryBundle:
         """Generate three fixture-backed itinerary options for a trip request."""
         experiences = self.fixture_source.search_places(query="", area=None, category="experience")
-        food_candidates = self.fixture_source.search_places(query="", area=None, category=None)
+        food_candidates = self.fixture_source.search_places(query="", area=None, category="food")
         if not experiences or not food_candidates:
             raise DataSourceError("Local fixtures must include experience and food candidates.")
 
@@ -152,7 +152,7 @@ class PlannerEngine:
                     estimated_cost_level="medium",
                     child_friendliness=experience.family_score,
                     fatigue_level=experience.fatigue_impact,
-                    source_refs=[signal.title for signal in experience.source_signals],
+                    source_refs=self._source_refs(experience, food),
                 )
             ],
             fallback_plan=(
@@ -184,6 +184,17 @@ class PlannerEngine:
         }
         option_themes = themes[option_id]
         return option_themes[day_index % len(option_themes)]
+
+    def _source_refs(self, *places: PlaceCandidate) -> list[str]:
+        refs: list[str] = []
+        seen: set[str] = set()
+        for place in places:
+            for signal in place.source_signals:
+                if signal.title in seen:
+                    continue
+                seen.add(signal.title)
+                refs.append(signal.title)
+        return refs
 
     def _emergency_playbook(self) -> dict[str, str]:
         return {
