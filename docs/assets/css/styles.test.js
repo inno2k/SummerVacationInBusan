@@ -19,8 +19,10 @@ function contrastRatio(foreground, background) {
 
 assert.match(html, /Noto(?:\+| )Serif(?:\+| )KR/);
 assert.match(html, /Noto(?:\+| )Sans(?:\+| )KR/);
+assert.match(html, /styles\.css\?v=[^"\s]*coastal[^"\s]*/);
 assert.match(css, /--seafoam:/);
 assert.match(css, /--peach:/);
+assert.match(css, /--coral-ink:#a7443c/);
 assert.match(css, /body::before/);
 assert.match(css, /@media\(max-width:760px\)/);
 assert.match(css, /--action-bg:#f6b8ad/);
@@ -31,4 +33,10 @@ assert.match(css, /\.map-day-filter button\.active,[^}]*\{background:var\(--acti
 assert.match(css, /@media\(max-width:760px\)\{body::before\{min-height:28rem;opacity:\.72\}/);
 assert.ok(contrastRatio("#123041", "#f6b8ad") >= 4.5);
 assert.ok(contrastRatio("#123041", "#ef8e7d") >= 4.5);
+assert.match(css, /\.block time\{[^}]*color:var\(--coral-ink\)/);
+assert.match(css, /\.food-card \.tag\{[^}]*color:var\(--coral-ink\)/);
+assert.match(css, /\.source-card \.format\{[^}]*color:var\(--coral-ink\)/);
+assert.match(css, /\.action-status\{[^}]*color:var\(--coral-ink\)/);
+assert.ok(contrastRatio("#a7443c", "#fffdf7") >= 4.5);
+assert.ok(contrastRatio("#a7443c", "#ffffff") >= 4.5);
 process.stdout.write("coastal style contract passed\n");
