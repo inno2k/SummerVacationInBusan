@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>여름 부산 가족여행 2026</title>
+    <meta name="description" content="KTX, 숙소, 물놀이, 오시리아 체험, 씨메르까지 다시 계산하는 부산 여행 운영판" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="coastline" aria-hidden="true"></div>
+    <div class="shell">
+      <nav class="topbar"><a class="brand" href="#top">BUSAN / SUMMER 26</a><span class="status-dot">LIVE PLAN</span></nav>
+      <header class="hero" id="top">
+        <div><p class="eyebrow" id="hero-kicker"></p><h1 id="hero-title"></h1><p class="hero-summary" id="hero-summary"></p><div class="hero-meta" id="hero-meta"></div></div>
+        <aside class="hero-panel" id="hero-stats"></aside>
+      </header>
+      <main>
+        <nav class="tabs" role="tablist" aria-label="여행 메뉴">
+          <button class="active" data-tab="overview">개요</button><button data-tab="itinerary">일정</button><button data-tab="ops">운영</button><button data-tab="explore">탐색</button><button data-tab="food">식사</button><button data-tab="budget">예산</button><button data-tab="sources">검증</button>
+        </nav>
+        <section class="panel active" data-panel="overview">
+          <div class="section-heading"><p class="eyebrow">TRIP CONTROL ROOM</p><h2>흐름을 입력하면 여행 전체가 다시 맞춰집니다</h2><p>총괄 에이전트가 일정·동선·숙소·교통·맛집·놀거리를 한 번에 재계산합니다.</p></div>
+          <div class="grid two"><article class="card blue"><h3>이번 여행의 기준</h3><ul id="trip-lens"></ul></article><article class="card sand"><h3>고정된 이동·숙소</h3><div id="fixed-facts"></div></article></div>
+          <div class="agent-strip" id="agent-strip"></div>
+          <div class="section-heading compact"><p class="eyebrow">DAY FLOW INPUT</p><h2>일자별 흐름</h2><p>여행 중 우선순위가 바뀌면 문장을 바꾸고 재계산하세요.</p></div>
+          <div id="day-flow-editor" class="flow-editor"></div><button class="primary" id="recalculate">↻ 전체 일정 재계산</button>
+        </section>
+        <section class="panel" data-panel="itinerary"><div class="section-heading"><p class="eyebrow">ORCHESTRATED ITINERARY</p><h2>총괄 에이전트의 최종 흐름</h2></div><div id="itinerary-list" class="itinerary-list"></div><div class="decision-box"><h3>총괄 결정</h3><ul id="decisions"></ul><h3>확인할 충돌</h3><ul id="warnings"></ul></div></section>
+        <section class="panel" data-panel="ops"><div class="section-heading"><p class="eyebrow">OPERATIONS</p><h2>짐·체크인·KTX 버퍼</h2></div><div id="ops-list" class="grid two"></div></section>
+        <section class="panel" data-panel="explore"><div class="section-heading"><p class="eyebrow">BUSAN MAP</p><h2>권역을 한눈에 보고 이동을 줄입니다</h2></div><div id="map"></div><div id="route-summary" class="route-summary"></div></section>
+        <section class="panel" data-panel="food"><div class="section-heading"><p class="eyebrow">FOOD / VIDEO PICKS</p><h2>일정 권역에 맞춘 식사 후보</h2></div><div id="food-list" class="grid two"></div></section>
+        <section class="panel" data-panel="budget"><div class="section-heading"><p class="eyebrow">BUDGET</p><h2>여행 모드별 지출 방향</h2></div><div id="budget-list" class="grid three"></div></section>
+        <section class="panel" data-panel="sources"><div class="section-heading"><p class="eyebrow">SOURCE / RECHECK</p><h2>여행 아이디어와 최신 정보 확인</h2><p id="recheck-note"></p></div><div id="source-list" class="source-list"></div></section>
+      </main>
+      <footer>여름 부산 여행 운영판 · 변경사항은 이 브라우저에 저장됩니다.</footer>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="./assets/js/trip-agents.js"></script>
+    <script src="./assets/js/app.js"></script>
+  </body>
+</html>
