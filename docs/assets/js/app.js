@@ -1,4 +1,4 @@
-const APP_VERSION = "busan-agent-5";
+const APP_VERSION = "busan-agent-6";
 const STORAGE_KEY = "busan-trip-day-flows";
 const BUDGET_MODE_KEY = "busan-trip-budget-mode";
 let trip;
@@ -95,13 +95,23 @@ function renderMapDayFilter() {
   document.querySelectorAll("[data-map-day]").forEach((button) => button.addEventListener("click", () => { selectedMapDay = button.dataset.mapDay; renderMapDayFilter(); refreshMap(); renderRoutes(); }));
 }
 
+function orchestratedMapRoutes() {
+  const catalog = { ...(trip.mapPlaceCatalog || {}) };
+  Object.values(trip.mapRoutePoints || {}).flat().forEach((point) => { catalog[point.name] = { lat: point.lat, lng: point.lng }; });
+  return Object.fromEntries(orchestration.days.map((day) => {
+    const mapDay = day.date.slice(-2) + "일";
+    const points = day.route.sequence.map((name) => catalog[name] ? { name, ...catalog[name] } : null).filter(Boolean);
+    return [mapDay, points];
+  }));
+}
+
 function refreshMap() {
   if (!window.L || !map) return;
   mapMarkers.forEach((marker) => marker.remove());
   mapRouteLines.forEach((line) => line.remove());
   mapMarkers = [];
   mapRouteLines = [];
-  const routes = trip.mapRoutePoints || {};
+  const routes = orchestratedMapRoutes();
   Object.entries(routes).forEach(([day, points]) => {
     const isSelected = selectedMapDay === "all" || selectedMapDay === day;
     const line = L.polyline(points.map((point) => [point.lat, point.lng]), { color: MAP_DAY_COLORS[day] || "#167a91", weight: isSelected ? 5 : 2, opacity: isSelected ? 0.85 : 0.2, dashArray: isSelected ? undefined : "5 8" }).addTo(map);
