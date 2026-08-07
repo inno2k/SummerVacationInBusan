@@ -1,4 +1,4 @@
-const APP_VERSION = "busan-agent-2";
+const APP_VERSION = "busan-agent-3";
 const STORAGE_KEY = "busan-trip-day-flows";
 let trip;
 let orchestration;
@@ -83,7 +83,7 @@ function mapPinIcon(point, index, highlighted) {
 }
 
 function mapDays() {
-  return ["all", ...Object.keys(trip.mapRoutePoints)];
+  return ["all", ...Object.keys(trip.mapRoutePoints || {})];
 }
 
 function renderMapDayFilter() {
