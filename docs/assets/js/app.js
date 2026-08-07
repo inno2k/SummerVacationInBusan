@@ -1,4 +1,4 @@
-const APP_VERSION = "busan-agent-1";
+const APP_VERSION = "busan-agent-2";
 const STORAGE_KEY = "busan-trip-day-flows";
 let trip;
 let orchestration;
