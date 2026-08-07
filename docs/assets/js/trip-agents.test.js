@@ -84,6 +84,18 @@ test("known 송도 and 감천 input propagates to every specialist output", () =
   assert.equal(day18.activities.chosen.some((item) => item.title === "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"), true);
 });
 
+test("custom destination overrides paid additions from the previous region", () => {
+  const changed = {
+    ...context,
+    budgetMode: "comfort",
+    budgetPlans: { comfort: { addBlocks: { "2026-08-18": [{ title: "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0\u00B7\uC624\uC2DC\uB9AC\uC544 \uD0DD\uC2DC \uC774\uB3D9", type: "activity" }] }, routes: {}, activities: {} } },
+    dayFlows: context.dayFlows.map((day) => day.date === "2026-08-18" ? { ...day, intent: "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74\uC640 \uAC10\uCC9C\uBB38\uD654\uB9C8\uC744" } : day)
+  };
+  const result = runTripOrchestrator(changed);
+  assert.equal(result.days[2].blocks.some((block) => block.title.includes("\uC2A4\uCE74\uC774\uB77C\uC778")), false);
+  assert.equal(result.days[2].route.sequence.includes("\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"), true);
+});
+
 test("unknown budget mode falls back to balanced behavior", () => {
   const changed = { ...context, budgetMode: "unknown", budgetPlans: { balanced: { mealLimit: 3, routes: {}, removeKeywords: {}, addBlocks: {}, activities: {} } } };
   const result = runTripOrchestrator(changed);

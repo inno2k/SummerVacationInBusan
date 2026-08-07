@@ -35,7 +35,7 @@ function scheduleAgent(context) {
     const removeKeywords = plan.removeKeywords?.[date] || [];
     const blocks = profile ? [...(context.defaultBlocks[date] || [])].filter((block) => ["fixed", "lodging"].includes(block.type)) : [...(context.defaultBlocks[date] || [])].filter((block) => !removeKeywords.some((keyword) => block.title.includes(keyword)));
     if (profile) profile.blocks.forEach((block) => blocks.push(block));
-    (plan.addBlocks?.[date] || []).forEach((block) => blocks.push(block));
+    if (!profile) (plan.addBlocks?.[date] || []).forEach((block) => blocks.push(block));
     if (flow.intent) blocks.unshift({ time: "사용자 요청", title: flow.intent, type: "input" });
     return { date, intent: flow.intent, blocks };
   });
