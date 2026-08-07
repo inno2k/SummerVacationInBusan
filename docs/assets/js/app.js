@@ -1,5 +1,6 @@
-const APP_VERSION = "busan-agent-3";
+const APP_VERSION = "busan-agent-5";
 const STORAGE_KEY = "busan-trip-day-flows";
+const BUDGET_MODE_KEY = "busan-trip-budget-mode";
 let trip;
 let orchestration;
 let map;
@@ -22,7 +23,7 @@ function contextFromTrip() {
   let saved = [];
   try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { saved = []; }
   const savedByDate = Object.fromEntries(saved.map((item) => [item.date, item.intent]));
-  return { ...trip, dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent })) };
+  return { ...trip, budgetMode: localStorage.getItem(BUDGET_MODE_KEY) || "balanced", dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent })) };
 }
 
 function renderHero() {
@@ -67,7 +68,10 @@ function renderFood() {
 }
 
 function renderBudget() {
-  document.getElementById("budget-list").innerHTML = Object.values(trip.budgets).map((item) => `<article class="card budget-card"><h3>${escapeHtml(item.name)}</h3><strong>${escapeHtml(item.total)}</strong><p>${escapeHtml(item.note)}</p></article>`).join("");
+  const selected = localStorage.getItem(BUDGET_MODE_KEY) || "balanced";
+  document.getElementById("budget-mode-selector").innerHTML = Object.entries(trip.budgets).map(([key, item]) => `<button type="button" class="${selected === key ? "active" : ""}" data-budget-mode="${key}"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.total)}</small></button>`).join("");
+  document.querySelectorAll("[data-budget-mode]").forEach((button) => button.addEventListener("click", () => { localStorage.setItem(BUDGET_MODE_KEY, button.dataset.budgetMode); renderAll(); }));
+  document.getElementById("budget-list").innerHTML = Object.values(trip.budgets).map((item) => `<article class="card budget-card"><div class="budget-head"><div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.note)}</p></div><strong class="budget-total">${escapeHtml(item.total)}</strong></div><p class="budget-basis">${escapeHtml(item.basis || "계획용 예상치")}</p><div class="budget-items">${(item.items || []).map((budgetItem) => `<div class="budget-item"><div><strong>${escapeHtml(budgetItem.label)}</strong><small>${escapeHtml(budgetItem.detail)}</small></div><b>${escapeHtml(budgetItem.amount)}</b></div>`).join("")}</div></article>`).join("");
 }
 
 function renderSources() {

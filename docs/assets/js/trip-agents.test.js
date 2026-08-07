@@ -32,3 +32,11 @@ test("manager changes the 18th route when the user requests Gwangalli and Centum
   assert.equal(result.days[2].route.hub, "광안리·센텀");
   assert.deepEqual(result.days[2].route.sequence, ["파라다이스호텔", "센텀", "광안리"]);
 });
+
+test("budget mode removes paid blocks and adds a free alternative across the plan", () => {
+  const changed = { ...context, budgetMode: "light", budgetPlans: { light: { mealLimit: 2, removeKeywords: { "2026-08-17": ["블루라인파크"] }, addBlocks: { "2026-08-17": [{ time: "낮", title: "해운대해수욕장 산책·무료 물놀이", type: "free" }] }, routes: { "2026-08-17": ["파라다이스호텔", "해운대해수욕장", "동백섬"] }, activities: { "2026-08-17": ["파라다이스호텔 물놀이"] } } } };
+  const result = runTripOrchestrator(changed);
+  assert.equal(result.days[1].blocks.some((block) => block.title.includes("블루라인파크")), false);
+  assert.equal(result.days[1].blocks.some((block) => block.title.includes("무료 물놀이")), true);
+  assert.deepEqual(result.days[1].route.sequence, ["파라다이스호텔", "해운대해수욕장", "동백섬"]);
+});
