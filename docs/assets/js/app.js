@@ -3,6 +3,10 @@ const STORAGE_KEY = "busan-trip-day-flows";
 let trip;
 let orchestration;
 let map;
+let mapMarkers = [];
+let mapRouteLines = [];
+let selectedMapDay = "all";
+const MAP_DAY_COLORS = { "16일": "#ee705d", "17일": "#167a91", "18일": "#e1a43b", "19일": "#6a63a8" };
 
 function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -54,7 +58,8 @@ function renderOps() {
 }
 
 function renderRoutes() {
-  document.getElementById("route-summary").innerHTML = orchestration.days.map((day) => `<div class="route-row"><strong>${escapeHtml(day.date.slice(5))}</strong>${escapeHtml(day.route.sequence.join(" → "))}</div>`).join("");
+  const rows = orchestration.days.filter((day) => selectedMapDay === "all" || day.date.endsWith(selectedMapDay.replace("일", ""))).map((day) => `<div class="route-row"><strong>${escapeHtml(day.date.slice(5))}</strong>${escapeHtml(day.route.sequence.join(" → "))}</div>`);
+  document.getElementById("route-summary").innerHTML = rows.join("");
 }
 
 function renderFood() {
@@ -72,10 +77,43 @@ function renderSources() {
   document.getElementById("recheck-note").textContent = trip.recheckNote;
 }
 
+function mapPinIcon(point, index, highlighted) {
+  const dayColor = MAP_DAY_COLORS[point.day] || "#167a91";
+  return L.divIcon({ className: "map-pin-wrap", html: `<span class="map-pin ${highlighted ? "highlighted" : "muted"}" style="--pin-color:${dayColor}"><b>${index + 1}</b></span>`, iconSize: [30, 38], iconAnchor: [15, 38], popupAnchor: [0, -36] });
+}
+
+function mapDays() {
+  return ["all", ...Object.keys(trip.mapRoutePoints)];
+}
+
+function renderMapDayFilter() {
+  document.getElementById("map-day-filter").innerHTML = mapDays().map((day) => `<button type="button" class="${selectedMapDay === day ? "active" : ""}" data-map-day="${day}">${day === "all" ? "전체 동선" : day}</button>`).join("");
+  document.querySelectorAll("[data-map-day]").forEach((button) => button.addEventListener("click", () => { selectedMapDay = button.dataset.mapDay; renderMapDayFilter(); refreshMap(); renderRoutes(); }));
+}
+
+function refreshMap() {
+  if (!window.L || !map) return;
+  mapMarkers.forEach((marker) => marker.remove());
+  mapRouteLines.forEach((line) => line.remove());
+  mapMarkers = [];
+  mapRouteLines = [];
+  const routes = trip.mapRoutePoints || {};
+  Object.entries(routes).forEach(([day, points]) => {
+    const isSelected = selectedMapDay === "all" || selectedMapDay === day;
+    const line = L.polyline(points.map((point) => [point.lat, point.lng]), { color: MAP_DAY_COLORS[day] || "#167a91", weight: isSelected ? 5 : 2, opacity: isSelected ? 0.85 : 0.2, dashArray: isSelected ? undefined : "5 8" }).addTo(map);
+    mapRouteLines.push(line);
+    points.forEach((point, index) => {
+      const marker = L.marker([point.lat, point.lng], { icon: mapPinIcon({ ...point, day }, index, isSelected), zIndexOffset: isSelected ? 500 : 0 }).addTo(map).bindPopup(`<strong>${escapeHtml(point.name)}</strong><br>${escapeHtml(day)} · ${index + 1}번째`);
+      mapMarkers.push(marker);
+    });
+  });
+}
+
 function renderMap() {
   if (!window.L) return;
   if (!map) { map = L.map("map").setView([35.13, 129.09], 11); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map); }
-  trip.places.forEach((place) => L.marker([place.lat, place.lng]).addTo(map).bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.day)}`));
+  renderMapDayFilter();
+  refreshMap();
 }
 
 function renderAll() { renderHero(); renderFlowEditor(); orchestration = window.runTripOrchestrator(contextFromTrip()); renderItinerary(); renderOps(); renderRoutes(); renderFood(); renderBudget(); renderSources(); renderMap(); }
