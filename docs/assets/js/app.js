@@ -1,6 +1,7 @@
-const APP_VERSION = "busan-agent-7";
+const APP_VERSION = "busan-agent-8";
 const STORAGE_KEY = "busan-trip-day-flows";
 const BUDGET_MODE_KEY = "busan-trip-budget-mode";
+const VALID_BUDGET_MODES = new Set(["light", "balanced", "comfort"]);
 let trip;
 let orchestration;
 let map;
@@ -13,6 +14,29 @@ function escapeHtml(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }
 
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(String(value || ""), window.location.href);
+    return url.protocol === "https:" ? url.href : "#";
+  } catch {
+    return "#";
+  }
+}
+
+function showActionStatus(message = "") {
+  const status = document.getElementById("action-status");
+  if (status) status.textContent = message;
+}
+
+function selectedBudgetMode() {
+  try {
+    const saved = localStorage.getItem(BUDGET_MODE_KEY);
+    return VALID_BUDGET_MODES.has(saved) ? saved : "balanced";
+  } catch {
+    return "balanced";
+  }
+}
+
 async function loadTrip() {
   const response = await fetch(`./assets/data/busan-family-trip-2026.json?v=${APP_VERSION}`);
   if (!response.ok) throw new Error(`여행 데이터를 불러오지 못했습니다: ${response.status}`);
@@ -21,9 +45,9 @@ async function loadTrip() {
 
 function contextFromTrip() {
   let saved = [];
-  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { saved = []; }
+  try { const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); saved = Array.isArray(parsed) ? parsed : []; } catch { saved = []; }
   const savedByDate = Object.fromEntries(saved.map((item) => [item.date, item.intent]));
-  return { ...trip, budgetMode: localStorage.getItem(BUDGET_MODE_KEY) || "balanced", dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent })) };
+  return { ...trip, budgetMode: selectedBudgetMode(), dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent })) };
 }
 
 function renderHero() {
@@ -44,7 +68,7 @@ function renderFlowEditor() {
 
 function saveFlowEditor() {
   const values = [...document.querySelectorAll("[data-flow-date]")].map((input) => ({ date: input.dataset.flowDate, intent: input.value.trim() || "여유롭게 이동" }));
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(values)); return true; } catch { showActionStatus("변경 내용을 저장하지 못했습니다. 브라우저 저장공간을 확인하세요."); return false; }
 }
 
 function renderItinerary() {
@@ -68,16 +92,26 @@ function renderFood() {
 }
 
 function renderBudget() {
-  const selected = localStorage.getItem(BUDGET_MODE_KEY) || "balanced";
+  const selected = selectedBudgetMode();
   document.getElementById("budget-mode-selector").innerHTML = Object.entries(trip.budgets).map(([key, item]) => `<button type="button" class="${selected === key ? "active" : ""}" data-budget-mode="${key}"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.total)}</small></button>`).join("");
-  document.querySelectorAll("[data-budget-mode]").forEach((button) => button.addEventListener("click", () => { localStorage.setItem(BUDGET_MODE_KEY, button.dataset.budgetMode); renderAll(); }));
+  document.querySelectorAll("[data-budget-mode]").forEach((button) => button.addEventListener("click", () => {
+    try {
+      const mode = button.dataset.budgetMode;
+      if (!VALID_BUDGET_MODES.has(mode)) throw new Error("invalid budget mode");
+      localStorage.setItem(BUDGET_MODE_KEY, mode);
+      renderAll();
+      showActionStatus(`${button.textContent.trim()} 예산으로 전체 탭을 갱신했습니다.`);
+    } catch {
+      showActionStatus("예산 유형을 저장하지 못했습니다. 잠시 후 다시 시도하세요.");
+    }
+  }));
   const item = trip.budgets[selected];
   document.getElementById("budget-list").innerHTML = `<article class="card budget-card"><div class="budget-head"><div><h3>${escapeHtml(item.name)} 상세 예산</h3><p>${escapeHtml(item.note)}</p></div><strong class="budget-total">${escapeHtml(item.total)}</strong></div><p class="budget-basis">${escapeHtml(item.basis || "계획용 예상치")}</p><div class="budget-items">${(item.items || []).map((budgetItem) => `<div class="budget-item"><div><strong>${escapeHtml(budgetItem.label)}</strong><small>${escapeHtml(budgetItem.detail)}</small></div><b>${escapeHtml(budgetItem.amount)}</b></div>`).join("")}</div></article>`;
 }
 
 function renderSources() {
-  const videos = trip.videoSources.map((source) => `<article class="source-card"><div><span class="format">${source.format === "shorts" ? "SHORTS" : "LONGFORM"} · ${escapeHtml(source.role)}</span><p>${escapeHtml(source.title)}</p></div><a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">영상 열기 ↗</a></article>`);
-  const official = trip.recheckSources.map((source) => `<article class="source-card"><div><span class="format">OFFICIAL RECHECK</span><p>${escapeHtml(source.title)} · ${escapeHtml(source.note)}</p></div><a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">공식 확인 ↗</a></article>`);
+  const videos = trip.videoSources.map((source) => `<article class="source-card"><div><span class="format">${source.format === "shorts" ? "SHORTS" : "LONGFORM"} · ${escapeHtml(source.role)}</span><p>${escapeHtml(source.title)}</p></div><a href="${escapeHtml(safeExternalUrl(source.url))}" target="_blank" rel="noopener noreferrer">영상 열기 ↗</a></article>`);
+  const official = trip.recheckSources.map((source) => `<article class="source-card"><div><span class="format">OFFICIAL RECHECK</span><p>${escapeHtml(source.title)} · ${escapeHtml(source.note)}</p></div><a href="${escapeHtml(safeExternalUrl(source.url))}" target="_blank" rel="noopener noreferrer">공식 확인 ↗</a></article>`);
   document.getElementById("source-list").innerHTML = [...videos, ...official].join("");
   document.getElementById("recheck-note").textContent = trip.recheckNote;
 }
@@ -139,7 +173,7 @@ function initTabs() {
 
 /** Start the Busan trip control room. */
 async function main() {
-  try { trip = await loadTrip(); initTabs(); renderAll(); document.getElementById("recalculate").addEventListener("click", () => { saveFlowEditor(); renderAll(); document.querySelector('[data-tab="itinerary"]').click(); }); } catch (error) { document.body.innerHTML = `<main class="card"><h1>여행 데이터를 불러오지 못했습니다.</h1><p>${escapeHtml(error.message)}</p></main>`; }
+  try { trip = await loadTrip(); initTabs(); renderAll(); document.getElementById("recalculate").addEventListener("click", () => { try { if (!saveFlowEditor()) return; renderAll(); document.querySelector('[data-tab="itinerary"]').click(); showActionStatus("전체 일정과 관련 탭을 갱신했습니다."); } catch { showActionStatus("전체 일정 재계산에 실패했습니다. 입력값을 확인하고 다시 시도하세요."); } }); } catch (error) { document.body.innerHTML = `<main class="card"><h1>여행 데이터를 불러오지 못했습니다.</h1><p>${escapeHtml(error.message)}</p></main>`; }
 }
 
 main();

@@ -9,15 +9,32 @@ function dayByDate(context, date) {
 }
 
 function budgetPlan(context) {
-  return context.budgetPlans?.[context.budgetMode || "balanced"] || {};
+  const mode = ["light", "balanced", "comfort"].includes(context.budgetMode) ? context.budgetMode : "balanced";
+  return context.budgetPlans?.[mode] || {};
+}
+
+function intentProfile(intent) {
+  const value = String(intent || "");
+  if (value.includes("송도") || value.includes("감천")) {
+    return {
+      hub: "송도·감천",
+      sequence: ["파라다이스호텔", "감천문화마을", "송도 케이블카"],
+      blocks: [{ time: "오전", title: "감천문화마을", type: "place" }, { time: "오후", title: "송도 케이블카·송도해수욕장", type: "activity" }, { time: "저녁", title: "송도권 식사", type: "food" }],
+      meals: ["송도 해산물", "감천 카페·간식", "남포 귀환 식사"],
+      activities: [{ title: "감천문화마을", area: "감천", audience: ["12살", "가족"], weather: "clear" }, { title: "송도 케이블카", area: "송도", audience: ["12살", "가족"], weather: "clear" }]
+    };
+  }
+  return null;
 }
 
 function scheduleAgent(context) {
   const plan = budgetPlan(context);
   const days = DAY_ORDER.map((date) => {
     const flow = dayByDate(context, date);
+    const profile = intentProfile(flow.intent);
     const removeKeywords = plan.removeKeywords?.[date] || [];
-    const blocks = [...(context.defaultBlocks[date] || [])].filter((block) => !removeKeywords.some((keyword) => block.title.includes(keyword)));
+    const blocks = profile ? [...(context.defaultBlocks[date] || [])].filter((block) => ["fixed", "lodging"].includes(block.type)) : [...(context.defaultBlocks[date] || [])].filter((block) => !removeKeywords.some((keyword) => block.title.includes(keyword)));
+    if (profile) profile.blocks.forEach((block) => blocks.push(block));
     (plan.addBlocks?.[date] || []).forEach((block) => blocks.push(block));
     if (flow.intent) blocks.unshift({ time: "사용자 요청", title: flow.intent, type: "input" });
     return { date, intent: flow.intent, blocks };
@@ -29,9 +46,10 @@ function routeAgent(context, schedule) {
   const plan = budgetPlan(context);
   const recommendations = schedule.recommendations.map((day) => {
     const intent = day.intent || "";
-    const customHub = intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : intent.includes("남포") || intent.includes("영도") ? "남포·영도" : context.routeHubs[day.date];
-    const customSequence = customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : customHub === "남포·영도" ? ["부산역", "남포·자갈치", "영도"] : plan.routes?.[day.date] || context.routeSequences[day.date] || [];
-    return { date: day.date, hub: customHub, sequence: customSequence, note: day.date === "2026-08-17" ? "해운대 관광과 물놀이를 같은 권역에서 마무리" : "권역 간 왕복을 줄이는 방향" };
+    const profile = intentProfile(intent);
+    const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : intent.includes("남포") || intent.includes("영도") ? "남포·영도" : context.routeHubs[day.date]);
+    const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : customHub === "남포·영도" ? ["부산역", "남포·자갈치", "영도"] : plan.routes?.[day.date] || context.routeSequences[day.date] || []);
+    return { date: day.date, intent, hub: customHub, sequence: customSequence, note: day.date === "2026-08-17" ? "해운대 관광과 물놀이를 같은 권역에서 마무리" : "권역 간 왕복을 줄이는 방향" };
   });
   return { agentId: "route", recommendations, constraints: ["하루 핵심 권역 1~2개"], warnings: [] };
 }
@@ -60,7 +78,7 @@ function foodAgent(context, route) {
   const plan = budgetPlan(context);
   const recommendations = route.recommendations.map((day) => ({
     date: day.date,
-    meals: (context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3),
+    meals: (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3),
     sourceHint: context.videoSources.filter((source) => source.days.includes(day.date)).slice(0, 2).map((source) => source.id)
   }));
   return { agentId: "food", recommendations, constraints: ["영상 추천은 영업/예약 여부 재확인"], warnings: [] };
@@ -69,8 +87,9 @@ function foodAgent(context, route) {
 function activityAgent(context, route) {
   const plan = budgetPlan(context);
   const recommendations = route.recommendations.map((day) => {
-    const candidates = context.activityCandidates[day.date] || [];
-    const preferredTitles = plan.activities?.[day.date];
+    const profile = intentProfile(day.intent);
+    const candidates = [...(context.activityCandidates[day.date] || []), ...(profile?.activities || [])];
+    const preferredTitles = profile?.activities?.map((item) => item.title) || plan.activities?.[day.date];
     const chosen = preferredTitles ? candidates.filter((item) => preferredTitles.includes(item.title)) : day.hub === "광안리·센텀" ? candidates.filter((item) => ["광안리", "센텀"].includes(item.area)) : day.date === "2026-08-18" ? candidates.filter((item) => item.audience.includes("12살")) : candidates;
     return { date: day.date, chosen: chosen.slice(0, 4), rainyAlternative: candidates.find((item) => item.weather === "rain") };
   });
@@ -110,7 +129,7 @@ function runTripOrchestrator(input) {
   return {
     days: schedule.recommendations.map((day) => ({ ...day, route: route.recommendations.find((item) => item.date === day.date), meals: food.recommendations.find((item) => item.date === day.date), activities: activity.recommendations.find((item) => item.date === day.date) })),
     specialistOutputs,
-    decisions: ["17일에 해운대 관광과 물놀이를 통합", "18일은 오시리아 체험을 우선", "19일 씨메르 후 KTX 버퍼를 유지"],
+    decisions: ["17일에 해운대 관광과 물놀이를 통합", `18일은 ${route.recommendations.find((day) => day.date === "2026-08-18")?.hub || "권역"} 코스를 우선`, "19일 씨메르 후 KTX 버퍼를 유지"],
     warnings,
     changedAt: new Date().toISOString()
   };

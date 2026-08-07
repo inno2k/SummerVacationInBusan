@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-    <link rel="stylesheet" href="./assets/css/styles.css?v=20260807-budget-selected" />
+    <link rel="stylesheet" href="./assets/css/styles.css?v=20260807-review-fix" />
   </head>
   <body>
     <div class="coastline" aria-hidden="true"></div>
@@ -28,7 +28,7 @@
           <div class="grid two"><article class="card blue"><h3>이번 여행의 기준</h3><ul id="trip-lens"></ul></article><article class="card sand"><h3>고정된 이동·숙소</h3><div id="fixed-facts"></div></article></div>
           <div class="agent-strip" id="agent-strip"></div>
           <div class="section-heading compact"><p class="eyebrow">DAY FLOW INPUT</p><h2>일자별 흐름</h2><p>여행 중 우선순위가 바뀌면 문장을 바꾸고 재계산하세요.</p></div>
-          <div id="day-flow-editor" class="flow-editor"></div><button class="primary" id="recalculate">↻ 전체 일정 재계산</button>
+          <div id="day-flow-editor" class="flow-editor"></div><button class="primary" id="recalculate">↻ 전체 일정 재계산</button><p id="action-status" class="action-status" role="status" aria-live="polite"></p>
         </section>
         <section class="panel" data-panel="itinerary"><div class="section-heading"><p class="eyebrow">ORCHESTRATED ITINERARY</p><h2>총괄 에이전트의 최종 흐름</h2></div><div id="itinerary-list" class="itinerary-list"></div><div class="decision-box"><h3>총괄 결정</h3><ul id="decisions"></ul><h3>확인할 충돌</h3><ul id="warnings"></ul></div></section>
         <section class="panel" data-panel="ops"><div class="section-heading"><p class="eyebrow">OPERATIONS</p><h2>짐·체크인·KTX 버퍼</h2></div><div id="ops-list" class="grid two"></div></section>
@@ -40,7 +40,7 @@
       <footer>여름 부산 여행 운영판 · 변경사항은 이 브라우저에 저장됩니다.</footer>
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="./assets/js/trip-agents.js?v=20260807-budget-selected"></script>
-    <script src="./assets/js/app.js?v=20260807-budget-selected"></script>
+    <script src="./assets/js/trip-agents.js?v=20260807-review-fix"></script>
+    <script src="./assets/js/app.js?v=20260807-review-fix"></script>
   </body>
 </html>
