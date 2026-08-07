@@ -26,7 +26,7 @@ function renderHero() {
   document.getElementById("hero-title").textContent = trip.hero.title;
   document.getElementById("hero-summary").textContent = trip.hero.summary;
   document.getElementById("hero-meta").innerHTML = trip.hero.meta.map((item) => `<span>${escapeHtml(item)}</span>`).join("");
-  document.getElementById("hero-stats").innerHTML = trip.hero.stats.map((item) => { const [value, label] = item.split(" "); return `<div class="stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label || "")}</span></div>`; }).join("");
+  document.getElementById("hero-stats").innerHTML = trip.hero.stats.map((item) => `<div class="stat"><strong>${escapeHtml(item.value)}</strong><span>${escapeHtml(item.label)}</span></div>`).join("");
   document.getElementById("trip-lens").innerHTML = trip.tripLens.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   document.getElementById("fixed-facts").innerHTML = `<div class="fact"><span>가는 KTX</span><strong>서울 07:58 → 부산 10:46</strong></div><div class="fact"><span>오는 KTX</span><strong>부산 14:31 → 서울 17:14</strong></div><div class="fact"><span>숙소 1</span><strong>아스티호텔 16~17일</strong></div><div class="fact"><span>숙소 2</span><strong>파라다이스 17~19일</strong></div>`;
   document.getElementById("agent-strip").innerHTML = trip.team.map((item) => `<article class="agent-card"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.role)}</span></article>`).join("");
