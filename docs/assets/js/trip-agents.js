@@ -9,8 +9,20 @@ function dayByDate(context, date) {
 }
 
 function budgetPlan(context) {
-  const mode = ["light", "balanced", "comfort"].includes(context.budgetMode) ? context.budgetMode : "balanced";
+  const mode = selectedBudgetMode(context);
   return context.budgetPlans?.[mode] || {};
+}
+
+function selectedBudgetMode(context) {
+  return ["light", "balanced", "comfort"].includes(context.budgetMode) ? context.budgetMode : "balanced";
+}
+
+function orderMealCandidates(candidates, priorities) {
+  const priorityIndex = new Map((priorities || []).map((name, index) => [name, index]));
+  return candidates
+    .map((candidate, index) => ({ candidate, index, priority: priorityIndex.get(candidate.name) }))
+    .sort((left, right) => (left.priority ?? Number.MAX_SAFE_INTEGER) - (right.priority ?? Number.MAX_SAFE_INTEGER) || left.index - right.index)
+    .map(({ candidate }) => candidate);
 }
 
 function intentProfile(intent) {
@@ -77,9 +89,13 @@ function transportAgent(context, route) {
 
 function foodAgent(context, route) {
   const plan = budgetPlan(context);
+  const mode = selectedBudgetMode(context);
   const recommendations = route.recommendations.map((day) => {
     const slotEntries = Object.entries(context.mealSlots?.[day.date] || {});
-    const slots = slotEntries.map(([meal, candidates]) => ({ meal, candidates: [...candidates] }));
+    const slots = slotEntries.map(([meal, candidates]) => ({
+      meal,
+      candidates: orderMealCandidates(candidates, plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal])
+    }));
     const meals = slots.length
       ? slots.map((slot) => `${slot.meal === "lunch" ? "점심" : "저녁"}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
       : (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);

@@ -213,3 +213,45 @@ test("rebalanced fixture assigns supplied restaurants to their intended day and 
   assert.equal(hasCandidate("2026-08-18", "dinner", "\uC548\uBAA9 \uB0A8\uCC9C\uB3D9", "\uB0A8\uCC9C"), true);
   assert.equal(hasCandidate("2026-08-19", "lunch", "\uC548\uBAA9 \uBD80\uC0B0\uC5ED\uC810", "\uBD80\uC0B0\uC5ED"), true);
 });
+
+test("budget modes reorder meal slot candidates without reducing their choices", () => {
+  const mealSlot = [
+    { name: "\uC54C\uB730 \uC2DD\uB2F9", genre: "\uBD84\uC2DD", area: "\uD574\uC6B4\uB300" },
+    { name: "\uADE0\uD615 \uC2DD\uB2F9", genre: "\uD55C\uC2DD", area: "\uD574\uC6B4\uB300" },
+    { name: "\uC5EC\uC720 \uC2DD\uB2F9", genre: "\uACE0\uAE30", area: "\uD574\uC6B4\uB300" }
+  ];
+  const base = {
+    ...context,
+    mealSlots: { "2026-08-17": { lunch: mealSlot, dinner: mealSlot } },
+    budgetPlans: {
+      light: { mealPriorities: { "2026-08-17": { lunch: ["\uC54C\uB730 \uC2DD\uB2F9"], dinner: ["\uC54C\uB730 \uC2DD\uB2F9"] } } },
+      balanced: { mealPriorities: { "2026-08-17": { lunch: ["\uADE0\uD615 \uC2DD\uB2F9"], dinner: ["\uADE0\uD615 \uC2DD\uB2F9"] } } },
+      comfort: { mealPriorities: { "2026-08-17": { lunch: ["\uC5EC\uC720 \uC2DD\uB2F9"], dinner: ["\uC5EC\uC720 \uC2DD\uB2F9"] } } }
+    }
+  };
+  const candidatesFor = (budgetMode) => runTripOrchestrator({ ...base, budgetMode })
+    .days.find((day) => day.date === "2026-08-17").meals.slots[0].candidates;
+
+  assert.equal(candidatesFor("light")[0].name, "\uC54C\uB730 \uC2DD\uB2F9");
+  assert.equal(candidatesFor("balanced")[0].name, "\uADE0\uD615 \uC2DD\uB2F9");
+  assert.equal(candidatesFor("comfort")[0].name, "\uC5EC\uC720 \uC2DD\uB2F9");
+  for (const budgetMode of ["light", "balanced", "comfort"]) assert.equal(candidatesFor(budgetMode).length, 3);
+});
+
+test("day 18 default route resolves every concrete stop to a map pin", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const catalog = { ...itineraryFixture.mapPlaceCatalog };
+  Object.values(itineraryFixture.mapRoutePoints).flat().forEach((point) => { catalog[point.name] = point; });
+  const sequence = result.days.find((day) => day.date === "2026-08-18").route.sequence;
+
+  assert.deepEqual(sequence, ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uB86F\uB370\uC6D4\uB4DC \uBD80\uC0B0", "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", "\uC624\uC2DC\uB9AC\uC544", "\uAD11\uC548\uB9AC"]);
+  assert.equal(sequence.every((name) => catalog[name]), true);
+});
+
+test("overview places Cimer on day 17 and protects the day 19 station buffer", () => {
+  const overview = [itineraryFixture.hero.summary, ...itineraryFixture.tripLens, ...itineraryFixture.photos.map((photo) => photo.detail)].join(" ");
+
+  assert.match(overview, /17\uC77C.*\uC528\uBA54\uB974/);
+  assert.match(overview, /19\uC77C.*\uBD80\uC0B0\uC5ED \uC9D0 \uBCF4\uAD00.*KTX \uBC84\uD37C/);
+  assert.doesNotMatch(itineraryFixture.tripLens.find((lens) => lens.includes("19\uC77C")), /\uC528\uBA54\uB974/);
+});
