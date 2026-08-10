@@ -515,3 +515,11 @@ test("budget modes preserve the confirmed day 17 rental and Haedong Yonggungsa r
     assert.equal(result.warnings.some((warning) => warning.includes("17일 확정 동선")), false, `${budgetMode} keeps the confirmed route`);
   }
 });
+
+test("light budget keeps the confirmed Mipo-Cheongsapo Blue Line block and map route", () => {
+  const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
+  const day17 = result.days.find((day) => day.date === "2026-08-17");
+
+  assert.equal(day17.blocks.some((block) => block.title.includes("미포·청사포 왕복 블루라인파크")), true);
+  assert.deepEqual(day17.route.sequence, itineraryFixture.mapRoutePoints["17일"].map((point) => point.name));
+});
