@@ -179,6 +179,45 @@ function testAppDistinguishesPrimaryMealsFromAlternatives() {
   assert.match(appSource, /다른 선택지/);
 }
 
+/**
+ * Render one date flow through the app's editor function in an isolated VM.
+ * @returns {string}
+ */
+function renderFlowEditorFixture() {
+  const editor = { innerHTML: "" };
+  const sourceStart = appSource.indexOf("function escapeHtml(");
+  const sourceEnd = appSource.indexOf("function saveFlowEditor()");
+
+  assert.notEqual(sourceStart, -1);
+  assert.notEqual(sourceEnd, -1);
+
+  const context = {
+    trip: {
+      dayFlows: [{ date: "2026-08-16", label: "16일", intent: "시장 동선" }]
+    },
+    document: {
+      getElementById(id) {
+        return id === "day-flow-editor" ? editor : null;
+      }
+    },
+    localStorage: {
+      getItem() {
+        return null;
+      }
+    }
+  };
+
+  vm.runInNewContext(appSource.slice(sourceStart, sourceEnd), context, { filename: "app.js" });
+  context.renderFlowEditor();
+  return editor.innerHTML;
+}
+
+function testAppGroupsFlowInputsByDateCard() {
+  const html = renderFlowEditorFixture();
+
+  assert.match(html, /^<section class="day-flow-card"[^>]*>[\s\S]*?<header class="day-flow-card__header">[\s\S]*?data-flow-date="2026-08-16"[\s\S]*?data-custom-request-date="2026-08-16"[\s\S]*?data-custom-request-area="2026-08-16"[\s\S]*?<\/section>$/);
+}
+
 try {
   testMalformedEncoding();
   testSiblingTraversal();
@@ -188,6 +227,7 @@ try {
   testAppBuildsMapRoutesFromOrchestratedSequences();
   testAppRendersOneDailyRequestControlAndOpenSlotState();
   testAppDistinguishesPrimaryMealsFromAlternatives();
+  testAppGroupsFlowInputsByDateCard();
   process.stdout.write("qa-server tests passed\n");
 } catch (error) {
   process.stderr.write(`${error.stack}\n`);
