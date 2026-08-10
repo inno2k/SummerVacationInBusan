@@ -80,7 +80,7 @@ function renderFlowEditor() {
   const context = contextFromTrip();
   document.getElementById("day-flow-editor").innerHTML = context.dayFlows.map((day) => {
     const request = context.customRequests[day.date]?.[0];
-    return `<div class="flow-row"><label for="flow-${day.date}">${escapeHtml(day.label)} 일정</label><input id="flow-${day.date}" data-flow-date="${day.date}" value="${escapeHtml(day.intent)}" /></div><div class="flow-row"><label for="request-${day.date}">${escapeHtml(day.label)} 추가 요청</label><input id="request-${day.date}" data-custom-request-date="${day.date}" value="${escapeHtml(request?.title || "")}" placeholder="비어 있는 시간에 넣을 요청 1건" /></div>`;
+    return `<div class="flow-row"><label for="flow-${day.date}">${escapeHtml(day.label)} 일정</label><input id="flow-${day.date}" data-flow-date="${day.date}" value="${escapeHtml(day.intent)}" /></div><div class="flow-row"><label for="request-${day.date}">${escapeHtml(day.label)} 추가 요청</label><input id="request-${day.date}" data-custom-request-date="${day.date}" value="${escapeHtml(request?.title || "")}" placeholder="비어 있는 시간에 넣을 요청 1건" /><label for="request-${day.date}-area">권역</label><input id="request-${day.date}-area" data-custom-request-area="${day.date}" value="${escapeHtml(request?.area || "")}" placeholder="예: 오시리아" /></div>`;
   }).join("");
 }
 
@@ -93,9 +93,10 @@ function saveCustomRequestEditor() {
   const requests = {};
   for (const input of document.querySelectorAll("[data-custom-request-date]")) {
     const title = input.value.trim();
-    if (title) {
-      const date = input.dataset.customRequestDate;
-      requests[date] = [{ title, area: trip.routeHubs?.[date] || "" }];
+    const date = input.dataset.customRequestDate;
+    const areaInput = document.querySelector(`[data-custom-request-area="${date}"]`);
+    if (title && areaInput?.value.trim()) {
+      requests[date] = [{ title, area: areaInput.value.trim() }];
     }
   }
   try {
@@ -205,7 +206,7 @@ function orchestratedMapRoutes() {
   Object.values(trip.mapRoutePoints || {}).flat().forEach((point) => { catalog[point.name] = { lat: point.lat, lng: point.lng }; });
   return Object.fromEntries(orchestration.days.map((day) => {
     const mapDay = day.date.slice(-2) + "일";
-    const points = day.route.sequence.map((name) => catalog[name] ? { name, ...catalog[name] } : null).filter(Boolean);
+    const points = day.route.points || day.route.sequence.map((name) => catalog[name] ? { name, ...catalog[name] } : null).filter(Boolean);
     return [mapDay, points];
   }));
 }

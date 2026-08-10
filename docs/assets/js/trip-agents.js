@@ -29,6 +29,10 @@ function primaryMeal(candidates) {
   return candidates.find((candidate) => candidate.primary) || candidates[0];
 }
 
+function selectedMeal(candidates, selectedName) {
+  return candidates.find((candidate) => candidate.name === selectedName) || primaryMeal(candidates);
+}
+
 function minutesAt(time) {
   const [hours, minutes] = String(time || "").split(":").map(Number);
   return Number.isInteger(hours) && Number.isInteger(minutes) ? hours * 60 + minutes : null;
@@ -59,6 +63,21 @@ function isCompatibleRequest(request, areas) {
   return Boolean(area) && areas.some((candidate) => String(candidate).includes(area) || area.includes(String(candidate)));
 }
 
+function mapPointCatalog(context) {
+  const catalog = { ...(context.mapPlaceCatalog || {}) };
+  Object.values(context.mapRoutePoints || {}).flat().forEach((point) => {
+    catalog[point.name] = { lat: point.lat, lng: point.lng };
+  });
+  return catalog;
+}
+
+function mapPointForRequest(context, request) {
+  const area = String(request?.area || "").trim();
+  const catalog = mapPointCatalog(context);
+  const matchedName = Object.keys(catalog).find((name) => name === area || name.includes(area) || area.includes(name));
+  return matchedName ? { name: request.title, ...catalog[matchedName] } : null;
+}
+
 function openSlotForDay(blocks, request, areas) {
   if (request && !isCompatibleRequest(request, areas)) return { status: "unavailable", reason: "area-mismatch" };
   const timedBlocks = blocks
@@ -66,8 +85,8 @@ function openSlotForDay(blocks, request, areas) {
     .filter((block) => block.start !== null && block.end !== null)
     .sort((left, right) => left.start - right.start);
   for (let index = 0; index < timedBlocks.length - 1; index += 1) {
-    const start = timedBlocks[index].end;
-    const end = timedBlocks[index + 1].start;
+    const start = timedBlocks[index].end + 15;
+    const end = timedBlocks[index + 1].start - 15;
     if (end - start >= 30) return { status: request ? "used" : "available", startAt: timeAt(start), endAt: timeAt(start + 30), availableUntil: timeAt(end) };
   }
   return { status: "unavailable", reason: "no-safe-gap" };
@@ -118,6 +137,17 @@ function routeAgent(context, schedule) {
     const profile = intentProfile(intent);
     const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : intent.includes("남포") || intent.includes("영도") ? "남포·영도" : context.routeHubs[day.date]);
     const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : customHub === "남포·영도" ? ["부산역", "남포·자갈치", "영도"] : plan.routes?.[day.date] || context.routeSequences[day.date] || []);
+    const request = day.blocks.find((block) => block.type === "custom");
+    if (request) {
+      const customPoint = mapPointForRequest(context, request);
+      const anchorIndex = customSequence.findIndex((name) => String(name).includes(request.area) || request.area.includes(String(name)));
+      if (customPoint && anchorIndex >= 0) {
+        const sequence = [...customSequence.slice(0, anchorIndex + 1), request.title, ...customSequence.slice(anchorIndex + 1)];
+        const catalog = mapPointCatalog(context);
+        const points = sequence.map((name) => name === request.title ? customPoint : catalog[name] ? { name, ...catalog[name] } : null).filter(Boolean);
+        return { date: day.date, intent, hub: customHub, sequence, points, note: "사용자 요청을 권역 내 동선에 반영" };
+      }
+    }
     return { date: day.date, intent, hub: customHub, sequence: customSequence, note: day.date === "2026-08-17" ? "해운대 관광과 물놀이를 같은 권역에서 마무리" : "권역 간 왕복을 줄이는 방향" };
   });
   return { agentId: "route", recommendations, constraints: ["하루 핵심 권역 1~2개"], warnings: [] };
@@ -149,12 +179,13 @@ function foodAgent(context, route) {
   const mode = selectedBudgetMode(context);
   const recommendations = route.recommendations.map((day) => {
     const slotEntries = Object.entries(context.mealSlots?.[day.date] || {});
-    const slots = slotEntries.map(([meal, candidates]) => ({
-      meal,
-      primary: primaryMeal(candidates),
-      alternatives: orderMealCandidates(candidates, plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal]).filter((candidate) => candidate !== primaryMeal(candidates)),
-      candidates: orderMealCandidates(candidates, plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal])
-    }));
+    const slots = slotEntries.map(([meal, candidates]) => {
+      const priorities = plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal] || [];
+      const selectedName = context.mealSelections?.[mode]?.[day.date]?.[meal] || priorities[0];
+      const primary = selectedMeal(candidates, selectedName);
+      const orderedCandidates = orderMealCandidates(candidates, [primary.name, ...priorities]);
+      return { meal, primary, alternatives: orderedCandidates.filter((candidate) => candidate !== primary), candidates: orderedCandidates };
+    });
     const meals = slots.length
       ? slots.map((slot) => `${slot.meal === "lunch" ? "점심" : "저녁"}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
       : (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);

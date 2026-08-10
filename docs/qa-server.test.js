@@ -157,7 +157,7 @@ function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
 
 function testAppBuildsMapRoutesFromOrchestratedSequences() {
   assert.match(appSource, /orchestration\.days\.map\(\(day\) =>/);
-  assert.match(appSource, /day\.route\.sequence\.map/);
+  assert.match(appSource, /day\.route\.points/);
 }
 
 function testAppRendersOneDailyRequestControlAndOpenSlotState() {
@@ -168,6 +168,8 @@ function testAppRendersOneDailyRequestControlAndOpenSlotState() {
   assert.match(appSource, /request-waiting/);
   assert.match(appSource, /request-used/);
   assert.match(appSource, /request-warning/);
+  assert.match(appSource, /data-custom-request-area/);
+  assert.match(appSource, /area: areaInput\.value\.trim\(\)/);
 }
 
 function testAppDistinguishesPrimaryMealsFromAlternatives() {

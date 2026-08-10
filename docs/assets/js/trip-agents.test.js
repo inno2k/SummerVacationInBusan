@@ -288,7 +288,7 @@ test("every default schedule block provides an ordered time range", () => {
   }
 });
 
-test("places one same-area custom request in the earliest available open slot", () => {
+test("places one same-area custom request after the required travel buffer", () => {
   const result = runTripOrchestrator({
     ...itineraryFixture,
     customRequests: {
@@ -299,8 +299,8 @@ test("places one same-area custom request in the earliest available open slot", 
   const inserted = day18.blocks.find((block) => block.title === "오시리아 카페");
 
   assert.equal(day18.openSlot.status, "used");
-  assert.equal(inserted.startAt, "13:00");
-  assert.equal(inserted.endAt, "13:30");
+  assert.equal(inserted.startAt, "17:15");
+  assert.equal(inserted.endAt, "17:45");
 });
 
 test("keeps only one custom request per day and warns about the second", () => {
@@ -334,8 +334,57 @@ test("food agent returns explicit primary meals and alternatives", () => {
   const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
   const slots = result.days.flatMap((day) => day.meals.slots);
 
-  assert.equal(slots.every((slot) => slot.primary?.primary === true), true);
+  assert.equal(slots.every((slot) => slot.primary === slot.candidates[0]), true);
   assert.equal(slots.every((slot) => slot.alternatives.every((candidate) => candidate !== slot.primary)), true);
   assert.equal(result.warnings.some((warning) => warning.includes("대표 식사 장르")), false);
   assert.equal(result.warnings.some((warning) => warning.includes("안목")), false);
+});
+
+test("budget modes select different primary meals while keeping every selected genre unique", () => {
+  const selectedByMode = Object.fromEntries(["light", "balanced", "comfort"].map((budgetMode) => {
+    const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
+    return [budgetMode, result.days.flatMap((day) => day.meals.slots.map((slot) => slot.primary))];
+  }));
+
+  assert.notDeepEqual(selectedByMode.light.map((meal) => meal.name), selectedByMode.balanced.map((meal) => meal.name));
+  assert.notDeepEqual(selectedByMode.comfort.map((meal) => meal.name), selectedByMode.balanced.map((meal) => meal.name));
+  for (const meals of Object.values(selectedByMode)) {
+    assert.equal(new Set(meals.map((meal) => meal.genre)).size, meals.length);
+    assert.equal(meals.filter((meal) => meal.name.includes("\uC548\uBAA9")).length, 1);
+  }
+});
+
+test("custom requests reserve travel buffers on both sides of the inserted activity", () => {
+  const result = runTripOrchestrator({
+    ...itineraryFixture,
+    customRequests: { "2026-08-18": [{ title: "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398", area: "\uC624\uC2DC\uB9AC\uC544" }] }
+  });
+  const day18 = result.days.find((day) => day.date === "2026-08-18");
+  const inserted = day18.blocks.find((block) => block.type === "custom");
+
+  assert.equal(day18.openSlot.status, "used");
+  assert.equal(inserted.startAt, "17:15");
+  assert.equal(inserted.endAt, "17:45");
+  assert.equal(day18.blocks.find((block) => block.title.includes("\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0")).endAt, "17:00");
+  assert.equal(day18.blocks.find((block) => block.title.includes("\uC800\uB141 \uC2DD\uC0AC")).startAt, "18:00");
+});
+
+test("custom requests reject off-route areas and add accepted requests to the map route", () => {
+  const accepted = runTripOrchestrator({
+    ...itineraryFixture,
+    customRequests: { "2026-08-18": [{ title: "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398", area: "\uC624\uC2DC\uB9AC\uC544" }] }
+  });
+  const acceptedDay = accepted.days.find((day) => day.date === "2026-08-18");
+  assert.equal(acceptedDay.route.sequence.includes("\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398"), true);
+  assert.deepEqual(acceptedDay.route.points.find((point) => point.name === "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398"), {
+    name: "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398", lat: 35.1921, lng: 129.2147
+  });
+
+  const rejected = runTripOrchestrator({
+    ...itineraryFixture,
+    customRequests: { "2026-08-18": [{ title: "\uC1A1\uB3C4 \uC0B0\uCC45", area: "\uC1A1\uB3C4" }] }
+  });
+  const rejectedDay = rejected.days.find((day) => day.date === "2026-08-18");
+  assert.equal(rejectedDay.openSlot.reason, "area-mismatch");
+  assert.equal(rejectedDay.route.sequence.includes("\uC1A1\uB3C4 \uC0B0\uCC45"), false);
 });
