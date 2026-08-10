@@ -132,6 +132,63 @@ function testMealSlotsHaveDisplayableCandidateData() {
   }
 }
 
+function testBreakfastRentalAndLuggageFixture() {
+  const dates = ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"];
+  const expectedDay17Route = [
+    "아스티호텔 부산",
+    "SK렌터카 부산역지점",
+    "파라다이스호텔 부산",
+    "해동용궁사",
+    "미포주차장",
+    "미포",
+    "청사포",
+    "미포",
+    "파라다이스호텔 부산",
+    "해운대해수욕장",
+    "해운대 렌터카 반납"
+  ];
+
+  for (const date of dates) {
+    assert.ok(tripFixture.mealSlots[date].breakfast, `${date} needs a breakfast slot`);
+    assert.ok(tripFixture.mealSlots[date].breakfast.length >= 3, `${date} breakfast needs three candidates`);
+  }
+
+  const day17Titles = tripFixture.defaultBlocks["2026-08-17"].map((block) => block.title);
+  ["아스티호텔 체크아웃", "렌터카 수령", "파라다이스호텔 부산 짐 전달", "해동용궁사", "미포주차장", "블루라인파크", "파라다이스호텔 물놀이", "해운대해수욕장", "해운대 렌터카 반납"].forEach((expected) => {
+    assert.ok(day17Titles.some((title) => title.includes(expected)), `17 Aug needs ${expected}`);
+  });
+  assert.deepEqual(tripFixture.routeSequences["2026-08-17"], expectedDay17Route);
+  assert.deepEqual(tripFixture.mapRoutePoints["17일"].map((point) => point.name), expectedDay17Route);
+
+  const rentalProviders = tripFixture.rentalCar.providers;
+  assert.deepEqual(rentalProviders.map((provider) => provider.name), ["SK렌터카 부산역지점", "롯데렌터카 부산역지점"]);
+  assert.equal(rentalProviders[0].address, "중앙대로180번길 12");
+  assert.equal(rentalProviders[1].address, "중앙대로248번길 7-7");
+  rentalProviders.forEach((provider) => assert.match(provider.url, /^https:\/\//));
+  assert.match(tripFixture.rentalCar.returnNote, /해운대/);
+  assert.match(tripFixture.rentalCar.returnNote, /예약.*확인/);
+
+  const day19Titles = tripFixture.defaultBlocks["2026-08-19"].map((block) => block.title);
+  ["파라다이스호텔 체크아웃", "짐캐리", "부산역 1층", "해운대 립 바비큐 레스토랑", "부산역 짐 수령", "탑승 버퍼"].forEach((expected) => {
+    assert.ok(day19Titles.some((title) => title.includes(expected)), `19 Aug needs ${expected}`);
+  });
+  assert.ok(tripFixture.defaultBlocks["2026-08-19"].some((block) => block.time === "14:31" && block.title.includes("KTX")), "19 Aug needs the 14:31 KTX");
+  assert.ok(!day19Titles.some((title) => title.includes("부산역 인근 점심")), "19 Aug must replace the Busan Station lunch");
+
+  for (const mode of ["light", "balanced", "comfort"]) {
+    const result = runTripOrchestrator({ ...tripFixture, budgetMode: mode });
+    const selectedMeals = result.specialistOutputs.food.recommendations.flatMap((day) => day.slots.map((slot) => slot.primary));
+    assert.equal(new Set(selectedMeals.map((meal) => meal.genre)).size, selectedMeals.length, `${mode} selected meal genres must be unique`);
+    const labels = tripFixture.budgets[mode].items.map((item) => item.label);
+    ["조식", "렌터카", "짐캐리"].forEach((label) => assert.ok(labels.includes(label), `${mode} budget needs ${label}`));
+  }
+
+  const recheckTitles = tripFixture.recheckSources.map((source) => source.title);
+  ["SK렌터카", "롯데렌터카", "짐캐리", "해동용궁사", "해운대암소갈비집"].forEach((expected) => {
+    assert.ok(recheckTitles.some((title) => title.includes(expected)), `recheck sources need ${expected}`);
+  });
+}
+
 function testAppRendersMealSlotsAndConciseItineraryMeals() {
   assert.match(appSource, /day\.meals\.slots/);
   assert.match(appSource, /slot\.candidates\[0\]/);
@@ -222,6 +279,7 @@ try {
   testMalformedEncoding();
   testSiblingTraversal();
   testMealSlotsHaveDisplayableCandidateData();
+  testBreakfastRentalAndLuggageFixture();
   testAppRendersMealSlotsAndConciseItineraryMeals();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
   testAppBuildsMapRoutesFromOrchestratedSequences();
