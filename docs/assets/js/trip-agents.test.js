@@ -502,3 +502,13 @@ test("validation accepts the confirmed rental and luggage-transfer route order",
   assert.equal(result.warnings.some((warning) => warning.includes("렌터카 업체")), false);
   assert.equal(result.warnings.some((warning) => warning.includes("짐캐리 URL")), false);
 });
+
+test("budget modes preserve the confirmed day 17 rental and Haedong Yonggungsa route", () => {
+  for (const budgetMode of ["light", "balanced", "comfort"]) {
+    const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
+    const day17 = result.days.find((day) => day.date === "2026-08-17");
+
+    assert.equal(day17.route.sequence.includes("해동용궁사"), true, `${budgetMode} keeps Haedong Yonggungsa`);
+    assert.equal(result.warnings.some((warning) => warning.includes("17일 확정 동선")), false, `${budgetMode} keeps the confirmed route`);
+  }
+});

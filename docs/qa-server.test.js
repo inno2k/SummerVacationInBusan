@@ -241,8 +241,9 @@ function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
   assert.match(appSource, /specialistOutputs\.lodging\.recommendations/);
   assert.match(appSource, /specialistOutputs\.transport\.recommendations/);
   assert.doesNotMatch(appSource, /씨메르 이용 후 체크아웃/);
-  assert.match(paradise.luggage, /부산역 짐 보관/);
-  assert.match(returnTransport.detail, /역내 짐 보관/);
+  assert.match(paradise.luggage, /짐캐리로 부산역에 짐 인계/);
+  assert.doesNotMatch(paradise.luggage, /부산역 짐 보관/);
+  assert.match(returnTransport.detail, /역내 짐 보관 대체: 짐캐리 수령/);
   assert.match(returnTransport.detail, /13:45/);
   assert.match(returnTransport.detail, /14:31/);
 }

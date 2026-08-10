@@ -141,7 +141,12 @@ function routeAgent(context, schedule) {
     const intent = day.intent || "";
     const profile = intentProfile(intent);
     const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : context.routeHubs[day.date]);
-    const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : plan.routes?.[day.date] || context.routeSequences[day.date] || []);
+    const budgetSequence = plan.routes?.[day.date];
+    const confirmedSequence = context.routeSequences[day.date] || [];
+    const hasDay17CoreRoute = ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "청사포", "해운대 렌터카 반납"].every((stop) => budgetSequence?.includes(stop));
+    const hasConfirmedDay17CoreRoute = ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "청사포", "해운대 렌터카 반납"].every((stop) => confirmedSequence.includes(stop));
+    const selectedSequence = day.date === "2026-08-17" && budgetSequence && !hasDay17CoreRoute && hasConfirmedDay17CoreRoute ? confirmedSequence : budgetSequence;
+    const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : selectedSequence || context.routeSequences[day.date] || []);
     const request = day.blocks.find((block) => block.type === "custom");
     if (request) {
       const customPoint = mapPointForRequest(context, request);
