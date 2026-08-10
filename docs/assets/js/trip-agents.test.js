@@ -23,11 +23,12 @@ test("manager places water play on day 17 and Osiria activities on day 18", () =
   assert.equal(result.days[2].activities.chosen[0].title, "롯데월드 부산");
 });
 
-test("manager preserves return train and flags missing Cimer intent", () => {
+test("manager preserves return train with the Busan Station buffer", () => {
   const changed = { ...context, dayFlows: context.dayFlows.map((day) => day.date === "2026-08-19" ? { ...day, intent: "아침 식사 후 귀환" } : day) };
   const result = runTripOrchestrator(changed);
   assert.equal(result.specialistOutputs.transport.recommendations[2].detail.includes("14:31"), true);
-  assert.equal(result.warnings.some((warning) => warning.includes("씨메르")), true);
+  assert.equal(result.specialistOutputs.transport.recommendations[2].detail.includes("11:55~12:15"), true);
+  assert.equal(result.warnings.some((warning) => warning.includes("씨메르")), false);
 });
 
 test("manager changes the 18th route when the user requests Gwangalli and Centum", () => {
@@ -105,6 +106,35 @@ test("unknown budget mode falls back to balanced behavior", () => {
   const result = runTripOrchestrator(changed);
   assert.equal(result.days[2].route.hub, context.routeHubs["2026-08-18"]);
   assert.deepEqual(result.days[2].meals.meals, []);
+});
+
+test("food agent exposes every meal slot and retains three candidates in light mode", () => {
+  const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
+
+  for (const day of result.specialistOutputs.food.recommendations) {
+    assert.deepEqual(day.slots.map((slot) => slot.meal), ["lunch", "dinner"]);
+    for (const slot of day.slots) {
+      assert.ok(slot.candidates.length >= 3, `${day.date} ${slot.meal} keeps three candidates`);
+    }
+    assert.ok(day.meals.length >= 2, `${day.date} has concise meal summaries`);
+  }
+
+  const day17 = result.days.find((day) => day.date === "2026-08-17");
+  assert.equal(day17.meals.slots[1].candidates.some((candidate) => candidate.name === "해운대암소갈비집"), true);
+});
+
+test("day 19 agents require Busan Station luggage storage and exclude Cimer", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const paradise = result.specialistOutputs.lodging.recommendations.find((lodging) => lodging.name === "파라다이스호텔 부산");
+  const returnTrip = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
+
+  assert.match(paradise.luggage, /부산역 짐 보관/);
+  assert.match(returnTrip.detail, /11:55~12:15/);
+  assert.match(returnTrip.detail, /13:45/);
+  assert.match(returnTrip.detail, /14:31/);
+  assert.doesNotMatch(returnTrip.detail, /씨메르/);
+  assert.equal(result.decisions.some((decision) => decision.includes("19일 씨메르")), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("씨메르")), false);
 });
 
 test("rebalanced fixture assigns Cimer to day 17 and keeps the day 19 route direct", () => {

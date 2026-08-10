@@ -57,7 +57,7 @@ function routeAgent(context, schedule) {
 function lodgingAgent(context) {
   const recommendations = context.lodgings.map((lodging) => ({
     ...lodging,
-    luggage: lodging.name.includes("아스티") ? "17일 오전 체크아웃 후 파라다이스로 짐 이동" : "19일 체크아웃 후 호텔 짐 보관 요청"
+    luggage: lodging.name.includes("아스티") ? "17일 오전 체크아웃 후 파라다이스로 짐 이동" : "19일 체크아웃 후 부산역 짐 보관으로 바로 이동"
   }));
   return { agentId: "lodging", recommendations, constraints: ["16~17일 아스티호텔", "17~19일 파라다이스호텔"], warnings: [] };
 }
@@ -65,22 +65,31 @@ function lodgingAgent(context) {
 function transportAgent(context, route) {
   const warnings = [];
   const returnAt = context.fixedTransport.return.arriveAtStation;
-  if (returnAt < "13:30") warnings.push("부산역 도착 여유가 짧습니다.");
+  const returnDepartAt = context.fixedTransport.return.departAt;
+  if (returnAt < "13:30") warnings.push("기존 부산역 도착 목표 대신 11:55~12:15 도착 목표를 적용합니다.");
   const recommendations = [
     { date: "2026-08-16", title: "서울역 KTX", detail: `${context.fixedTransport.outbound.departAt} 출발 → ${context.fixedTransport.outbound.arriveAt} 부산역 도착` },
     { date: "2026-08-17", title: "호텔 간 짐 이동", detail: "아스티호텔 체크아웃 후 파라다이스호텔에 짐 전달" },
-    { date: "2026-08-19", title: "부산역 귀환", detail: `씨메르 후 ${returnAt}까지 부산역 도착, ${context.fixedTransport.return.departAt} KTX 탑승` }
+    { date: "2026-08-19", title: "부산역 귀환", detail: `11:55~12:15 부산역 도착·역내 짐 보관, 13:45 승강장 이동 버퍼, ${returnDepartAt} KTX 탑승` }
   ];
-  return { agentId: "transport", recommendations, constraints: ["KTX 30분 전 부산역 도착 권장"], warnings };
+  return { agentId: "transport", recommendations, constraints: ["부산역 11:55~12:15 도착", "KTX 13:45 승강장 이동 버퍼"], warnings };
 }
 
 function foodAgent(context, route) {
   const plan = budgetPlan(context);
-  const recommendations = route.recommendations.map((day) => ({
-    date: day.date,
-    meals: (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3),
-    sourceHint: context.videoSources.filter((source) => source.days.includes(day.date)).slice(0, 2).map((source) => source.id)
-  }));
+  const recommendations = route.recommendations.map((day) => {
+    const slotEntries = Object.entries(context.mealSlots?.[day.date] || {});
+    const slots = slotEntries.map(([meal, candidates]) => ({ meal, candidates: [...candidates] }));
+    const meals = slots.length
+      ? slots.map((slot) => `${slot.meal === "lunch" ? "점심" : "저녁"}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
+      : (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);
+    return {
+      date: day.date,
+      slots,
+      meals,
+      sourceHint: context.videoSources.filter((source) => source.days.includes(day.date)).slice(0, 2).map((source) => source.id)
+    };
+  });
   return { agentId: "food", recommendations, constraints: ["영상 추천은 영업/예약 여부 재확인"], warnings: [] };
 }
 
@@ -104,7 +113,11 @@ function validate(context, outputs) {
     warnings.push("17일 흐름에 해운대 물놀이가 드러나지 않습니다. 기본 블록은 유지됩니다.");
   }
   if (day18?.chosen.some((item) => item.area === "해운대")) warnings.push("18일 후보에 해운대가 포함되어 다른 권역 우선 원칙과 충돌합니다.");
-  if (!context.dayFlows.some((day) => day.date === "2026-08-19" && day.intent.includes("씨메르"))) warnings.push("19일 오전 씨메르 요청이 입력에 없습니다.");
+  const day19 = outputs.schedule.recommendations.find((day) => day.date === "2026-08-19");
+  const day19Transport = outputs.transport.recommendations.find((item) => item.date === "2026-08-19");
+  if (day19?.blocks.some((block) => block.title.includes("씨메르"))) warnings.push("19일 씨메르는 제외하고 부산역 귀환 버퍼를 유지해야 합니다.");
+  if (!day19?.blocks.some((block) => block.title.includes("짐 보관"))) warnings.push("19일 일정에 부산역 짐 보관이 필요합니다.");
+  if (!day19Transport?.detail.includes("11:55~12:15") || !day19Transport.detail.includes("13:45")) warnings.push("19일 부산역 도착 및 탑승 버퍼가 부족합니다.");
   return warnings;
 }
 
@@ -129,7 +142,7 @@ function runTripOrchestrator(input) {
   return {
     days: schedule.recommendations.map((day) => ({ ...day, route: route.recommendations.find((item) => item.date === day.date), meals: food.recommendations.find((item) => item.date === day.date), activities: activity.recommendations.find((item) => item.date === day.date) })),
     specialistOutputs,
-    decisions: ["17일에 해운대 관광과 물놀이를 통합", `18일은 ${route.recommendations.find((day) => day.date === "2026-08-18")?.hub || "권역"} 코스를 우선`, "19일 씨메르 후 KTX 버퍼를 유지"],
+    decisions: ["17일에 해운대 관광과 물놀이·씨메르를 통합", `18일은 ${route.recommendations.find((day) => day.date === "2026-08-18")?.hub || "권역"} 코스를 우선`, "19일은 부산역 짐 보관 후 13:45 탑승 버퍼를 유지"],
     warnings,
     changedAt: new Date().toISOString()
   };
