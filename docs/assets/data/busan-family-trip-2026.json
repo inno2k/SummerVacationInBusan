@@ -28,13 +28,14 @@
     "2026-08-17": {
       "lunch": [
         { "name": "해운대가야밀면", "genre": "밀면", "area": "좌동", "meal": "lunch", "url": "https://place.map.kakao.com/15555120", "note": "호텔 짐 전달 뒤 블루라인파크 전 식사" },
-        { "name": "해운대암소갈비집", "genre": "소갈비", "area": "해운대", "meal": "lunch", "url": "https://naver.me/5LHsNhM3", "note": "대기 가능 시간을 고려한 예약형 후보" },
+        { "name": "해운대 소문난 돼지국밥", "genre": "돼지국밥", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%86%8C%EB%AC%B8%EB%82%9C%20%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5", "note": "해운대 이동 뒤 든든한 국밥 선택지" },
         { "name": "해운대 전통시장", "genre": "분식", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%A0%84%ED%86%B5%EC%8B%9C%EC%9E%A5", "note": "미포 이동 전 빠른 식사" }
       ],
       "dinner": [
         { "name": "해운대다찌", "genre": "해산물", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1528294592", "note": "물놀이 후 해산물 저녁" },
         { "name": "맛찬들왕소금구이 부산해운대점", "genre": "돼지고기", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/18161911", "note": "가족 식사에 맞는 구이 선택지" },
-        { "name": "이카", "genre": "이자카야", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1305748619", "note": "저녁 시간대 오징어회·일식 선택지" }
+        { "name": "이카", "genre": "이자카야", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1305748619", "note": "저녁 시간대 오징어회·일식 선택지" },
+        { "name": "해운대암소갈비집", "genre": "소갈비", "area": "해운대", "meal": "dinner", "url": "https://naver.me/5LHsNhM3", "note": "대기 가능 시간을 고려한 예약형 저녁 후보" }
       ]
     },
     "2026-08-18": {

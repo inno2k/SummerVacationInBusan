@@ -135,3 +135,37 @@ test("rebalanced fixture provides distinct lunch and dinner restaurant options f
     }
   }
 });
+
+test("rebalanced fixture retains the required weather, hotel, and KTX itinerary details", () => {
+  const blocksFor = (date) => itineraryFixture.defaultBlocks[date];
+  const hasBlock = (date, text) => blocksFor(date).some((block) => block.title.includes(text));
+  const activitiesFor = (date) => itineraryFixture.activityCandidates[date];
+
+  assert.equal(hasBlock("2026-08-16", "\uD770\uC5EC\uC6B8\uBB38\uD654\uB9C8\uC744(\uB9D1\uC74C)"), true);
+  assert.equal(hasBlock("2026-08-16", "\uAD6D\uB9BD\uD574\uC591\uBC15\uBB3C\uAD00(\uBE44)"), true);
+  assert.equal(hasBlock("2026-08-17", "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uC9D0 \uC804\uB2EC"), true);
+  assert.equal(hasBlock("2026-08-17", "\uD574\uC6B4\uB300\u00B7\uBE14\uB8E8\uB77C\uC778\uD30C\uD06C\u00B7\uBBF8\uD3EC\u00B7\uCCAD\uC0AC\uD3EC"), true);
+  assert.equal(hasBlock("2026-08-17", "\uC624\uC158\uD480 \uB610\uB294 \uC528\uBA54\uB974"), true);
+
+  const day18Activities = activitiesFor("2026-08-18");
+  assert.equal(day18Activities.some((activity) => activity.title === "\uB86F\uB370\uC6D4\uB4DC \uBD80\uC0B0" && activity.weather === "clear"), true);
+  assert.equal(day18Activities.some((activity) => activity.title === "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00" && activity.weather === "rain"), true);
+  assert.equal(day18Activities.some((activity) => activity.title === "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0" && activity.weather === "clear"), true);
+
+  assert.equal(hasBlock("2026-08-19", "\uC5ED\uB0B4 \uC9D0 \uBCF4\uAD00"), true);
+  assert.equal(blocksFor("2026-08-19").some((block) => block.time === "13:45"), true);
+  assert.equal(blocksFor("2026-08-19").some((block) => block.time === "14:31" && block.title.includes("KTX")), true);
+});
+
+test("rebalanced fixture assigns supplied restaurants to their intended day and meal", () => {
+  const candidatesFor = (date, meal) => itineraryFixture.mealSlots[date][meal];
+  const hasCandidate = (date, meal, name, area) => candidatesFor(date, meal)
+    .some((candidate) => candidate.name === name && candidate.area === area);
+
+  assert.equal(hasCandidate("2026-08-17", "lunch", "\uD574\uC6B4\uB300\uAC00\uC57C\uBC00\uBA74", "\uC88C\uB3D9"), true);
+  for (const name of ["\uD574\uC6B4\uB300\uC554\uC18C\uAC08\uBE44\uC9D1", "\uB9DB\uCC2C\uB4E4\uC655\uC18C\uAE08\uAD6C\uC774 \uBD80\uC0B0\uD574\uC6B4\uB300\uC810", "\uD574\uC6B4\uB300\uB2E4\uCC0C", "\uC774\uCE74"]) {
+    assert.equal(hasCandidate("2026-08-17", "dinner", name, "\uD574\uC6B4\uB300"), true);
+  }
+  assert.equal(hasCandidate("2026-08-18", "dinner", "\uC548\uBAA9 \uB0A8\uCC9C\uB3D9", "\uB0A8\uCC9C"), true);
+  assert.equal(hasCandidate("2026-08-19", "lunch", "\uC548\uBAA9 \uBD80\uC0B0\uC5ED\uC810", "\uBD80\uC0B0\uC5ED"), true);
+});
