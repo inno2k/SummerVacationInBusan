@@ -185,14 +185,11 @@ test("rebalanced fixture retains the required weather, hotel, and KTX itinerary 
   const hasBlock = (date, text) => blocksFor(date).some((block) => block.title.includes(text));
   const activitiesFor = (date) => itineraryFixture.activityCandidates[date];
 
-  assert.equal(hasBlock("2026-08-16", "\uD770\uC5EC\uC6B8\uBB38\uD654\uB9C8\uC744(\uB9D1\uC74C)"), true);
-  assert.equal(hasBlock("2026-08-16", "\uAD6D\uB9BD\uD574\uC591\uBC15\uBB3C\uAD00(\uBE44)"), true);
   assert.equal(hasBlock("2026-08-17", "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uC9D0 \uC804\uB2EC"), true);
   assert.equal(hasBlock("2026-08-17", "\uD574\uC6B4\uB300\u00B7\uBE14\uB8E8\uB77C\uC778\uD30C\uD06C\u00B7\uBBF8\uD3EC\u00B7\uCCAD\uC0AC\uD3EC"), true);
   assert.equal(hasBlock("2026-08-17", "\uC624\uC158\uD480 \uB610\uB294 \uC528\uBA54\uB974"), true);
 
   const day18Activities = activitiesFor("2026-08-18");
-  assert.equal(day18Activities.some((activity) => activity.title === "\uB86F\uB370\uC6D4\uB4DC \uBD80\uC0B0" && activity.weather === "clear"), true);
   assert.equal(day18Activities.some((activity) => activity.title === "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00" && activity.weather === "rain"), true);
   assert.equal(day18Activities.some((activity) => activity.title === "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0" && activity.weather === "clear"), true);
 
@@ -244,8 +241,35 @@ test("day 18 default route resolves every concrete stop to a map pin", () => {
   Object.values(itineraryFixture.mapRoutePoints).flat().forEach((point) => { catalog[point.name] = point; });
   const sequence = result.days.find((day) => day.date === "2026-08-18").route.sequence;
 
-  assert.deepEqual(sequence, ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uB86F\uB370\uC6D4\uB4DC \uBD80\uC0B0", "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", "\uC624\uC2DC\uB9AC\uC544", "\uAD11\uC548\uB9AC"]);
+  assert.equal(sequence.includes("\uB86F\uB370\uC6D4\uB4DC \uBD80\uC0B0"), false);
   assert.equal(sequence.every((name) => catalog[name]), true);
+});
+
+test("day 16 connects lunch, science, both markets, and hotel in order", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const day16 = result.days.find((day) => day.date === "2026-08-16");
+
+  assert.deepEqual(day16.route.sequence, [
+    "부산역", "아스티호텔 부산", "이재모피자", "부산과학체험관", "초량전통시장", "부평깡통시장", "아스티호텔 부산"
+  ]);
+  assert.equal(day16.blocks.some((block) => block.title.includes("이재모피자")), true);
+  assert.equal(day16.blocks.some((block) => block.title.includes("부산과학체험관")), true);
+  assert.equal(day16.blocks.some((block) => block.title.includes("초량전통시장")), true);
+  assert.equal(day16.blocks.some((block) => block.title.includes("부평깡통시장")), true);
+});
+
+test("the fixture no longer exposes Lotte World Busan", () => {
+  assert.doesNotMatch(JSON.stringify(itineraryFixture), /롯데월드 부산/);
+});
+
+test("day 16 offers Ijaemo Pizza and Bupyeong dinner choices", () => {
+  const lunch = itineraryFixture.mealSlots["2026-08-16"].lunch;
+  const dinner = itineraryFixture.mealSlots["2026-08-16"].dinner;
+
+  assert.equal(lunch.some((candidate) => candidate.name === "이재모피자"), true);
+  for (const name of ["양산집", "깡통골목할매 유부전골", "부평통닭"]) {
+    assert.equal(dinner.some((candidate) => candidate.name === name), true);
+  }
 });
 
 test("overview places Cimer on day 17 and protects the day 19 station buffer", () => {

@@ -179,6 +179,14 @@ function testAppDistinguishesPrimaryMealsFromAlternatives() {
   assert.match(appSource, /다른 선택지/);
 }
 
+function testAppGroupsFlowInputsByDateCard() {
+  assert.match(appSource, /day-flow-card/);
+  assert.match(appSource, /day-flow-card__header/);
+  assert.match(appSource, /data-flow-date/);
+  assert.match(appSource, /data-custom-request-date/);
+  assert.match(appSource, /data-custom-request-area/);
+}
+
 try {
   testMalformedEncoding();
   testSiblingTraversal();
@@ -188,6 +196,7 @@ try {
   testAppBuildsMapRoutesFromOrchestratedSequences();
   testAppRendersOneDailyRequestControlAndOpenSlotState();
   testAppDistinguishesPrimaryMealsFromAlternatives();
+  testAppGroupsFlowInputsByDateCard();
   process.stdout.write("qa-server tests passed\n");
 } catch (error) {
   process.stderr.write(`${error.stack}\n`);
