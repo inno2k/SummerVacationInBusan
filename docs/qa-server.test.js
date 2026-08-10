@@ -248,6 +248,23 @@ function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
   assert.match(returnTransport.detail, /14:31/);
 }
 
+function testAppLabelsBreakfastAndRendersRentalLogisticsLinks() {
+  const result = runTripOrchestrator(tripFixture);
+  const rentalTransport = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-17");
+  const luggageTransport = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
+
+  assert.match(appSource, /function mealLabel\(meal\)[\s\S]*meal === "breakfast"[\s\S]*Breakfast/);
+  assert.match(appSource, /safeExternalUrl\(provider\.url\)/);
+  assert.match(appSource, /safeExternalUrl\(logistics\.url\)/);
+  assert.match(appSource, /target="_blank" rel="noopener noreferrer"/);
+  assert.match(appSource, /ops-card__links/);
+  assert.ok(rentalTransport.providers.some((provider) => provider.name.includes("SK")), "17 Aug transport includes an SK rental provider");
+  assert.ok(rentalTransport.providers.some((provider) => provider.name.includes("롯데")), "17 Aug transport includes a Lotte rental provider");
+  assert.match(luggageTransport.title, /짐캐리/);
+  assert.match(luggageTransport.detail, /짐캐리/);
+  assert.doesNotMatch(luggageTransport.title, /부산역.*짐 보관/);
+}
+
 function testAppBuildsMapRoutesFromOrchestratedSequences() {
   assert.match(appSource, /orchestration\.days\.map\(\(day\) =>/);
   assert.match(appSource, /day\.route\.points/);
@@ -318,6 +335,7 @@ try {
   testBreakfastRentalAndLuggageFixture();
   testAppRendersMealSlotsAndConciseItineraryMeals();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
+  testAppLabelsBreakfastAndRendersRentalLogisticsLinks();
   testAppBuildsMapRoutesFromOrchestratedSequences();
   testAppRendersOneDailyRequestControlAndOpenSlotState();
   testAppDistinguishesPrimaryMealsFromAlternatives();

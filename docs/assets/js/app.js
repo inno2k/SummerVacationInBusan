@@ -108,6 +108,10 @@ function saveCustomRequestEditor() {
   }
 }
 
+function mealLabel(meal) {
+  return meal === "breakfast" ? "Breakfast" : meal === "lunch" ? "Lunch" : "Dinner";
+}
+
 /**
  * Format the selected first restaurant from each meal slot for the concise itinerary.
  * @param {{meals: {slots?: Array<{meal: string, candidates?: Array<{name: string}>}>}}} day
@@ -117,7 +121,7 @@ function conciseMealSummary(day) {
   return (day.meals.slots || []).map((slot) => {
     const candidate = slot.primary || slot.candidates[0];
     if (!candidate) return null;
-    return `${slot.meal === "lunch" ? "점심" : "저녁"}: ${candidate.name}`;
+    return `${mealLabel(slot.meal)}: ${candidate.name}`;
   }).filter(Boolean).join(" · ") || day.meals.meals.join(" · ");
 }
 
@@ -141,11 +145,33 @@ function renderItinerary() {
 
 function renderOps() {
   const lodgingRecommendations = orchestration.specialistOutputs.lodging.recommendations || trip.lodgings;
-  const returnTransport = orchestration.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
-  const paradise = lodgingRecommendations.find((item) => item.name === "파라다이스호텔 부산");
-  const returnBody = [paradise?.luggage, returnTransport?.detail].filter(Boolean).join(" · ") || "체크아웃 후 부산역으로 이동해 KTX에 탑승";
-  const cards = [...lodgingRecommendations.map((item) => ({ title: item.name, body: `${item.dates} · ${item.role} · ${item.luggage || "짐 보관은 프런트에 확인"}` })), { title: "가는 날", body: "부산역 도착 후 아스티호텔에 짐을 맡기고 원도심·영도로 이동" }, { title: "돌아오는 날", body: returnBody }];
-  document.getElementById("ops-list").innerHTML = cards.map((item) => `<article class="ops-card"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.body)}</p></article>`).join("");
+  const transportRecommendations = orchestration.specialistOutputs.transport.recommendations || [];
+  const rentalTransport = transportRecommendations.find((item) => item.date === "2026-08-17" && Array.isArray(item.providers));
+  const luggageTransport = transportRecommendations.find((item) => item.date === "2026-08-19" && item.logistics);
+  const ktxTransport = transportRecommendations.filter((item) => !item.providers && !item.logistics);
+  const rentalProviders = rentalTransport?.providers || [];
+  const logistics = luggageTransport?.logistics;
+  const cards = [
+    ...lodgingRecommendations.map((item) => ({ title: item.name, body: `${item.dates} · ${item.role} · ${item.luggage || "짐 보관은 프런트에 확인"}` })),
+    ...ktxTransport.map((item) => ({ title: item.title, body: item.detail })),
+    rentalTransport && {
+      title: rentalTransport.title,
+      body: [rentalTransport.detail, ...rentalProviders.map((provider) => [provider.name, provider.address, provider.note].filter(Boolean).join(" · "))].filter(Boolean).join(" · "),
+      links: rentalProviders.map((provider) => ({ label: provider.name, url: safeExternalUrl(provider.url) }))
+    },
+    luggageTransport && logistics && {
+      title: luggageTransport.title,
+      body: [logistics.origin && logistics.destination ? `${logistics.origin} → ${logistics.destination}` : "", logistics.collection, logistics.note, logistics.confirmed ? "예약 확인 완료" : "예약 확인 필요"].filter(Boolean).join(" · "),
+      links: [{ label: "Zim Carry", url: safeExternalUrl(logistics.url) }]
+    }
+  ].filter(Boolean);
+  document.getElementById("ops-list").innerHTML = cards.map((item) => {
+    const links = (item.links || []).map(({ label, url }) => {
+      const href = safeExternalUrl(url);
+      return href === "#" ? "" : `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} ↗</a>`;
+    }).filter(Boolean).join("");
+    return `<article class="ops-card"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.body)}</p>${links ? `<div class="ops-card__links">${links}</div>` : ""}</article>`;
+  }).join("");
 }
 
 function renderRoutes() {
@@ -158,7 +184,7 @@ function renderFood() {
     const primary = slot.primary || slot.candidates?.[0];
     const alternatives = slot.alternatives || (slot.candidates || []).filter((candidate) => candidate !== primary);
     const restaurant = (candidate) => `<div><strong>${escapeHtml(candidate.name)}</strong><p>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.area)}</p><p>${escapeHtml(candidate.note)}</p><a href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer">지도 열기 ↗</a></div>`;
-    return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(slot.meal === "lunch" ? "점심" : "저녁")} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(slot.meal === "lunch" ? "점심 대표 선택" : "저녁 대표 선택")}</h3>${primary ? `<div class="food-primary"><strong>대표 선택</strong>${restaurant(primary)}</div>` : ""}<h4>다른 선택지</h4>${alternatives.map(restaurant).join("")}</article>`;
+    return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(mealLabel(slot.meal))} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(`${mealLabel(slot.meal)} selected`)}</h3>${primary ? `<div class="food-primary"><strong>대표 선택</strong>${restaurant(primary)}</div>` : ""}<h4>다른 선택지</h4>${alternatives.map(restaurant).join("")}</article>`;
   })).join("");
 }
 
