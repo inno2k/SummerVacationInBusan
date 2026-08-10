@@ -486,6 +486,14 @@ test("transport agent preserves an explicit day 19 KTX recommendation", () => {
   assert.equal(returnKtx.detail.includes("14:31"), true);
 });
 
+test("Paradise checkout luggage recommendation uses Zim Carry instead of station storage", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const paradise = result.specialistOutputs.lodging.recommendations.find((lodging) => lodging.name === "파라다이스호텔 부산");
+
+  assert.match(paradise.luggage, /짐캐리/);
+  assert.doesNotMatch(paradise.luggage, /부산역 짐 보관/);
+});
+
 test("validation accepts the confirmed rental and luggage-transfer route order", () => {
   const result = runTripOrchestrator(itineraryFixture);
 

@@ -161,7 +161,7 @@ function routeAgent(context, schedule) {
 function lodgingAgent(context) {
   const recommendations = context.lodgings.map((lodging) => ({
     ...lodging,
-    luggage: lodging.name.includes("아스티") ? "17일 오전 체크아웃 후 파라다이스로 짐 이동" : "19일 체크아웃 후 부산역 짐 보관으로 바로 이동"
+    luggage: lodging.name.includes("아스티") ? "17일 오전 체크아웃 후 파라다이스로 짐 이동" : "19일 체크아웃 후 짐캐리로 부산역에 짐 인계"
   }));
   return { agentId: "lodging", recommendations, constraints: ["16~17일 아스티호텔", "17~19일 파라다이스호텔"], warnings: [] };
 }
