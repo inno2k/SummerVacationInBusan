@@ -128,7 +128,9 @@ test("day 19 agents retain Zim Carry logistics and the return KTX buffer", () =>
   const returnTrip = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
 
   assert.match(returnTrip.detail, /짐캐리/);
-  assert.match(returnTrip.detail, /역내 짐 보관 대체/);
+  assert.match(returnTrip.detail, /짐캐리.*호텔 인계/);
+  assert.match(returnTrip.detail, /부산역.*수령/);
+  assert.doesNotMatch(returnTrip.detail, /역내 짐 보관|부산역 짐 보관/);
   assert.match(returnTrip.detail, /13:45/);
   assert.match(returnTrip.detail, /14:31/);
   assert.doesNotMatch(returnTrip.detail, /씨메르/);

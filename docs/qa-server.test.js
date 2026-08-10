@@ -243,9 +243,23 @@ function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
   assert.doesNotMatch(appSource, /씨메르 이용 후 체크아웃/);
   assert.match(paradise.luggage, /짐캐리로 부산역에 짐 인계/);
   assert.doesNotMatch(paradise.luggage, /부산역 짐 보관/);
-  assert.match(returnTransport.detail, /역내 짐 보관 대체: 짐캐리 수령/);
+  assert.match(returnTransport.detail, /짐캐리.*인계/);
+  assert.match(returnTransport.detail, /부산역.*수령/);
+  assert.doesNotMatch(returnTransport.detail, /역내 짐 보관|부산역 짐 보관/);
   assert.match(returnTransport.detail, /13:45/);
   assert.match(returnTransport.detail, /14:31/);
+}
+
+function testVisibleTripCopyUsesZimCarryHandoffAndCollection() {
+  const visibleCopy = [tripFixture.hero.summary, ...tripFixture.tripLens, ...tripFixture.photos.map((photo) => photo.detail)].join(" ");
+  const day19MustDo = tripFixture.dayFlows.find((day) => day.date === "2026-08-19").mustDo;
+
+  assert.match(visibleCopy, /짐캐리.*인계/);
+  assert.match(visibleCopy, /부산역.*수령/);
+  assert.doesNotMatch(visibleCopy, /부산역 짐 보관|역내 짐 보관/);
+  assert.match(day19MustDo, /짐캐리.*인계/);
+  assert.match(day19MustDo, /부산역.*수령/);
+  assert.doesNotMatch(day19MustDo, /부산역 짐 보관|역내 짐 보관/);
 }
 
 function testAppLabelsBreakfastAndRendersRentalLogisticsLinks() {
@@ -335,6 +349,7 @@ try {
   testBreakfastRentalAndLuggageFixture();
   testAppRendersMealSlotsAndConciseItineraryMeals();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
+  testVisibleTripCopyUsesZimCarryHandoffAndCollection();
   testAppLabelsBreakfastAndRendersRentalLogisticsLinks();
   testAppBuildsMapRoutesFromOrchestratedSequences();
   testAppRendersOneDailyRequestControlAndOpenSlotState();

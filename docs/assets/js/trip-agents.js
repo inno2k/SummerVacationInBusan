@@ -181,7 +181,7 @@ function transportAgent(context, route) {
   const recommendations = [
     { date: "2026-08-16", title: "서울역 KTX", detail: `${context.fixedTransport.outbound.departAt} 출발 → ${context.fixedTransport.outbound.arriveAt} 부산역 도착` },
     { date: "2026-08-17", title: "호텔 간 짐 이동", detail: "아스티호텔 체크아웃 후 파라다이스호텔에 짐 전달" },
-    { date: "2026-08-19", title: "부산역 귀환", detail: `11:55~12:15 부산역 도착·역내 짐 보관, 13:45 승강장 이동 버퍼, ${returnDepartAt} KTX 탑승` }
+    { date: "2026-08-19", title: "부산역 귀환", detail: `11:55~12:15 부산역 도착·짐캐리 수령, 13:45 승강장 이동 버퍼, ${returnDepartAt} KTX 탑승` }
   ];
   if (rental) {
     recommendations[1] = {
@@ -195,7 +195,7 @@ function transportAgent(context, route) {
     recommendations[2] = {
       date: luggage.date,
       title: `${luggage.name} hotel handoff and station collection`,
-      detail: [`${luggage.origin} -> ${luggage.destination}`, luggage.collection, "역내 짐 보관 대체: 짐캐리 수령", "13:45 boarding buffer", `${returnDepartAt} KTX`].filter(Boolean).join(", "),
+      detail: [`${luggage.name} 호텔 인계: ${luggage.origin} -> ${luggage.destination}`, `부산역 수령: ${luggage.collection}`, luggage.note, "13:45 boarding buffer", `${returnDepartAt} KTX`].filter(Boolean).join(", "),
       logistics: {
         origin: luggage.origin,
         destination: luggage.destination,
