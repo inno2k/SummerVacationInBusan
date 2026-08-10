@@ -279,6 +279,71 @@ function testAppLabelsBreakfastAndRendersRentalLogisticsLinks() {
   assert.doesNotMatch(luggageTransport.title, /부산역.*짐 보관/);
 }
 
+function renderOpsFixture() {
+  const opsList = { innerHTML: "" };
+  const sourceStart = appSource.indexOf("function escapeHtml(");
+  const sourceEnd = appSource.indexOf("function renderRoutes()");
+
+  assert.notEqual(sourceStart, -1);
+  assert.notEqual(sourceEnd, -1);
+
+  const context = {
+    URL,
+    window: { location: { href: "https://trip.example/" } },
+    trip: { lodgings: [] },
+    orchestration: {
+      specialistOutputs: {
+        lodging: { recommendations: [{ name: "Hotel handoff", dates: "8/17-8/19", role: "stay", luggage: "hotel luggage handoff" }] },
+        transport: {
+          recommendations: [
+            { date: "2026-08-16", title: "Outbound KTX", detail: "07:58 departure" },
+            {
+              date: "2026-08-17",
+              title: "Rental pickup",
+              detail: "17 Aug rental pickup",
+              providers: [
+                { name: "Renamed SK provider", address: "SK address", note: "SK note", url: "https://sk.example/rental" },
+                { name: "Renamed Lotte provider", address: "Lotte address", note: "Lotte note", url: "https://lotte.example/rental" }
+              ]
+            },
+            {
+              date: "2026-08-19",
+              title: "Agent logistics",
+              logistics: {
+                name: "Renamed Carry provider",
+                origin: "Paradise Hotel handoff",
+                destination: "Busan Station meeting hall",
+                collection: "Busan Station collection",
+                note: "Confirm the Zim Carry handoff",
+                url: "https://carry.example/booking",
+                confirmed: false
+              }
+            },
+            { date: "2026-08-19", title: "Return KTX", detail: "14:31 KTX" }
+          ]
+        }
+      }
+    },
+    document: { getElementById: () => opsList }
+  };
+
+  vm.runInNewContext(appSource.slice(sourceStart, sourceEnd), context, { filename: "app.js" });
+  context.renderOps();
+  return opsList.innerHTML;
+}
+
+function testAppRendersOpsFromAgentProviderAndLogisticsData() {
+  const html = renderOpsFixture();
+
+  ["Renamed SK provider", "Renamed Lotte provider", "Renamed Carry provider"].forEach((name) => assert.match(html, new RegExp(name)));
+  assert.match(html, /href="https:\/\/sk\.example\/rental" target="_blank" rel="noopener noreferrer"/);
+  assert.match(html, /href="https:\/\/lotte\.example\/rental" target="_blank" rel="noopener noreferrer"/);
+  assert.match(html, /href="https:\/\/carry\.example\/booking" target="_blank" rel="noopener noreferrer"/);
+  assert.match(html, /Paradise Hotel handoff/);
+  assert.match(html, /Busan Station collection/);
+  assert.doesNotMatch(html, /부산역 짐 보관|역내 짐 보관/);
+}
+
 function testAppBuildsMapRoutesFromOrchestratedSequences() {
   assert.match(appSource, /orchestration\.days\.map\(\(day\) =>/);
   assert.match(appSource, /day\.route\.points/);
@@ -351,6 +416,7 @@ try {
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
   testVisibleTripCopyUsesZimCarryHandoffAndCollection();
   testAppLabelsBreakfastAndRendersRentalLogisticsLinks();
+  testAppRendersOpsFromAgentProviderAndLogisticsData();
   testAppBuildsMapRoutesFromOrchestratedSequences();
   testAppRendersOneDailyRequestControlAndOpenSlotState();
   testAppDistinguishesPrimaryMealsFromAlternatives();

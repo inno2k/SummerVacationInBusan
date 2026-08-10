@@ -162,7 +162,7 @@ function renderOps() {
     luggageTransport && logistics && {
       title: luggageTransport.title,
       body: [logistics.origin && logistics.destination ? `${logistics.origin} → ${logistics.destination}` : "", logistics.collection, logistics.note, logistics.confirmed ? "예약 확인 완료" : "예약 확인 필요"].filter(Boolean).join(" · "),
-      links: [{ label: "Zim Carry", url: safeExternalUrl(logistics.url) }]
+      links: [{ label: logistics.name, url: safeExternalUrl(logistics.url) }]
     }
   ].filter(Boolean);
   document.getElementById("ops-list").innerHTML = cards.map((item) => {

@@ -197,6 +197,7 @@ function transportAgent(context, route) {
       title: `${luggage.name} hotel handoff and station collection`,
       detail: [`${luggage.name} 호텔 인계: ${luggage.origin} -> ${luggage.destination}`, `부산역 수령: ${luggage.collection}`, luggage.note, "13:45 boarding buffer", `${returnDepartAt} KTX`].filter(Boolean).join(", "),
       logistics: {
+        name: luggage.name,
         origin: luggage.origin,
         destination: luggage.destination,
         collection: luggage.collection,

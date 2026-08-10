@@ -477,6 +477,7 @@ test("transport agent exposes rental providers and Zim Carry logistics from the 
 
   assert.deepEqual(rental.providers, itineraryFixture.rentalOptions.providers);
   assert.equal(luggage.logistics.url, itineraryFixture.luggageTransfer.url);
+  assert.equal(luggage.logistics.name, itineraryFixture.luggageTransfer.name);
   assert.equal(luggage.logistics.origin, itineraryFixture.luggageTransfer.origin);
   assert.equal(luggage.logistics.destination, itineraryFixture.luggageTransfer.destination);
 });
