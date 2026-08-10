@@ -287,3 +287,55 @@ test("every default schedule block provides an ordered time range", () => {
     }
   }
 });
+
+test("places one same-area custom request in the earliest available open slot", () => {
+  const result = runTripOrchestrator({
+    ...itineraryFixture,
+    customRequests: {
+      "2026-08-18": [{ title: "오시리아 카페", area: "오시리아" }]
+    }
+  });
+  const day18 = result.days.find((day) => day.date === "2026-08-18");
+  const inserted = day18.blocks.find((block) => block.title === "오시리아 카페");
+
+  assert.equal(day18.openSlot.status, "used");
+  assert.equal(inserted.startAt, "13:00");
+  assert.equal(inserted.endAt, "13:30");
+});
+
+test("keeps only one custom request per day and warns about the second", () => {
+  const result = runTripOrchestrator({
+    ...itineraryFixture,
+    customRequests: {
+      "2026-08-18": [{ title: "오시리아 카페", area: "오시리아" }, { title: "두 번째 요청", area: "오시리아" }]
+    }
+  });
+
+  assert.equal(result.days.find((day) => day.date === "2026-08-18").blocks.some((block) => block.title === "두 번째 요청"), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("하루당 한 건")), true);
+});
+
+test("rejects an unsafe custom request without moving protected blocks", () => {
+  const result = runTripOrchestrator({
+    ...itineraryFixture,
+    customRequests: {
+      "2026-08-19": [{ title: "해운대 카페", area: "해운대" }]
+    }
+  });
+  const day19 = result.days.find((day) => day.date === "2026-08-19");
+
+  assert.equal(day19.openSlot.status, "unavailable");
+  assert.equal(day19.blocks.some((block) => block.title === "해운대 카페"), false);
+  assert.equal(day19.blocks.some((block) => block.time === "14:31" && block.title.includes("KTX")), true);
+  assert.equal(result.warnings.some((warning) => warning.includes("안전한 빈 시간")), true);
+});
+
+test("food agent returns explicit primary meals and alternatives", () => {
+  const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
+  const slots = result.days.flatMap((day) => day.meals.slots);
+
+  assert.equal(slots.every((slot) => slot.primary?.primary === true), true);
+  assert.equal(slots.every((slot) => slot.alternatives.every((candidate) => candidate !== slot.primary)), true);
+  assert.equal(result.warnings.some((warning) => warning.includes("대표 식사 장르")), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("안목")), false);
+});

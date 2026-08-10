@@ -25,6 +25,61 @@ function orderMealCandidates(candidates, priorities) {
     .map(({ candidate }) => candidate);
 }
 
+function primaryMeal(candidates) {
+  return candidates.find((candidate) => candidate.primary) || candidates[0];
+}
+
+function minutesAt(time) {
+  const [hours, minutes] = String(time || "").split(":").map(Number);
+  return Number.isInteger(hours) && Number.isInteger(minutes) ? hours * 60 + minutes : null;
+}
+
+function timeAt(minutes) {
+  return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+}
+
+function requestsForDate(context, date) {
+  const requests = context.customRequests?.[date];
+  if (!requests) return [];
+  return Array.isArray(requests) ? requests : [requests];
+}
+
+function areasForDay(context, date, intent, plan) {
+  const profile = intentProfile(intent);
+  return [
+    profile?.hub,
+    context.routeHubs?.[date],
+    ...(plan.routes?.[date] || []),
+    ...(context.routeSequences?.[date] || [])
+  ].filter(Boolean);
+}
+
+function isCompatibleRequest(request, areas) {
+  const area = String(request?.area || "").trim();
+  return Boolean(area) && areas.some((candidate) => String(candidate).includes(area) || area.includes(String(candidate)));
+}
+
+function openSlotForDay(blocks, request, areas) {
+  if (request && !isCompatibleRequest(request, areas)) return { status: "unavailable", reason: "area-mismatch" };
+  const timedBlocks = blocks
+    .map((block) => ({ ...block, start: minutesAt(block.startAt), end: minutesAt(block.endAt) }))
+    .filter((block) => block.start !== null && block.end !== null)
+    .sort((left, right) => left.start - right.start);
+  for (let index = 0; index < timedBlocks.length - 1; index += 1) {
+    const start = timedBlocks[index].end;
+    const end = timedBlocks[index + 1].start;
+    if (end - start >= 30) return { status: request ? "used" : "available", startAt: timeAt(start), endAt: timeAt(start + 30), availableUntil: timeAt(end) };
+  }
+  return { status: "unavailable", reason: "no-safe-gap" };
+}
+
+function placeCustomRequest(blocks, openSlot, request) {
+  if (!request || openSlot.status !== "used") return blocks;
+  const customBlock = { time: openSlot.startAt, startAt: openSlot.startAt, endAt: openSlot.endAt, title: request.title, area: request.area, type: "custom" };
+  const insertionIndex = blocks.findIndex((block) => minutesAt(block.startAt) !== null && minutesAt(block.startAt) >= minutesAt(customBlock.endAt));
+  return insertionIndex === -1 ? [...blocks, customBlock] : [...blocks.slice(0, insertionIndex), customBlock, ...blocks.slice(insertionIndex)];
+}
+
 function intentProfile(intent) {
   const value = String(intent || "");
   if (value.includes("송도") || value.includes("감천")) {
@@ -49,7 +104,9 @@ function scheduleAgent(context) {
     if (profile) profile.blocks.forEach((block) => blocks.push(block));
     if (!profile) (plan.addBlocks?.[date] || []).forEach((block) => blocks.push(block));
     if (flow.intent) blocks.unshift({ time: "사용자 요청", title: flow.intent, type: "input" });
-    return { date, intent: flow.intent, blocks };
+    const requests = requestsForDate(context, date);
+    const openSlot = openSlotForDay(blocks, requests[0], areasForDay(context, date, flow.intent, plan));
+    return { date, intent: flow.intent, blocks: placeCustomRequest(blocks, openSlot, requests[0]), openSlot };
   });
   return { agentId: "schedule", recommendations: days, constraints: ["KTX 시간은 고정"], warnings: [] };
 }
@@ -94,6 +151,8 @@ function foodAgent(context, route) {
     const slotEntries = Object.entries(context.mealSlots?.[day.date] || {});
     const slots = slotEntries.map(([meal, candidates]) => ({
       meal,
+      primary: primaryMeal(candidates),
+      alternatives: orderMealCandidates(candidates, plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal]).filter((candidate) => candidate !== primaryMeal(candidates)),
       candidates: orderMealCandidates(candidates, plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal])
     }));
     const meals = slots.length
@@ -140,6 +199,21 @@ function validate(context, outputs) {
   return warnings;
 }
 
+function validateMealAndRequests(context, outputs) {
+  const warnings = [];
+  const primaryMeals = outputs.food.recommendations.flatMap((day) => day.slots.map((slot) => slot.primary).filter(Boolean));
+  if (new Set(primaryMeals.map((meal) => meal.genre)).size !== primaryMeals.length) warnings.push("대표 식사 장르가 전 일정에서 중복됩니다.");
+  const anmokMeals = primaryMeals.filter((meal) => meal.name.includes("안목"));
+  if (anmokMeals.length !== 1 || anmokMeals[0].area !== "부산역") warnings.push("안목은 부산역 점심 대표 식사 한 번으로만 배치해야 합니다.");
+  DAY_ORDER.forEach((date) => {
+    const requests = requestsForDate(context, date);
+    const day = outputs.schedule.recommendations.find((item) => item.date === date);
+    if (requests.length > 1) warnings.push(`${date} 새 요청은 하루당 한 건만 자동 배치할 수 있습니다.`);
+    if (requests.length && day?.openSlot.status === "unavailable") warnings.push(`${date} 요청을 넣을 안전한 빈 시간이 없거나 동선 권역이 맞지 않습니다.`);
+  });
+  return warnings;
+}
+
 function runTripOrchestrator(input) {
   const context = clone(input);
   const schedule = scheduleAgent(context);
@@ -156,7 +230,8 @@ function runTripOrchestrator(input) {
     ...transport.warnings,
     ...food.warnings,
     ...activity.warnings,
-    ...validate(context, specialistOutputs)
+    ...validate(context, specialistOutputs),
+    ...validateMealAndRequests(context, specialistOutputs)
   ];
   return {
     days: schedule.recommendations.map((day) => ({ ...day, route: route.recommendations.find((item) => item.date === day.date), meals: food.recommendations.find((item) => item.date === day.date), activities: activity.recommendations.find((item) => item.date === day.date) })),
@@ -168,4 +243,4 @@ function runTripOrchestrator(input) {
 }
 
 if (typeof window !== "undefined") window.runTripOrchestrator = runTripOrchestrator;
-if (typeof module !== "undefined") module.exports = { runTripOrchestrator, scheduleAgent, routeAgent, lodgingAgent, transportAgent, foodAgent, activityAgent };
+if (typeof module !== "undefined") module.exports = { runTripOrchestrator, scheduleAgent, routeAgent, lodgingAgent, transportAgent, foodAgent, activityAgent, primaryMeal, openSlotForDay, placeCustomRequest };
