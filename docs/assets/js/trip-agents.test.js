@@ -1,6 +1,10 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const { runTripOrchestrator } = require("./trip-agents.js");
+
+const itineraryFixture = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/busan-family-trip-2026.json"), "utf8"));
 
 const context = {
   fixedTransport: { outbound: { departAt: "07:58", arriveAt: "10:46" }, return: { departAt: "14:31", arriveAtStation: "14:00" } },
@@ -101,4 +105,33 @@ test("unknown budget mode falls back to balanced behavior", () => {
   const result = runTripOrchestrator(changed);
   assert.equal(result.days[2].route.hub, context.routeHubs["2026-08-18"]);
   assert.deepEqual(result.days[2].meals.meals, []);
+});
+
+test("rebalanced fixture assigns Cimer to day 17 and keeps the day 19 route direct", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const day17 = result.days.find((day) => day.date === "2026-08-17");
+  const day19 = result.days.find((day) => day.date === "2026-08-19");
+
+  assert.equal(day17.blocks.some((block) => block.title.includes("\uC528\uBA54\uB974")), true);
+  assert.equal(day19.blocks.some((block) => block.title.includes("\uC528\uBA54\uB974")), false);
+  assert.deepEqual(day19.route.sequence, ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uBD80\uC0B0\uC5ED"]);
+  assert.deepEqual(itineraryFixture.mapRoutePoints["\u0031\u0039\uC77C"].map((point) => point.name), ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uBD80\uC0B0\uC5ED"]);
+
+  const cimerDates = Object.entries(itineraryFixture.activityCandidates)
+    .filter(([, candidates]) => candidates.some((candidate) => candidate.title.includes("\uC528\uBA54\uB974")))
+    .map(([date]) => date);
+  assert.deepEqual(cimerDates, ["2026-08-17"]);
+});
+
+test("rebalanced fixture provides distinct lunch and dinner restaurant options for every day", () => {
+  for (const date of ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"]) {
+    for (const meal of ["lunch", "dinner"]) {
+      const candidates = itineraryFixture.mealSlots?.[date]?.[meal] || [];
+      assert.ok(candidates.length >= 3, `${date} ${meal} needs three candidates`);
+      assert.equal(new Set(candidates.map((candidate) => candidate.genre)).size, candidates.length);
+      for (const candidate of candidates) {
+        assert.match(candidate.url, /^https:\/\//);
+      }
+    }
+  }
 });
