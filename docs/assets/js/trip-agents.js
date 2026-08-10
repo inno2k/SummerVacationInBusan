@@ -1,4 +1,9 @@
 const DAY_ORDER = ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"];
+const MEAL_LABELS = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
+
+function mealLabel(meal) {
+  return MEAL_LABELS[meal] || meal;
+}
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -165,13 +170,43 @@ function transportAgent(context, route) {
   const warnings = [];
   const returnAt = context.fixedTransport.return.arriveAtStation;
   const returnDepartAt = context.fixedTransport.return.departAt;
+  const rental = context.rentalOptions;
+  const luggage = context.luggageTransfer;
   if (returnAt < "13:30") warnings.push("기존 부산역 도착 목표 대신 11:55~12:15 도착 목표를 적용합니다.");
   const recommendations = [
     { date: "2026-08-16", title: "서울역 KTX", detail: `${context.fixedTransport.outbound.departAt} 출발 → ${context.fixedTransport.outbound.arriveAt} 부산역 도착` },
     { date: "2026-08-17", title: "호텔 간 짐 이동", detail: "아스티호텔 체크아웃 후 파라다이스호텔에 짐 전달" },
     { date: "2026-08-19", title: "부산역 귀환", detail: `11:55~12:15 부산역 도착·역내 짐 보관, 13:45 승강장 이동 버퍼, ${returnDepartAt} KTX 탑승` }
   ];
-  return { agentId: "transport", recommendations, constraints: ["부산역 11:55~12:15 도착", "KTX 13:45 승강장 이동 버퍼"], warnings };
+  if (rental) {
+    recommendations[1] = {
+      date: rental.date,
+      title: rental.providers?.[0]?.name || "Rental pickup",
+      detail: [rental.pickup, rental.returnPlan].filter(Boolean).join(" "),
+      providers: rental.providers || []
+    };
+  }
+  if (luggage) {
+    recommendations[2] = {
+      date: luggage.date,
+      title: `${luggage.name} hotel handoff and station collection`,
+      detail: [`${luggage.origin} -> ${luggage.destination}`, luggage.collection, "역내 짐 보관 대체: 짐캐리 수령", "13:45 boarding buffer", `${returnDepartAt} KTX`].filter(Boolean).join(", "),
+      logistics: {
+        origin: luggage.origin,
+        destination: luggage.destination,
+        collection: luggage.collection,
+        url: luggage.url,
+        note: luggage.note,
+        confirmed: luggage.confirmed
+      }
+    };
+    recommendations.push({
+      date: luggage.date,
+      title: "Return KTX",
+      detail: `13:45 boarding buffer, ${returnDepartAt} KTX`
+    });
+  }
+  return { agentId: "transport", recommendations, constraints: ["Rental provider confirmation", "Zim Carry hotel handoff and station collection", `KTX ${returnDepartAt} with a 13:45 boarding buffer`], warnings };
 }
 
 function foodAgent(context, route) {
@@ -187,7 +222,7 @@ function foodAgent(context, route) {
       return { meal, primary, alternatives: orderedCandidates.filter((candidate) => candidate !== primary), candidates: orderedCandidates };
     });
     const meals = slots.length
-      ? slots.map((slot) => `${slot.meal === "lunch" ? "점심" : "저녁"}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
+      ? slots.map((slot) => `${mealLabel(slot.meal)}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
       : (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);
     return {
       date: day.date,
@@ -223,9 +258,22 @@ function validate(context, outputs) {
   const day19Transport = outputs.transport.recommendations.find((item) => item.date === "2026-08-19");
   const returnDeparture = context.fixedTransport?.return?.departAt;
   const hasReturnKtxBlock = day19?.blocks.some((block) => block.time === "14:31" && block.title.includes("KTX"));
-  if (day19?.blocks.some((block) => block.title.includes("씨메르"))) warnings.push("19일 씨메르는 제외하고 부산역 귀환 버퍼를 유지해야 합니다.");
-  if (!day19?.blocks.some((block) => block.title.includes("짐 보관"))) warnings.push("19일 일정에 부산역 짐 보관이 필요합니다.");
-  if (!day19Transport?.detail.includes("11:55~12:15") || !day19Transport.detail.includes("13:45")) warnings.push("19일 부산역 도착 및 탑승 버퍼가 부족합니다.");
+  const hasOrderedStops = (sequence, stops) => {
+    let cursor = -1;
+    for (const stop of stops) {
+      cursor = sequence.indexOf(stop, cursor + 1);
+      if (cursor === -1) return false;
+    }
+    return true;
+  };
+  const day17Route = outputs.route.recommendations.find((item) => item.date === "2026-08-17")?.sequence || [];
+  const day19Route = outputs.route.recommendations.find((item) => item.date === "2026-08-19")?.sequence || [];
+  if (!hasOrderedStops(day17Route, ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "미포", "청사포", "미포", "해운대 렌터카 반납"])) warnings.push("17일 확정 동선에 렌터카 수령, 해동용궁사, 미포 왕복, 해운대 반납이 필요합니다.");
+  if (!hasOrderedStops(day19Route, ["파라다이스호텔 체크아웃", "파라다이스호텔 짐캐리 인계", "해운대 립 바비큐 레스토랑", "부산역 짐캐리 수령·탑승 버퍼", "부산역 KTX 출발 14:31"])) warnings.push("19일 확정 동선에 짐캐리 인계, 해운대 점심, 부산역 수령·탑승 버퍼, 14:31 KTX가 필요합니다.");
+  if (!Array.isArray(context.rentalOptions?.providers) || context.rentalOptions.providers.length === 0 || !context.rentalOptions.providers.every((provider) => provider.name && /^https:\/\//.test(provider.url || ""))) warnings.push("17일 렌터카 업체 정보와 URL이 필요합니다.");
+  if (!/^https:\/\//.test(context.luggageTransfer?.url || "")) warnings.push("19일 짐캐리 URL이 필요합니다.");
+  if (!day19?.blocks.some((block) => block.title.includes("짐캐리 인계")) || !day19?.blocks.some((block) => block.title.includes("짐 수령"))) warnings.push("19일 일정에 짐캐리 인계와 부산역 수령이 필요합니다.");
+  if (!day19Transport?.detail.includes("짐캐리") || !day19Transport.detail.includes("13:45")) warnings.push("19일 짐캐리 수령과 탑승 버퍼가 부족합니다.");
   if (returnDeparture !== "14:31" || !hasReturnKtxBlock) warnings.push("19일 귀환 KTX는 14:31로 유지해야 합니다.");
   return warnings;
 }
@@ -234,8 +282,6 @@ function validateMealAndRequests(context, outputs) {
   const warnings = [];
   const primaryMeals = outputs.food.recommendations.flatMap((day) => day.slots.map((slot) => slot.primary).filter(Boolean));
   if (new Set(primaryMeals.map((meal) => meal.genre)).size !== primaryMeals.length) warnings.push("대표 식사 장르가 전 일정에서 중복됩니다.");
-  const anmokMeals = primaryMeals.filter((meal) => meal.name.includes("안목"));
-  if (anmokMeals.length !== 1 || anmokMeals[0].area !== "부산역") warnings.push("안목은 부산역 점심 대표 식사 한 번으로만 배치해야 합니다.");
   DAY_ORDER.forEach((date) => {
     const requests = requestsForDate(context, date);
     const day = outputs.schedule.recommendations.find((item) => item.date === date);
@@ -267,7 +313,7 @@ function runTripOrchestrator(input) {
   return {
     days: schedule.recommendations.map((day) => ({ ...day, route: route.recommendations.find((item) => item.date === day.date), meals: food.recommendations.find((item) => item.date === day.date), activities: activity.recommendations.find((item) => item.date === day.date) })),
     specialistOutputs,
-    decisions: ["17일에 해운대 관광과 물놀이·씨메르를 통합", `18일은 ${route.recommendations.find((day) => day.date === "2026-08-18")?.hub || "권역"} 코스를 우선`, "19일은 부산역 짐 보관 후 13:45 탑승 버퍼를 유지"],
+    decisions: ["17 Aug rental pickup, Haedong Yonggungsa, and Mipo round trip are fixed.", `18일은 ${route.recommendations.find((day) => day.date === "2026-08-18")?.hub || "권역"} 코스를 우선`, `19 Aug Zim Carry hotel handoff and Busan Station collection protect the ${context.fixedTransport.return.departAt} KTX.`],
     warnings,
     changedAt: new Date().toISOString()
   };

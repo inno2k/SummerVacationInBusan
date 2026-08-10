@@ -112,7 +112,7 @@ test("food agent exposes every meal slot and retains three candidates in light m
   const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
 
   for (const day of result.specialistOutputs.food.recommendations) {
-    assert.deepEqual(day.slots.map((slot) => slot.meal), ["lunch", "dinner"]);
+    assert.deepEqual(day.slots.map((slot) => slot.meal), ["breakfast", "lunch", "dinner"]);
     for (const slot of day.slots) {
       assert.ok(slot.candidates.length >= 3, `${day.date} ${slot.meal} keeps three candidates`);
     }
@@ -120,21 +120,20 @@ test("food agent exposes every meal slot and retains three candidates in light m
   }
 
   const day17 = result.days.find((day) => day.date === "2026-08-17");
-  assert.equal(day17.meals.slots[1].candidates.some((candidate) => candidate.name === "해운대암소갈비집"), true);
+  assert.equal(day17.meals.slots.find((slot) => slot.meal === "lunch").candidates.some((candidate) => candidate.name === "해운대가야밀면"), true);
 });
 
-test("day 19 agents require Busan Station luggage storage and exclude Cimer", () => {
+test("day 19 agents retain Zim Carry logistics and the return KTX buffer", () => {
   const result = runTripOrchestrator(itineraryFixture);
-  const paradise = result.specialistOutputs.lodging.recommendations.find((lodging) => lodging.name === "파라다이스호텔 부산");
   const returnTrip = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
 
-  assert.match(paradise.luggage, /부산역 짐 보관/);
-  assert.match(returnTrip.detail, /11:55~12:15/);
+  assert.match(returnTrip.detail, /짐캐리/);
+  assert.match(returnTrip.detail, /역내 짐 보관 대체/);
   assert.match(returnTrip.detail, /13:45/);
   assert.match(returnTrip.detail, /14:31/);
   assert.doesNotMatch(returnTrip.detail, /씨메르/);
-  assert.equal(result.decisions.some((decision) => decision.includes("19일 씨메르")), false);
-  assert.equal(result.warnings.some((warning) => warning.includes("씨메르")), false);
+  assert.equal(returnTrip.logistics.url, itineraryFixture.luggageTransfer.url);
+  assert.equal(result.warnings.some((warning) => warning.includes("해운대")), false);
 });
 
 test("manager warns when the day 19 return KTX is not scheduled for 14:31", () => {
@@ -151,25 +150,18 @@ test("manager warns when the day 19 return KTX is not scheduled for 14:31", () =
   assert.equal(result.warnings.some((warning) => warning.includes("14:31")), true);
 });
 
-test("rebalanced fixture assigns Cimer to day 17 and keeps the day 19 route direct", () => {
+test("rebalanced fixture keeps the confirmed day 17 and day 19 routes", () => {
   const result = runTripOrchestrator(itineraryFixture);
   const day17 = result.days.find((day) => day.date === "2026-08-17");
   const day19 = result.days.find((day) => day.date === "2026-08-19");
 
-  assert.equal(day17.blocks.some((block) => block.title.includes("\uC528\uBA54\uB974")), true);
-  assert.equal(day19.blocks.some((block) => block.title.includes("\uC528\uBA54\uB974")), false);
-  assert.deepEqual(day19.route.sequence, ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uBD80\uC0B0\uC5ED"]);
-  assert.deepEqual(itineraryFixture.mapRoutePoints["\u0031\u0039\uC77C"].map((point) => point.name), ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uBD80\uC0B0\uC5ED"]);
-
-  const cimerDates = Object.entries(itineraryFixture.activityCandidates)
-    .filter(([, candidates]) => candidates.some((candidate) => candidate.title.includes("\uC528\uBA54\uB974")))
-    .map(([date]) => date);
-  assert.deepEqual(cimerDates, ["2026-08-17"]);
+  assert.deepEqual(day17.route.sequence, itineraryFixture.routeSequences["2026-08-17"]);
+  assert.deepEqual(day19.route.sequence, itineraryFixture.routeSequences["2026-08-19"]);
 });
 
-test("rebalanced fixture provides distinct lunch and dinner restaurant options for every day", () => {
+test("rebalanced fixture provides distinct breakfast, lunch, and dinner restaurant options for every day", () => {
   for (const date of ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"]) {
-    for (const meal of ["lunch", "dinner"]) {
+    for (const meal of ["breakfast", "lunch", "dinner"]) {
       const candidates = itineraryFixture.mealSlots?.[date]?.[meal] || [];
       assert.ok(candidates.length >= 3, `${date} ${meal} needs three candidates`);
       assert.equal(new Set(candidates.map((candidate) => candidate.genre)).size, candidates.length);
@@ -185,15 +177,15 @@ test("rebalanced fixture retains the required weather, hotel, and KTX itinerary 
   const hasBlock = (date, text) => blocksFor(date).some((block) => block.title.includes(text));
   const activitiesFor = (date) => itineraryFixture.activityCandidates[date];
 
-  assert.equal(hasBlock("2026-08-17", "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uC9D0 \uC804\uB2EC"), true);
-  assert.equal(hasBlock("2026-08-17", "\uD574\uC6B4\uB300\u00B7\uBE14\uB8E8\uB77C\uC778\uD30C\uD06C\u00B7\uBBF8\uD3EC\u00B7\uCCAD\uC0AC\uD3EC"), true);
-  assert.equal(hasBlock("2026-08-17", "\uC624\uC158\uD480 \uB610\uB294 \uC528\uBA54\uB974"), true);
+  assert.equal(hasBlock("2026-08-17", "SK\uB80C\uD130\uCE74 \uBD80\uC0B0\uC5ED\uC9C0\uC810 \uB80C\uD130\uCE74 \uC218\uB839"), true);
+  assert.equal(hasBlock("2026-08-17", "\uD574\uB3D9\uC6A9\uAD81\uC0AC"), true);
+  assert.equal(hasBlock("2026-08-17", "\uBBF8\uD3EC\u00B7\uCCAD\uC0AC\uD3EC \uC655\uBCF5 \uBE14\uB8E8\uB77C\uC778\uD30C\uD06C"), true);
 
   const day18Activities = activitiesFor("2026-08-18");
   assert.equal(day18Activities.some((activity) => activity.title === "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00" && activity.weather === "rain"), true);
   assert.equal(day18Activities.some((activity) => activity.title === "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0" && activity.weather === "clear"), true);
 
-  assert.equal(hasBlock("2026-08-19", "\uC5ED\uB0B4 \uC9D0 \uBCF4\uAD00"), true);
+  assert.equal(hasBlock("2026-08-19", "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uC9D0\uCE90\uB9AC \uC778\uACC4"), true);
   assert.equal(blocksFor("2026-08-19").some((block) => block.time === "13:45"), true);
   assert.equal(blocksFor("2026-08-19").some((block) => block.time === "14:31" && block.title.includes("KTX")), true);
 });
@@ -208,7 +200,7 @@ test("rebalanced fixture assigns supplied restaurants to their intended day and 
     assert.equal(hasCandidate("2026-08-17", "dinner", name, "\uD574\uC6B4\uB300"), true);
   }
   assert.equal(hasCandidate("2026-08-18", "dinner", "\uAE30\uC7A5 \uBD95\uC7A5\uC5B4\uAD6C\uC774", "\uAE30\uC7A5"), true);
-  assert.equal(hasCandidate("2026-08-19", "lunch", "\uC548\uBAA9 \uBD80\uC0B0\uC5ED\uC810", "\uBD80\uC0B0\uC5ED"), true);
+  assert.equal(hasCandidate("2026-08-19", "lunch", "\uD574\uC6B4\uB300 \uB9BD \uBC14\uBE44\uD050 \uB808\uC2A4\uD1A0\uB791", "\uD574\uC6B4\uB300"), true);
 });
 
 test("budget modes reorder meal slot candidates without reducing their choices", () => {
@@ -325,32 +317,33 @@ test("day 16 keeps market meal candidates and selections aligned across budget m
   }
 });
 
-test("overview places Cimer on day 17 and protects the day 19 station buffer", () => {
-  const overview = [itineraryFixture.hero.summary, ...itineraryFixture.tripLens, ...itineraryFixture.photos.map((photo) => photo.detail)].join(" ");
+test("overview decisions report rental, Zim Carry, and the 14:31 KTX constraint", () => {
+  const decisions = runTripOrchestrator(itineraryFixture).decisions.join(" ");
 
-  assert.match(overview, /17\uC77C.*\uC528\uBA54\uB974/);
-  assert.match(overview, /19\uC77C.*\uBD80\uC0B0\uC5ED \uC9D0 \uBCF4\uAD00.*KTX \uBC84\uD37C/);
-  assert.doesNotMatch(itineraryFixture.tripLens.find((lens) => lens.includes("19\uC77C")), /\uC528\uBA54\uB974/);
+  assert.match(decisions, /rental pickup/);
+  assert.match(decisions, /Zim Carry/);
+  assert.match(decisions, /14:31 KTX/);
 });
 
-test("meal fixture assigns exactly one unique primary genre to every meal slot", () => {
-  const slots = Object.values(itineraryFixture.mealSlots).flatMap((day) => [day.lunch, day.dinner]);
+test("meal fixture assigns exactly four breakfast slots and one unique primary genre to every meal slot", () => {
+  const slots = Object.values(itineraryFixture.mealSlots).flatMap((day) => Object.values(day));
   const primaryCandidates = slots.map((candidates) => candidates.filter((candidate) => candidate.primary));
 
-  assert.equal(primaryCandidates.length, 8);
+  assert.equal(Object.values(itineraryFixture.mealSlots).filter((day) => day.breakfast).length, 4);
+  assert.equal(primaryCandidates.length, 12);
   assert.equal(primaryCandidates.every((candidates) => candidates.length === 1), true);
-  assert.equal(new Set(primaryCandidates.map(([candidate]) => candidate.genre)).size, 8);
+  assert.equal(new Set(primaryCandidates.map(([candidate]) => candidate.genre)).size, 12);
 });
 
-test("meal fixture keeps Anmok only as the day 19 Busan Station lunch primary", () => {
+test("meal fixture keeps Haeundae rib barbecue as the day 19 lunch primary", () => {
   const candidates = Object.entries(itineraryFixture.mealSlots)
     .flatMap(([date, day]) => Object.entries(day).flatMap(([meal, slotCandidates]) => slotCandidates.map((candidate) => ({ date, meal, candidate }))));
-  const anmokCandidates = candidates.filter(({ candidate }) => candidate.name.includes("\uC548\uBAA9"));
+  const ribBarbecueCandidates = candidates.filter(({ candidate }) => candidate.name.includes("\uB9BD \uBC14\uBE44\uD050"));
 
-  assert.deepEqual(anmokCandidates.map(({ date, meal, candidate }) => ({ date, meal, name: candidate.name, primary: candidate.primary })), [{
+  assert.deepEqual(ribBarbecueCandidates.map(({ date, meal, candidate }) => ({ date, meal, name: candidate.name, primary: candidate.primary })), [{
     date: "2026-08-19",
     meal: "lunch",
-    name: "\uC548\uBAA9 \uBD80\uC0B0\uC5ED\uC810",
+    name: "\uD574\uC6B4\uB300 \uB9BD \uBC14\uBE44\uD050 \uB808\uC2A4\uD1A0\uB791",
     primary: true
   }]);
 });
@@ -392,7 +385,7 @@ test("keeps only one custom request per day and warns about the second", () => {
   assert.equal(result.warnings.some((warning) => warning.includes("하루당 한 건")), true);
 });
 
-test("rejects an unsafe custom request without moving protected blocks", () => {
+test("allows a same-area day 19 custom request without moving protected blocks", () => {
   const result = runTripOrchestrator({
     ...itineraryFixture,
     customRequests: {
@@ -401,10 +394,10 @@ test("rejects an unsafe custom request without moving protected blocks", () => {
   });
   const day19 = result.days.find((day) => day.date === "2026-08-19");
 
-  assert.equal(day19.openSlot.status, "unavailable");
-  assert.equal(day19.blocks.some((block) => block.title === "해운대 카페"), false);
+  assert.equal(day19.openSlot.status, "used");
+  assert.equal(day19.blocks.some((block) => block.title === "해운대 카페"), true);
   assert.equal(day19.blocks.some((block) => block.time === "14:31" && block.title.includes("KTX")), true);
-  assert.equal(result.warnings.some((warning) => warning.includes("안전한 빈 시간")), true);
+  assert.equal(result.warnings.some((warning) => warning.includes("안전한 빈 시간")), false);
 });
 
 test("food agent returns explicit primary meals and alternatives", () => {
@@ -427,7 +420,7 @@ test("budget modes select different primary meals while keeping every selected g
   assert.notDeepEqual(selectedByMode.comfort.map((meal) => meal.name), selectedByMode.balanced.map((meal) => meal.name));
   for (const meals of Object.values(selectedByMode)) {
     assert.equal(new Set(meals.map((meal) => meal.genre)).size, meals.length);
-    assert.equal(meals.filter((meal) => meal.name.includes("\uC548\uBAA9")).length, 1);
+    assert.equal(meals.filter((meal) => meal.name.includes("\uD574\uC6B4\uB300 \uB9BD \uBC14\uBE44\uD050")).length, 1);
   }
 });
 
@@ -464,4 +457,40 @@ test("custom requests reject off-route areas and add accepted requests to the ma
   const rejectedDay = rejected.days.find((day) => day.date === "2026-08-18");
   assert.equal(rejectedDay.openSlot.reason, "area-mismatch");
   assert.equal(rejectedDay.route.sequence.includes("\uC1A1\uB3C4 \uC0B0\uCC45"), false);
+});
+
+test("food agent labels breakfast summaries without hardcoded lunch and dinner labels", () => {
+  const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
+  const day16 = result.specialistOutputs.food.recommendations.find((day) => day.date === "2026-08-16");
+
+  assert.match(day16.meals[0], /^Breakfast:/);
+  assert.match(day16.meals[1], /^Lunch:/);
+  assert.match(day16.meals[2], /^Dinner:/);
+});
+
+test("transport agent exposes rental providers and Zim Carry logistics from the fixture", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const rental = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-17");
+  const luggage = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
+
+  assert.deepEqual(rental.providers, itineraryFixture.rentalOptions.providers);
+  assert.equal(luggage.logistics.url, itineraryFixture.luggageTransfer.url);
+  assert.equal(luggage.logistics.origin, itineraryFixture.luggageTransfer.origin);
+  assert.equal(luggage.logistics.destination, itineraryFixture.luggageTransfer.destination);
+});
+
+test("transport agent preserves an explicit day 19 KTX recommendation", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+  const returnKtx = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19" && item.title.includes("KTX"));
+
+  assert.equal(returnKtx.detail.includes("14:31"), true);
+});
+
+test("validation accepts the confirmed rental and luggage-transfer route order", () => {
+  const result = runTripOrchestrator(itineraryFixture);
+
+  assert.equal(result.warnings.some((warning) => warning.includes("17일 확정 동선")), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("19일 확정 동선")), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("렌터카 업체")), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("짐캐리 URL")), false);
 });
