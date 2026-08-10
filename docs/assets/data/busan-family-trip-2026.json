@@ -8,20 +8,20 @@
   "dayFlows": [{ "date": "2026-08-16", "label": "16일", "intent": "부산역·초량·남포·영도", "mustDo": "아스티호텔 짐 보관 후 서부권 관광과 바다 전망", "avoid": "도착 직후 먼 동쪽 이동" }, { "date": "2026-08-17", "label": "17일", "intent": "해운대 관광과 물놀이", "mustDo": "블루라인파크·청사포와 파라다이스 오션풀 또는 씨메르", "avoid": "권역을 여러 번 왕복" }, { "date": "2026-08-18", "label": "18일", "intent": "오시리아 체험·휴식·식사", "mustDo": "12살 아이가 고르는 체험과 기장 또는 광안리 저녁", "avoid": "해운대 반복" }, { "date": "2026-08-19", "label": "19일", "intent": "부산역 귀환과 KTX 탑승 버퍼", "mustDo": "11시 체크아웃 후 부산역 짐 보관과 여유 있는 점심", "avoid": "KTX 직전 먼 일정" }],
   "fixedTransport": { "outbound": { "title": "서울역 → 부산역", "departAt": "07:58", "arriveAt": "10:46" }, "return": { "title": "부산역 → 서울역", "departAt": "14:31", "arriveAtStation": "14:00", "arriveAt": "17:14" } },
   "lodgings": [{ "name": "아스티호텔 부산", "area": "부산역", "dates": "8/16–8/17", "role": "도착·원도심 거점" }, { "name": "파라다이스호텔 부산", "area": "해운대", "dates": "8/17–8/19", "role": "해운대·물놀이·씨메르 거점" }],
-  "defaultBlocks": { "2026-08-16": [{ "time": "10:46", "title": "부산역 도착·아스티호텔 짐 보관", "type": "fixed" }, { "time": "점심", "title": "초량 점심 식사", "type": "food" }, { "time": "오후", "title": "남포·자갈치 관광", "type": "place" }, { "time": "오후", "title": "흰여울문화마을(맑음) 또는 국립해양박물관(비)", "type": "place" }, { "time": "저녁", "title": "영도 또는 남포 저녁 식사 후 아스티호텔 복귀", "type": "food" }], "2026-08-17": [{ "time": "오전", "title": "아스티호텔 체크아웃·파라다이스호텔 짐 전달", "type": "lodging" }, { "time": "낮", "title": "해운대·블루라인파크·미포·청사포", "type": "place" }, { "time": "오후", "title": "파라다이스호텔 오션풀 또는 씨메르", "type": "water" }, { "time": "오후", "title": "해운대해수욕장 물놀이·휴식", "type": "water" }, { "time": "저녁", "title": "해운대 저녁 식사", "type": "food" }], "2026-08-18": [{ "time": "오전", "title": "롯데월드 부산 또는 국립부산과학관", "type": "activity" }, { "time": "오후", "title": "스카이라인 루지(맑음)·오시리아 휴식", "type": "activity" }, { "time": "저녁", "title": "기장 또는 남천·광안리 저녁 식사", "type": "food" }], "2026-08-19": [{ "time": "11:00", "title": "파라다이스호텔 체크아웃", "type": "lodging" }, { "time": "11:20", "title": "택시로 부산역 이동·역내 짐 보관", "type": "transport" }, { "time": "12:20", "title": "부산역 인근 점심·짧은 휴식", "type": "food" }, { "time": "13:45", "title": "부산역 승강장 이동·탑승 버퍼", "type": "transport" }, { "time": "14:31", "title": "부산역 KTX 출발", "type": "fixed" }] },
+  "defaultBlocks": { "2026-08-16": [{ "time": "10:46", "startAt": "10:46", "endAt": "11:40", "title": "부산역 도착·아스티호텔 짐 보관", "type": "fixed" }, { "time": "점심", "startAt": "11:50", "endAt": "12:50", "title": "초량 점심 식사", "type": "food" }, { "time": "오후", "startAt": "13:00", "endAt": "14:20", "title": "남포·자갈치 관광", "type": "place" }, { "time": "오후", "startAt": "14:40", "endAt": "17:20", "title": "흰여울문화마을(맑음) 또는 국립해양박물관(비)", "type": "place" }, { "time": "저녁", "startAt": "18:00", "endAt": "19:20", "title": "영도 또는 남포 저녁 식사 후 아스티호텔 복귀", "type": "food" }], "2026-08-17": [{ "time": "오전", "startAt": "08:30", "endAt": "10:00", "title": "아스티호텔 체크아웃·파라다이스호텔 짐 전달", "type": "lodging" }, { "time": "낮", "startAt": "10:30", "endAt": "14:00", "title": "해운대·블루라인파크·미포·청사포", "type": "place" }, { "time": "오후", "startAt": "14:30", "endAt": "16:30", "title": "파라다이스호텔 오션풀 또는 씨메르", "type": "water" }, { "time": "오후", "startAt": "16:30", "endAt": "17:50", "title": "해운대해수욕장 물놀이·휴식", "type": "water" }, { "time": "저녁", "startAt": "18:30", "endAt": "20:00", "title": "해운대 저녁 식사", "type": "food" }], "2026-08-18": [{ "time": "오전", "startAt": "09:30", "endAt": "13:00", "title": "롯데월드 부산 또는 국립부산과학관", "type": "activity" }, { "time": "오후", "startAt": "13:30", "endAt": "17:00", "title": "스카이라인 루지(맑음)·오시리아 휴식", "type": "activity" }, { "time": "저녁", "startAt": "18:00", "endAt": "19:30", "title": "기장 또는 남천·광안리 저녁 식사", "type": "food" }], "2026-08-19": [{ "time": "11:00", "startAt": "10:00", "endAt": "11:00", "title": "파라다이스호텔 체크아웃", "type": "lodging" }, { "time": "11:20", "startAt": "11:20", "endAt": "12:00", "title": "택시로 부산역 이동·역내 짐 보관", "type": "transport" }, { "time": "12:20", "startAt": "12:20", "endAt": "13:15", "title": "부산역 인근 점심·짧은 휴식", "type": "food" }, { "time": "13:45", "startAt": "13:45", "endAt": "14:20", "title": "부산역 승강장 이동·탑승 버퍼", "type": "transport" }, { "time": "14:31", "startAt": "14:31", "endAt": "17:14", "title": "부산역 KTX 출발", "type": "fixed" }] },
   "routeHubs": { "2026-08-16": "부산역·초량·남포·영도", "2026-08-17": "해운대·청사포", "2026-08-18": "오시리아·기장", "2026-08-19": "부산역 귀환" },
   "routeSequences": { "2026-08-16": ["부산역", "초량", "남포·자갈치", "영도", "아스티호텔"], "2026-08-17": ["아스티호텔", "파라다이스호텔", "해운대", "미포", "청사포", "파라다이스호텔", "해운대해수욕장"], "2026-08-18": ["파라다이스호텔", "롯데월드 부산", "스카이라인 루지", "오시리아", "광안리"], "2026-08-19": ["파라다이스호텔", "부산역"] },
   "mealCandidates": { "2026-08-16": ["초량밀면", "신발원", "자갈치시장"], "2026-08-17": ["청사포 해산물", "해운대 전통시장", "호텔 식사"], "2026-08-18": ["오시리아 식당가", "기장 해산물", "광안리 저녁"], "2026-08-19": ["호텔 조식", "부산역 간단 식사"] },
   "mealSlots": {
     "2026-08-16": {
       "lunch": [
-        { "name": "초량밀면", "genre": "밀면", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%B4%88%EB%9F%89%EB%B0%80%EB%A9%B4", "note": "부산역 도착 직후 초량 동선" },
+        { "name": "초량밀면", "genre": "밀면", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%B4%88%EB%9F%89%EB%B0%80%EB%A9%B4", "note": "부산역 도착 직후 초량 동선", "primary": true },
         { "name": "신발원", "genre": "만두", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%8B%A0%EB%B0%9C%EC%9B%90", "note": "초량 이바구길 전 간단한 식사" },
-        { "name": "안목 부산역점", "genre": "한식", "area": "부산역", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%95%88%EB%AA%A9%20%EB%B6%80%EC%82%B0%EC%97%AD%EC%A0%90", "note": "부산역과 아스티호텔 사이 선택지" }
+        { "name": "초량 이바구길 카페", "genre": "카페 브런치", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%B4%88%EB%9F%89%20%EC%9D%B4%EB%B0%94%EA%B5%AC%EA%B8%B8%20%EC%B9%B4%ED%8E%98", "note": "초량 이바구길 산책 전 가벼운 식사" }
       ],
       "dinner": [
         { "name": "자갈치시장", "genre": "해산물", "area": "남포·자갈치", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%9E%90%EA%B0%88%EC%B9%98%EC%8B%9C%EC%9E%A5", "note": "영도 이동 전 또는 남포 복귀 식사" },
-        { "name": "개미집 국제시장본점", "genre": "낙곱새", "area": "남포", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B0%9C%EB%AF%B8%EC%A7%91%20%EA%B5%AD%EC%A0%9C%EC%8B%9C%EC%9E%A5%EB%B3%B8%EC%A0%90", "note": "남포권 대표 매운 한 끼" },
+        { "name": "개미집 국제시장본점", "genre": "낙곱새", "area": "남포", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B0%9C%EB%AF%B8%EC%A7%91%20%EA%B5%AD%EC%A0%9C%EC%8B%9C%EC%9E%A5%EB%B3%B8%EC%A0%90", "note": "남포권 대표 매운 한 끼", "primary": true },
         { "name": "영도 해녀촌", "genre": "해물라면", "area": "영도", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%98%81%EB%8F%84%20%ED%95%B4%EB%85%80%EC%B4%8C", "note": "흰여울 선택 시 바다 전망 식사" }
       ]
     },
@@ -29,37 +29,37 @@
       "lunch": [
         { "name": "해운대가야밀면", "genre": "밀면", "area": "좌동", "meal": "lunch", "url": "https://place.map.kakao.com/15555120", "note": "호텔 짐 전달 뒤 블루라인파크 전 식사" },
         { "name": "해운대 소문난 돼지국밥", "genre": "돼지국밥", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%86%8C%EB%AC%B8%EB%82%9C%20%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5", "note": "해운대 이동 뒤 든든한 국밥 선택지" },
-        { "name": "해운대 전통시장", "genre": "분식", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%A0%84%ED%86%B5%EC%8B%9C%EC%9E%A5", "note": "미포 이동 전 빠른 식사" }
+        { "name": "해운대 전통시장", "genre": "분식", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%A0%84%ED%86%B5%EC%8B%9C%EC%9E%A5", "note": "미포 이동 전 빠른 식사", "primary": true }
       ],
       "dinner": [
         { "name": "해운대다찌", "genre": "해산물", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1528294592", "note": "물놀이 후 해산물 저녁" },
         { "name": "맛찬들왕소금구이 부산해운대점", "genre": "돼지고기", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/18161911", "note": "가족 식사에 맞는 구이 선택지" },
         { "name": "이카", "genre": "이자카야", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1305748619", "note": "저녁 시간대 오징어회·일식 선택지" },
-        { "name": "해운대암소갈비집", "genre": "소갈비", "area": "해운대", "meal": "dinner", "url": "https://naver.me/5LHsNhM3", "note": "대기 가능 시간을 고려한 예약형 저녁 후보" }
+        { "name": "해운대암소갈비집", "genre": "소갈비", "area": "해운대", "meal": "dinner", "url": "https://naver.me/5LHsNhM3", "note": "대기 가능 시간을 고려한 예약형 저녁 후보", "primary": true }
       ]
     },
     "2026-08-18": {
       "lunch": [
-        { "name": "롯데월드 부산 푸드드롭", "genre": "테마파크 푸드", "area": "오시리아", "meal": "lunch", "url": "https://adventurebusan.lotteworld.com/kor/food/food/list.do", "note": "롯데월드 선택 시 이동을 줄이는 식사" },
+        { "name": "롯데월드 부산 푸드드롭", "genre": "테마파크 푸드", "area": "오시리아", "meal": "lunch", "url": "https://adventurebusan.lotteworld.com/kor/food/food/list.do", "note": "롯데월드 선택 시 이동을 줄이는 식사", "primary": true },
         { "name": "기장시장", "genre": "해산물", "area": "기장", "meal": "lunch", "url": "https://map.naver.com/p/search/%EA%B8%B0%EC%9E%A5%EC%8B%9C%EC%9E%A5", "note": "과학관·루지 전후 기장권 식사" },
         { "name": "국립부산과학관 카페", "genre": "카페 브런치", "area": "오시리아", "meal": "lunch", "url": "https://www.sciport.or.kr", "note": "우천 시 과학관 일정에 맞춘 가벼운 식사" }
       ],
       "dinner": [
-        { "name": "안목 남천동", "genre": "한식", "area": "남천", "meal": "dinner", "url": "https://naver.me/GDa2FOMZ", "note": "광안리 저녁 선택 시 남천동 지점" },
+        { "name": "기장 붕장어구이", "genre": "붕장어구이", "area": "기장", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B8%B0%EC%9E%A5%20%EB%B6%95%EC%9E%A5%EC%96%B4%EA%B5%AC%EC%9D%B4", "note": "오시리아 체험 후 기장권에서 이어지는 저녁", "primary": true },
         { "name": "기장 연화리 해녀촌", "genre": "해산물", "area": "기장", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B8%B0%EC%9E%A5%20%EC%97%B0%ED%99%94%EB%A6%AC%20%ED%95%B4%EB%85%80%EC%B4%8C", "note": "오시리아에서 기장권으로 이어지는 저녁" },
         { "name": "광안리 돼지국밥", "genre": "국밥", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B4%91%EC%95%88%EB%A6%AC%20%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5", "note": "광안대교 야경 전 든든한 식사" }
       ]
     },
     "2026-08-19": {
       "lunch": [
-        { "name": "안목 부산역점", "genre": "한식", "area": "부산역", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%95%88%EB%AA%A9%20%EB%B6%80%EC%82%B0%EC%97%AD%EC%A0%90", "note": "역내 짐 보관 후 여유 있는 점심" },
+        { "name": "안목 부산역점", "genre": "돼지국밥", "area": "부산역", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%95%88%EB%AA%A9%20%EB%B6%80%EC%82%B0%EC%97%AD%EC%A0%90", "note": "역내 짐 보관 후 여유 있는 점심", "primary": true },
         { "name": "초량밀면", "genre": "밀면", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%B4%88%EB%9F%89%EB%B0%80%EB%A9%B4", "note": "부산역 도보권 짧은 식사" },
         { "name": "부산역 푸드코트", "genre": "푸드코트", "area": "부산역", "meal": "lunch", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%ED%91%B8%EB%93%9C%EC%BD%94%ED%8A%B8", "note": "13:45 승강장 버퍼를 지키는 가장 빠른 선택지" }
       ],
       "dinner": [
         { "name": "서울역 식당가", "genre": "한식", "area": "서울역", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EC%8B%9D%EB%8B%B9%EA%B0%80", "note": "17:14 서울역 도착 후 저녁 선택지" },
         { "name": "서울역 푸드코트", "genre": "푸드코트", "area": "서울역", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%ED%91%B8%EB%93%9C%EC%BD%94%ED%8A%B8", "note": "귀가 전 빠른 저녁" },
-        { "name": "서울역 라멘", "genre": "라멘", "area": "서울역", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EB%9D%BC%EB%A9%98", "note": "KTX 귀환 후 다른 장르의 저녁" }
+        { "name": "서울역 라멘", "genre": "라멘", "area": "서울역", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EB%9D%BC%EB%A9%98", "note": "KTX 귀환 후 다른 장르의 저녁", "primary": true }
       ]
     }
   },
@@ -73,13 +73,13 @@
     "balanced": {
       "2026-08-16": { "lunch": ["초량밀면"], "dinner": ["자갈치시장"] },
       "2026-08-17": { "lunch": ["해운대가야밀면"], "dinner": ["해운대다찌"] },
-      "2026-08-18": { "lunch": ["롯데월드 부산 푸드드롭"], "dinner": ["안목 남천동"] },
+      "2026-08-18": { "lunch": ["롯데월드 부산 푸드드롭"], "dinner": ["기장 붕장어구이"] },
       "2026-08-19": { "lunch": ["안목 부산역점"], "dinner": ["서울역 식당가"] }
     },
     "comfort": {
-      "2026-08-16": { "lunch": ["안목 부산역점"], "dinner": ["영도 해녀촌"] },
+      "2026-08-16": { "lunch": ["초량밀면"], "dinner": ["영도 해녀촌"] },
       "2026-08-17": { "lunch": ["해운대 소문난 돼지국밥"], "dinner": ["해운대암소갈비집"] },
-      "2026-08-18": { "lunch": ["기장시장"], "dinner": ["안목 남천동"] },
+      "2026-08-18": { "lunch": ["기장시장"], "dinner": ["기장 붕장어구이"] },
       "2026-08-19": { "lunch": ["안목 부산역점"], "dinner": ["서울역 라멘"] }
     }
   },

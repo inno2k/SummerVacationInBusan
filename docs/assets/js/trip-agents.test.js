@@ -210,7 +210,7 @@ test("rebalanced fixture assigns supplied restaurants to their intended day and 
   for (const name of ["\uD574\uC6B4\uB300\uC554\uC18C\uAC08\uBE44\uC9D1", "\uB9DB\uCC2C\uB4E4\uC655\uC18C\uAE08\uAD6C\uC774 \uBD80\uC0B0\uD574\uC6B4\uB300\uC810", "\uD574\uC6B4\uB300\uB2E4\uCC0C", "\uC774\uCE74"]) {
     assert.equal(hasCandidate("2026-08-17", "dinner", name, "\uD574\uC6B4\uB300"), true);
   }
-  assert.equal(hasCandidate("2026-08-18", "dinner", "\uC548\uBAA9 \uB0A8\uCC9C\uB3D9", "\uB0A8\uCC9C"), true);
+  assert.equal(hasCandidate("2026-08-18", "dinner", "\uAE30\uC7A5 \uBD95\uC7A5\uC5B4\uAD6C\uC774", "\uAE30\uC7A5"), true);
   assert.equal(hasCandidate("2026-08-19", "lunch", "\uC548\uBAA9 \uBD80\uC0B0\uC5ED\uC810", "\uBD80\uC0B0\uC5ED"), true);
 });
 
@@ -254,4 +254,36 @@ test("overview places Cimer on day 17 and protects the day 19 station buffer", (
   assert.match(overview, /17\uC77C.*\uC528\uBA54\uB974/);
   assert.match(overview, /19\uC77C.*\uBD80\uC0B0\uC5ED \uC9D0 \uBCF4\uAD00.*KTX \uBC84\uD37C/);
   assert.doesNotMatch(itineraryFixture.tripLens.find((lens) => lens.includes("19\uC77C")), /\uC528\uBA54\uB974/);
+});
+
+test("meal fixture assigns exactly one unique primary genre to every meal slot", () => {
+  const slots = Object.values(itineraryFixture.mealSlots).flatMap((day) => [day.lunch, day.dinner]);
+  const primaryCandidates = slots.map((candidates) => candidates.filter((candidate) => candidate.primary));
+
+  assert.equal(primaryCandidates.length, 8);
+  assert.equal(primaryCandidates.every((candidates) => candidates.length === 1), true);
+  assert.equal(new Set(primaryCandidates.map(([candidate]) => candidate.genre)).size, 8);
+});
+
+test("meal fixture keeps Anmok only as the day 19 Busan Station lunch primary", () => {
+  const candidates = Object.entries(itineraryFixture.mealSlots)
+    .flatMap(([date, day]) => Object.entries(day).flatMap(([meal, slotCandidates]) => slotCandidates.map((candidate) => ({ date, meal, candidate }))));
+  const anmokCandidates = candidates.filter(({ candidate }) => candidate.name.includes("\uC548\uBAA9"));
+
+  assert.deepEqual(anmokCandidates.map(({ date, meal, candidate }) => ({ date, meal, name: candidate.name, primary: candidate.primary })), [{
+    date: "2026-08-19",
+    meal: "lunch",
+    name: "\uC548\uBAA9 \uBD80\uC0B0\uC5ED\uC810",
+    primary: true
+  }]);
+});
+
+test("every default schedule block provides an ordered time range", () => {
+  for (const [date, blocks] of Object.entries(itineraryFixture.defaultBlocks)) {
+    for (const block of blocks) {
+      assert.match(block.startAt || "", /^\d{2}:\d{2}$/, `${date} ${block.title} startAt`);
+      assert.match(block.endAt || "", /^\d{2}:\d{2}$/, `${date} ${block.title} endAt`);
+      assert.ok(block.startAt < block.endAt, `${date} ${block.title} has an ordered range`);
+    }
+  }
 });
