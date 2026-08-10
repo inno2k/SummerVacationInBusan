@@ -258,6 +258,24 @@ test("day 16 connects lunch, science, both markets, and hotel in order", () => {
   assert.equal(day16.blocks.some((block) => block.title.includes("부평깡통시장")), true);
 });
 
+test("day 16 resolves its market route to the matching map points", () => {
+  assert.deepEqual(itineraryFixture.mapRoutePoints["16일"].map((point) => point.name), [
+    "부산역", "아스티호텔 부산", "이재모피자", "부산과학체험관", "초량전통시장", "부평깡통시장", "아스티호텔 부산"
+  ]);
+});
+
+test("day 16 prefers its explicit route sequence over the legacy Nampho profile", () => {
+  const legacyDay16Intent = {
+    ...itineraryFixture,
+    dayFlows: itineraryFixture.dayFlows.map((day) => day.date === "2026-08-16"
+      ? { ...day, intent: "부산역·초량·남포·영도" }
+      : day)
+  };
+  const day16 = runTripOrchestrator(legacyDay16Intent).days.find((day) => day.date === "2026-08-16");
+
+  assert.deepEqual(day16.route.sequence, itineraryFixture.routeSequences["2026-08-16"]);
+});
+
 test("the fixture no longer exposes Lotte World Busan", () => {
   assert.doesNotMatch(JSON.stringify(itineraryFixture), /롯데월드 부산/);
 });
@@ -269,6 +287,41 @@ test("day 16 offers Ijaemo Pizza and Bupyeong dinner choices", () => {
   assert.equal(lunch.some((candidate) => candidate.name === "이재모피자"), true);
   for (const name of ["양산집", "깡통골목할매 유부전골", "부평통닭"]) {
     assert.equal(dinner.some((candidate) => candidate.name === name), true);
+  }
+});
+
+test("day 16 keeps market meal candidates and selections aligned across budget modes", () => {
+  const lunch = itineraryFixture.mealSlots["2026-08-16"].lunch;
+  const dinner = itineraryFixture.mealSlots["2026-08-16"].dinner;
+  const expectedDinnerByMode = {
+    light: "\uC591\uC0B0\uC9D1",
+    balanced: "\uAE61\uD1B5\uACE8\uBAA9\uD560\uB9E4 \uC720\uBD80\uC804\uACE8",
+    comfort: "\uBD80\uD3C9\uD1B5\uB2ED"
+  };
+  const expectedGenres = {
+    "\uC591\uC0B0\uC9D1": "\uB3FC\uC9C0\uAD6D\uBC25",
+    "\uAE61\uD1B5\uACE8\uBAA9\uD560\uB9E4 \uC720\uBD80\uC804\uACE8": "\uC720\uBD80\uC804\uACE8",
+    "\uBD80\uD3C9\uD1B5\uB2ED": "\uD1B5\uB2ED"
+  };
+
+  assert.ok(lunch.length >= 3);
+  assert.equal(new Set(lunch.map((candidate) => candidate.genre)).size, lunch.length);
+  assert.deepEqual(dinner.map((candidate) => candidate.name).sort(), Object.keys(expectedGenres).sort());
+  for (const candidate of dinner) {
+    assert.equal(candidate.genre, expectedGenres[candidate.name]);
+    assert.equal(candidate.area, "\uBD80\uD3C9\uAE61\uD1B5\uC2DC\uC7A5");
+    assert.match(candidate.url, /^https:\/\//);
+    assert.ok(candidate.note);
+  }
+
+  for (const [mode, expectedDinner] of Object.entries(expectedDinnerByMode)) {
+    const selection = itineraryFixture.mealSelections[mode]["2026-08-16"];
+    const priority = itineraryFixture.mealPriorities[mode]["2026-08-16"];
+
+    assert.equal(selection.lunch, "\uC774\uC7AC\uBAA8\uD53C\uC790");
+    assert.equal(priority.lunch[0], "\uC774\uC7AC\uBAA8\uD53C\uC790");
+    assert.equal(selection.dinner, expectedDinner);
+    assert.equal(priority.dinner[0], expectedDinner);
   }
 });
 

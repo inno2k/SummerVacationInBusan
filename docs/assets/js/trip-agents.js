@@ -135,8 +135,8 @@ function routeAgent(context, schedule) {
   const recommendations = schedule.recommendations.map((day) => {
     const intent = day.intent || "";
     const profile = intentProfile(intent);
-    const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : intent.includes("남포") || intent.includes("영도") ? "남포·영도" : context.routeHubs[day.date]);
-    const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : customHub === "남포·영도" ? ["부산역", "남포·자갈치", "영도"] : plan.routes?.[day.date] || context.routeSequences[day.date] || []);
+    const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : context.routeHubs[day.date]);
+    const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : plan.routes?.[day.date] || context.routeSequences[day.date] || []);
     const request = day.blocks.find((block) => block.type === "custom");
     if (request) {
       const customPoint = mapPointForRequest(context, request);
