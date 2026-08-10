@@ -1,5 +1,6 @@
 const APP_VERSION = "busan-agent-8";
 const STORAGE_KEY = "busan-trip-day-flows";
+const CUSTOM_REQUESTS_KEY = "busan-trip-custom-requests";
 const BUDGET_MODE_KEY = "busan-trip-budget-mode";
 const VALID_BUDGET_MODES = new Set(["light", "balanced", "comfort"]);
 let trip;
@@ -37,6 +38,15 @@ function selectedBudgetMode() {
   }
 }
 
+function savedCustomRequests() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CUSTOM_REQUESTS_KEY) || "{}");
+    return saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+  } catch {
+    return {};
+  }
+}
+
 async function loadTrip() {
   const response = await fetch(`./assets/data/busan-family-trip-2026.json?v=${APP_VERSION}`);
   if (!response.ok) throw new Error(`여행 데이터를 불러오지 못했습니다: ${response.status}`);
@@ -47,7 +57,12 @@ function contextFromTrip() {
   let saved = [];
   try { const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); saved = Array.isArray(parsed) ? parsed : []; } catch { saved = []; }
   const savedByDate = Object.fromEntries(saved.map((item) => [item.date, item.intent]));
-  return { ...trip, budgetMode: selectedBudgetMode(), dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent })) };
+  return {
+    ...trip,
+    budgetMode: selectedBudgetMode(),
+    customRequests: savedCustomRequests(),
+    dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent }))
+  };
 }
 
 function renderHero() {
@@ -63,12 +78,34 @@ function renderHero() {
 
 function renderFlowEditor() {
   const context = contextFromTrip();
-  document.getElementById("day-flow-editor").innerHTML = context.dayFlows.map((day) => `<div class="flow-row"><label for="flow-${day.date}">${escapeHtml(day.label)}</label><input id="flow-${day.date}" data-flow-date="${day.date}" value="${escapeHtml(day.intent)}" /></div>`).join("");
+  document.getElementById("day-flow-editor").innerHTML = context.dayFlows.map((day) => {
+    const request = context.customRequests[day.date]?.[0];
+    return `<div class="flow-row"><label for="flow-${day.date}">${escapeHtml(day.label)} 일정</label><input id="flow-${day.date}" data-flow-date="${day.date}" value="${escapeHtml(day.intent)}" /></div><div class="flow-row"><label for="request-${day.date}">${escapeHtml(day.label)} 추가 요청</label><input id="request-${day.date}" data-custom-request-date="${day.date}" value="${escapeHtml(request?.title || "")}" placeholder="비어 있는 시간에 넣을 요청 1건" /><label for="request-${day.date}-area">권역</label><input id="request-${day.date}-area" data-custom-request-area="${day.date}" value="${escapeHtml(request?.area || "")}" placeholder="예: 오시리아" /></div>`;
+  }).join("");
 }
 
 function saveFlowEditor() {
   const values = [...document.querySelectorAll("[data-flow-date]")].map((input) => ({ date: input.dataset.flowDate, intent: input.value.trim() || "여유롭게 이동" }));
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(values)); return true; } catch { showActionStatus("변경 내용을 저장하지 못했습니다. 브라우저 저장공간을 확인하세요."); return false; }
+}
+
+function saveCustomRequestEditor() {
+  const requests = {};
+  for (const input of document.querySelectorAll("[data-custom-request-date]")) {
+    const title = input.value.trim();
+    const date = input.dataset.customRequestDate;
+    const areaInput = document.querySelector(`[data-custom-request-area="${date}"]`);
+    if (title && areaInput?.value.trim()) {
+      requests[date] = [{ title, area: areaInput.value.trim() }];
+    }
+  }
+  try {
+    localStorage.setItem(CUSTOM_REQUESTS_KEY, JSON.stringify(requests));
+    return true;
+  } catch {
+    showActionStatus("추가 요청을 저장하지 못했습니다. 브라우저 저장공간을 확인하세요.");
+    return false;
+  }
 }
 
 /**
@@ -78,14 +115,26 @@ function saveFlowEditor() {
  */
 function conciseMealSummary(day) {
   return (day.meals.slots || []).map((slot) => {
-    const candidate = slot.candidates[0];
+    const candidate = slot.primary || slot.candidates[0];
     if (!candidate) return null;
     return `${slot.meal === "lunch" ? "점심" : "저녁"}: ${candidate.name}`;
   }).filter(Boolean).join(" · ") || day.meals.meals.join(" · ");
 }
 
+function openSlotSummary(day) {
+  const slot = day.openSlot || {};
+  if (slot.status === "used") {
+    const request = day.blocks.find((block) => block.type === "custom");
+    return `<div class="pill request-used">요청 반영: ${escapeHtml(request?.title || "추가 요청")} · ${escapeHtml(slot.startAt)}~${escapeHtml(slot.endAt)}</div>`;
+  }
+  if (slot.status === "available") {
+    return `<div class="pill request-waiting">요청 대기: ${escapeHtml(slot.startAt)}~${escapeHtml(slot.availableUntil)} 사이에 1건 배치 가능</div>`;
+  }
+  return `<div class="pill request-warning">요청 배치 경고: 안전한 빈 시간이 없습니다.</div>`;
+}
+
 function renderItinerary() {
-  document.getElementById("itinerary-list").innerHTML = orchestration.days.map((day) => `<article class="day-card"><div class="day-header"><div><span>${escapeHtml(day.date)}</span><h3>${escapeHtml(day.intent)}</h3></div><span>${escapeHtml(day.route.hub)}</span></div>${day.blocks.map((block) => `<div class="block"><time>${escapeHtml(block.time)}</time><div><strong>${escapeHtml(block.title)}</strong><small>${block.type === "water" ? "물놀이·휴식" : block.type === "fixed" ? "고정 교통" : "권장 블록"}</small></div></div>`).join("")}<div class="pill">식사: ${escapeHtml(conciseMealSummary(day))}</div><div class="pill">추천: ${escapeHtml(day.activities.chosen.map((item) => item.title).join(" · "))}</div></article>`).join("");
+  document.getElementById("itinerary-list").innerHTML = orchestration.days.map((day) => `<article class="day-card"><div class="day-header"><div><span>${escapeHtml(day.date)}</span><h3>${escapeHtml(day.intent)}</h3></div><span>${escapeHtml(day.route.hub)}</span></div>${day.blocks.map((block) => `<div class="block"><time>${escapeHtml(block.time)}</time><div><strong>${escapeHtml(block.title)}</strong><small>${block.type === "water" ? "물놀이·휴식" : block.type === "fixed" ? "고정 교통" : block.type === "custom" ? "자동 배치 요청" : "권장 블록"}</small></div></div>`).join("")}${openSlotSummary(day)}<div class="pill">식사: ${escapeHtml(conciseMealSummary(day))}</div><div class="pill">추천: ${escapeHtml(day.activities.chosen.map((item) => item.title).join(" · "))}</div></article>`).join("");
   document.getElementById("decisions").innerHTML = orchestration.decisions.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   document.getElementById("warnings").innerHTML = orchestration.warnings.length ? orchestration.warnings.map((item) => `<li>${escapeHtml(item)}</li>`).join("") : "<li>현재 입력에서 큰 충돌이 없습니다.</li>";
 }
@@ -105,7 +154,12 @@ function renderRoutes() {
 }
 
 function renderFood() {
-  document.getElementById("food-list").innerHTML = orchestration.days.flatMap((day) => (day.meals.slots || []).map((slot) => `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(slot.meal === "lunch" ? "점심" : "저녁")} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(slot.meal === "lunch" ? "점심 후보" : "저녁 후보")}</h3>${(slot.candidates || []).map((candidate) => `<div><strong>${escapeHtml(candidate.name)}</strong><p>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.area)}</p><p>${escapeHtml(candidate.note)}</p><a href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer">지도 열기 ↗</a></div>`).join("")}</article>`)).join("");
+  document.getElementById("food-list").innerHTML = orchestration.days.flatMap((day) => (day.meals.slots || []).map((slot) => {
+    const primary = slot.primary || slot.candidates?.[0];
+    const alternatives = slot.alternatives || (slot.candidates || []).filter((candidate) => candidate !== primary);
+    const restaurant = (candidate) => `<div><strong>${escapeHtml(candidate.name)}</strong><p>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.area)}</p><p>${escapeHtml(candidate.note)}</p><a href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer">지도 열기 ↗</a></div>`;
+    return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(slot.meal === "lunch" ? "점심" : "저녁")} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(slot.meal === "lunch" ? "점심 대표 선택" : "저녁 대표 선택")}</h3>${primary ? `<div class="food-primary"><strong>대표 선택</strong>${restaurant(primary)}</div>` : ""}<h4>다른 선택지</h4>${alternatives.map(restaurant).join("")}</article>`;
+  })).join("");
 }
 
 function renderBudget() {
@@ -152,7 +206,7 @@ function orchestratedMapRoutes() {
   Object.values(trip.mapRoutePoints || {}).flat().forEach((point) => { catalog[point.name] = { lat: point.lat, lng: point.lng }; });
   return Object.fromEntries(orchestration.days.map((day) => {
     const mapDay = day.date.slice(-2) + "일";
-    const points = day.route.sequence.map((name) => catalog[name] ? { name, ...catalog[name] } : null).filter(Boolean);
+    const points = day.route.points || day.route.sequence.map((name) => catalog[name] ? { name, ...catalog[name] } : null).filter(Boolean);
     return [mapDay, points];
   }));
 }
@@ -190,7 +244,7 @@ function initTabs() {
 
 /** Start the Busan trip control room. */
 async function main() {
-  try { trip = await loadTrip(); initTabs(); renderAll(); document.getElementById("recalculate").addEventListener("click", () => { try { if (!saveFlowEditor()) return; renderAll(); document.querySelector('[data-tab="itinerary"]').click(); showActionStatus("전체 일정과 관련 탭을 갱신했습니다."); } catch { showActionStatus("전체 일정 재계산에 실패했습니다. 입력값을 확인하고 다시 시도하세요."); } }); } catch (error) { document.body.innerHTML = `<main class="card"><h1>여행 데이터를 불러오지 못했습니다.</h1><p>${escapeHtml(error.message)}</p></main>`; }
+  try { trip = await loadTrip(); initTabs(); renderAll(); document.getElementById("recalculate").addEventListener("click", () => { try { if (!saveFlowEditor() || !saveCustomRequestEditor()) return; renderAll(); document.querySelector('[data-tab="itinerary"]').click(); showActionStatus("전체 일정과 관련 탭을 갱신했습니다."); } catch { showActionStatus("전체 일정 재계산에 실패했습니다. 입력값을 확인하고 다시 시도하세요."); } }); } catch (error) { document.body.innerHTML = `<main class="card"><h1>여행 데이터를 불러오지 못했습니다.</h1><p>${escapeHtml(error.message)}</p></main>`; }
 }
 
 main();
