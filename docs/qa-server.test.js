@@ -160,6 +160,23 @@ function testAppBuildsMapRoutesFromOrchestratedSequences() {
   assert.match(appSource, /day\.route\.sequence\.map/);
 }
 
+function testAppRendersOneDailyRequestControlAndOpenSlotState() {
+  assert.match(appSource, /CUSTOM_REQUESTS_KEY/);
+  assert.match(appSource, /data-custom-request-date/);
+  assert.match(appSource, /customRequests/);
+  assert.match(appSource, /day\.openSlot/);
+  assert.match(appSource, /request-waiting/);
+  assert.match(appSource, /request-used/);
+  assert.match(appSource, /request-warning/);
+}
+
+function testAppDistinguishesPrimaryMealsFromAlternatives() {
+  assert.match(appSource, /slot\.primary/);
+  assert.match(appSource, /slot\.alternatives/);
+  assert.match(appSource, /대표 선택/);
+  assert.match(appSource, /다른 선택지/);
+}
+
 try {
   testMalformedEncoding();
   testSiblingTraversal();
@@ -167,6 +184,8 @@ try {
   testAppRendersMealSlotsAndConciseItineraryMeals();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
   testAppBuildsMapRoutesFromOrchestratedSequences();
+  testAppRendersOneDailyRequestControlAndOpenSlotState();
+  testAppDistinguishesPrimaryMealsFromAlternatives();
   process.stdout.write("qa-server tests passed\n");
 } catch (error) {
   process.stderr.write(`${error.stack}\n`);
