@@ -149,10 +149,9 @@ function testBreakfastRentalAndLuggageFixture() {
   ];
   const expectedDay19Route = [
     "파라다이스호텔 체크아웃",
-    "짐캐리 부산역 1층 미팅홀 전달",
+    "파라다이스호텔 짐캐리 인계",
     "해운대 립 바비큐 레스토랑",
-    "부산역 짐캐리 수령",
-    "부산역 승강장 이동·탑승 버퍼",
+    "부산역 짐캐리 수령·탑승 버퍼",
     "부산역 KTX 출발 14:31"
   ];
 
@@ -160,6 +159,11 @@ function testBreakfastRentalAndLuggageFixture() {
     assert.ok(tripFixture.mealSlots[date].breakfast, `${date} needs a breakfast slot`);
     assert.ok(tripFixture.mealSlots[date].breakfast.length >= 3, `${date} breakfast needs three candidates`);
   }
+  assert.equal(tripFixture.fixedTransport.outbound.departAt, "07:58");
+  tripFixture.mealSlots["2026-08-16"].breakfast.forEach((candidate) => {
+    assert.equal(candidate.area, "서울역", "16 Aug breakfast must be in the Seoul Station area before KTX departure");
+    assert.match(candidate.note, /07:58.*출발 전/);
+  });
 
   const day17Titles = tripFixture.defaultBlocks["2026-08-17"].map((block) => block.title);
   ["아스티호텔 체크아웃", "렌터카 수령", "파라다이스호텔 부산 짐 전달", "해동용궁사", "미포주차장", "블루라인파크", "파라다이스호텔 물놀이", "해운대해수욕장", "해운대 렌터카 반납"].forEach((expected) => {
@@ -188,13 +192,16 @@ function testBreakfastRentalAndLuggageFixture() {
   assert.equal(tripFixture.luggageTransfer.confirmed, false);
 
   const day19Titles = tripFixture.defaultBlocks["2026-08-19"].map((block) => block.title);
-  ["파라다이스호텔 체크아웃", "짐캐리", "부산역 1층", "해운대 립 바비큐 레스토랑", "부산역 짐 수령", "탑승 버퍼"].forEach((expected) => {
+  ["파라다이스호텔 체크아웃", "파라다이스호텔 짐캐리 인계", "해운대 립 바비큐 레스토랑", "부산역 짐 수령", "탑승 버퍼"].forEach((expected) => {
     assert.ok(day19Titles.some((title) => title.includes(expected)), `19 Aug needs ${expected}`);
   });
   assert.ok(tripFixture.defaultBlocks["2026-08-19"].some((block) => block.time === "14:31" && block.title.includes("KTX")), "19 Aug needs the 14:31 KTX");
   assert.ok(!day19Titles.some((title) => title.includes("부산역 인근 점심")), "19 Aug must replace the Busan Station lunch");
   assert.deepEqual(tripFixture.routeSequences["2026-08-19"], expectedDay19Route);
   assert.deepEqual(tripFixture.mapRoutePoints["19일"].map((point) => point.name), expectedDay19Route);
+  const day19MapPoints = tripFixture.mapRoutePoints["19일"];
+  assert.deepEqual(day19MapPoints[1], { name: "파라다이스호텔 짐캐리 인계", lat: 35.1605, lng: 129.1635 });
+  assert.deepEqual(day19MapPoints[3], { name: "부산역 짐캐리 수령·탑승 버퍼", lat: 35.1151, lng: 129.0414 });
 
   for (const mode of ["light", "balanced", "comfort"]) {
     const result = runTripOrchestrator({ ...tripFixture, budgetMode: mode });
