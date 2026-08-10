@@ -115,9 +115,12 @@ function validate(context, outputs) {
   if (day18?.chosen.some((item) => item.area === "해운대")) warnings.push("18일 후보에 해운대가 포함되어 다른 권역 우선 원칙과 충돌합니다.");
   const day19 = outputs.schedule.recommendations.find((day) => day.date === "2026-08-19");
   const day19Transport = outputs.transport.recommendations.find((item) => item.date === "2026-08-19");
+  const returnDeparture = context.fixedTransport?.return?.departAt;
+  const hasReturnKtxBlock = day19?.blocks.some((block) => block.time === "14:31" && block.title.includes("KTX"));
   if (day19?.blocks.some((block) => block.title.includes("씨메르"))) warnings.push("19일 씨메르는 제외하고 부산역 귀환 버퍼를 유지해야 합니다.");
   if (!day19?.blocks.some((block) => block.title.includes("짐 보관"))) warnings.push("19일 일정에 부산역 짐 보관이 필요합니다.");
   if (!day19Transport?.detail.includes("11:55~12:15") || !day19Transport.detail.includes("13:45")) warnings.push("19일 부산역 도착 및 탑승 버퍼가 부족합니다.");
+  if (returnDeparture !== "14:31" || !hasReturnKtxBlock) warnings.push("19일 귀환 KTX는 14:31로 유지해야 합니다.");
   return warnings;
 }
 

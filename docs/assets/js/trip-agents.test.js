@@ -137,6 +137,20 @@ test("day 19 agents require Busan Station luggage storage and exclude Cimer", ()
   assert.equal(result.warnings.some((warning) => warning.includes("씨메르")), false);
 });
 
+test("manager warns when the day 19 return KTX is not scheduled for 14:31", () => {
+  const changed = {
+    ...itineraryFixture,
+    fixedTransport: {
+      ...itineraryFixture.fixedTransport,
+      return: { ...itineraryFixture.fixedTransport.return, departAt: "15:00" }
+    }
+  };
+
+  const result = runTripOrchestrator(changed);
+
+  assert.equal(result.warnings.some((warning) => warning.includes("14:31")), true);
+});
+
 test("rebalanced fixture assigns Cimer to day 17 and keeps the day 19 route direct", () => {
   const result = runTripOrchestrator(itineraryFixture);
   const day17 = result.days.find((day) => day.date === "2026-08-17");
