@@ -409,7 +409,7 @@ test("food agent returns explicit primary meals and alternatives", () => {
   assert.equal(result.warnings.some((warning) => warning.includes("안목")), false);
 });
 
-test("every budget preserves the Centum day 18 route and offers both optional experiences", () => {
+test("every budget preserves the confirmed Centum day 18 route", () => {
   const expectedRoute = [
     "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0",
     "\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774",
@@ -427,15 +427,23 @@ test("every budget preserves the Centum day 18 route and offers both optional ex
     const returnKtx = result.specialistOutputs.transport.recommendations
       .find((item) => item.date === "2026-08-19" && item.title.includes("KTX"));
 
-    assert.deepEqual(itineraryFixture.routeSequences["2026-08-18"], expectedRoute, `${budgetMode} fixture preserves the confirmed Centum route`);
-    assert.ok(Array.isArray(day18.activities.options), `${budgetMode} must expose day 18 optional experiences`);
-    assert.deepEqual(day18.activities.options.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
+    assert.deepEqual(day18.route.sequence, expectedRoute, `${budgetMode} preserves the confirmed Centum route`);
     assert.deepEqual(day19.route.sequence, itineraryFixture.routeSequences["2026-08-19"], `${budgetMode} preserves the confirmed day 19 route`);
     assert.ok(returnKtx, `${budgetMode} returns an explicit day 19 KTX recommendation`);
     assert.equal((returnKtx?.detail ?? "").includes("14:31") || day19.route.sequence.some((stop) => stop.includes("KTX") && stop.includes("14:31")), true, `${budgetMode} retains the 14:31 return KTX`);
     for (const removedDestination of ["\uC624\uC2DC\uB9AC\uC544", "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00", "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", "\uB86F\uB370\uC6D4\uB4DC"]) {
       assert.equal(day18.blocks.some((block) => block.title.includes(removedDestination)), false, `${budgetMode} removes ${removedDestination} from day 18 blocks`);
     }
+  }
+});
+
+test("every budget exposes both day 18 optional experiences", () => {
+  for (const budgetMode of ["light", "balanced", "comfort"]) {
+    const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
+    const day18 = result.days.find((day) => day.date === "2026-08-18");
+
+    assert.ok(Array.isArray(day18.activities.options), `${budgetMode} must expose day 18 optional experiences`);
+    assert.deepEqual(day18.activities.options.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
   }
 });
 

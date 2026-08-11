@@ -181,10 +181,14 @@ function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
 
   for (const budget of Object.values(tripFixture.budgets)) {
     const reservation = budget.items.find((item) => item.label === "\uC120\uD0DD \uCCB4\uD5D8");
+    const baselineAmount = budget.items
+      .filter((item) => item !== reservation)
+      .reduce((total, item) => total + (Number.parseInt(item.amount, 10) || 0), 0);
 
     assert.ok(reservation, "every budget must include an optional-experience reservation line");
     assert.deepEqual(reservation, { label: "\uC120\uD0DD \uCCB4\uD5D8", amount: "\uC608\uC57D \uC2DC \uD655\uC778", detail: "\uC218\uC601\uB9CC \uC694\uD2B8 \uB610\uB294 \uC13C\uD140 \uC544\uC774\uC2A4\uB9C1\uD06C\uB294 \uAE30\uBCF8 \uC608\uC0B0\uC5D0 \uD3EC\uD568\uD558\uC9C0 \uC54A\uC74C" });
     assert.match(budget.total, /^\uC57D \d+\uB9CC\uC6D0$/, "baseline total remains a fixed numeric plan total");
+    assert.equal(baselineAmount, Number((budget.total.match(/\d+/) || ["0"])[0]), "baseline total must exclude optional experience cost");
   }
 
   for (const plan of Object.values(tripFixture.budgetPlans)) {
