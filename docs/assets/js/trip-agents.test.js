@@ -447,9 +447,11 @@ test("food agent keeps every selected meal separate from five fallbacks in every
   for (const budgetMode of ["light", "balanced", "comfort"]) {
     const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
 
-    for (const [date, fixtureGroups] of Object.entries(itineraryFixture.mealFallbacks || {})) {
+    for (const [date, mealSlots] of Object.entries(itineraryFixture.mealSlots)) {
       const day = result.days.find((candidate) => candidate.date === date);
-      const expectedMeals = Object.keys(fixtureGroups).sort();
+      const expectedMeals = Object.keys(mealSlots)
+        .map((meal) => date === "2026-08-19" && meal === "dinner" ? "takeaway" : meal)
+        .sort();
 
       assert.ok(day, `${budgetMode} must retain ${date}`);
       assert.ok(Array.isArray(day.meals.fallbacks), `${budgetMode} ${date} must expose fallback groups`);

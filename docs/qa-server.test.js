@@ -176,6 +176,15 @@ function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
 
 function testMealFallbackFixtureProvidesFiveActionableAlternatives() {
   assert.ok(tripFixture.mealFallbacks, "fixture must define meal fallbacks");
+  assert.deepEqual(Object.keys(tripFixture.mealFallbacks).sort(), Object.keys(tripFixture.mealSlots).sort(), "meal fallback dates must match meal slot dates");
+  for (const [date, mealSlots] of Object.entries(tripFixture.mealSlots)) {
+    const expectedMeals = Object.keys(mealSlots)
+      .map((meal) => date === "2026-08-19" && meal === "dinner" ? "takeaway" : meal)
+      .sort();
+    const fallbackMeals = Object.keys(tripFixture.mealFallbacks[date] || {}).sort();
+
+    assert.deepEqual(fallbackMeals, expectedMeals, `${date} fallback meals must cover every meal slot`);
+  }
   for (const [date, meals] of Object.entries(tripFixture.mealFallbacks)) {
     for (const [meal, fallbacks] of Object.entries(meals)) {
       assert.equal(fallbacks.length, 5, `${date} ${meal} needs exactly five fallbacks`);
