@@ -7,6 +7,7 @@ const { runTripOrchestrator } = require("./assets/js/trip-agents.js");
 const docsRoot = path.resolve(__dirname);
 const serverSource = fs.readFileSync(path.join(docsRoot, "qa-server.js"), "utf8");
 const appSource = fs.readFileSync(path.join(docsRoot, "assets", "js", "app.js"), "utf8");
+const indexSource = fs.readFileSync(path.join(docsRoot, "index.html"), "utf8");
 const fixtureSource = fs.readFileSync(path.join(docsRoot, "assets", "data", "busan-family-trip-2026.json"), "utf8");
 const tripFixture = JSON.parse(fixtureSource);
 
@@ -404,12 +405,20 @@ function testVisibleTripCopyUsesZimCarryHandoffAndCollection() {
   assert.doesNotMatch(day19MustDo, /부산역 짐 보관|역내 짐 보관/);
 }
 
-function testAppLabelsBreakfastAndRendersRentalLogisticsLinks() {
+function testAppLabelsBreakfastAndTakeawayAndRendersRentalLogisticsLinks() {
   const result = runTripOrchestrator(tripFixture);
   const rentalTransport = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-17");
   const luggageTransport = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
+  const sourceStart = appSource.indexOf("function mealLabel(meal)");
+  const sourceEnd = appSource.indexOf("/**", sourceStart);
+
+  assert.notEqual(sourceStart, -1);
+  assert.notEqual(sourceEnd, -1);
+  const context = {};
+  vm.runInNewContext(appSource.slice(sourceStart, sourceEnd), context, { filename: "app.js" });
 
   assert.match(appSource, /function mealLabel\(meal\)[\s\S]*meal === "breakfast"[\s\S]*Breakfast/);
+  assert.equal(context.mealLabel("takeaway"), "KTX 탑승 전 포장");
   assert.match(appSource, /safeExternalUrl\(provider\.url\)/);
   assert.match(appSource, /safeExternalUrl\(logistics\.url\)/);
   assert.match(appSource, /target="_blank" rel="noopener noreferrer"/);
@@ -520,6 +529,12 @@ function renderFoodFixture(fallbacks) {
   vm.runInNewContext(appSource.slice(sourceStart, sourceEnd), context, { filename: "app.js" });
   context.renderFood();
   return foodList.innerHTML;
+}
+
+function testIndexAndAppExcludeStaleOsiriaCopy() {
+  const visibleSources = [indexSource, appSource].join("\n");
+
+  assert.doesNotMatch(visibleSources, /오시리아/);
 }
 
 function testAppEscapesAndSanitizesFallbackFoodCards() {
@@ -636,7 +651,8 @@ try {
   testAppRendersOptionalExperiencesAndMealFallbacks();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
   testVisibleTripCopyUsesZimCarryHandoffAndCollection();
-  testAppLabelsBreakfastAndRendersRentalLogisticsLinks();
+  testAppLabelsBreakfastAndTakeawayAndRendersRentalLogisticsLinks();
+  testIndexAndAppExcludeStaleOsiriaCopy();
   testAppRendersOpsFromAgentProviderAndLogisticsData();
   testAppEscapesAndSanitizesFallbackFoodCards();
   testAppHandlesMalformedFallbackFoodGroups();

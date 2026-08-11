@@ -31,11 +31,11 @@ test("manager preserves return train with the Busan Station buffer", () => {
   assert.equal(result.warnings.some((warning) => warning.includes("씨메르")), false);
 });
 
-test("manager changes the 18th route when the user requests Gwangalli and Centum", () => {
-  const changed = { ...context, dayFlows: context.dayFlows.map((day) => day.date === "2026-08-18" ? { ...day, intent: "광안리 요트와 센텀 휴식" } : day), activityCandidates: { ...context.activityCandidates, "2026-08-18": [{ title: "광안리 요트", area: "광안리", audience: ["12살"] }, { title: "센텀 스파랜드", area: "센텀", audience: ["가족"] }] } };
+test("manager changes a non-confirmed route when the user requests Gwangalli and Centum", () => {
+  const changed = { ...context, dayFlows: context.dayFlows.map((day) => day.date === "2026-08-16" ? { ...day, intent: "광안리 요트와 센텀 휴식" } : day), activityCandidates: { ...context.activityCandidates, "2026-08-16": [{ title: "광안리 요트", area: "광안리", audience: ["12살"] }, { title: "센텀 스파랜드", area: "센텀", audience: ["가족"] }] } };
   const result = runTripOrchestrator(changed);
-  assert.equal(result.days[2].route.hub, "광안리·센텀");
-  assert.deepEqual(result.days[2].route.sequence, ["파라다이스호텔", "센텀", "광안리"]);
+  assert.equal(result.days[0].route.hub, "광안리·센텀");
+  assert.deepEqual(result.days[0].route.sequence, ["파라다이스호텔", "센텀", "광안리"]);
 });
 
 test("budget mode removes paid blocks and adds a free alternative across the plan", () => {
@@ -75,30 +75,30 @@ test("light budget keeps schedule, route, food, and activity outputs aligned", (
 test("known 송도 and 감천 input propagates to every specialist output", () => {
   const changed = {
     ...context,
-    dayFlows: context.dayFlows.map((day) => day.date === "2026-08-18" ? { ...day, intent: "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74\uC640 \uAC10\uCC9C\uBB38\uD654\uB9C8\uC744" } : day),
-    defaultBlocks: { ...context.defaultBlocks, "2026-08-18": [{ title: "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", type: "paid" }] },
-    mealCandidates: { ...context.mealCandidates, "2026-08-18": ["\uC624\uC2DC\uB9AC\uC544 \uC2DD\uB2F9\uAC00"] },
-    activityCandidates: { ...context.activityCandidates, "2026-08-18": [{ title: "\uAD11\uC548\uB9AC \uC0B0\uCC45\u00B7\uBBFC\uB77D\uC218\uBCC0 \uD734\uC2DD", area: "\uAD11\uC548\uB9AC", audience: ["12\uC0B4", "\uAC00\uC871"], weather: "clear" }] }
+    dayFlows: context.dayFlows.map((day) => day.date === "2026-08-16" ? { ...day, intent: "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74\uC640 \uAC10\uCC9C\uBB38\uD654\uB9C8\uC744" } : day),
+    defaultBlocks: { ...context.defaultBlocks, "2026-08-16": [{ title: "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", type: "paid" }] },
+    mealCandidates: { ...context.mealCandidates, "2026-08-16": ["\uC624\uC2DC\uB9AC\uC544 \uC2DD\uB2F9\uAC00"] },
+    activityCandidates: { ...context.activityCandidates, "2026-08-16": [{ title: "\uAD11\uC548\uB9AC \uC0B0\uCC45\u00B7\uBBFC\uB77D\uC218\uBCC0 \uD734\uC2DD", area: "\uAD11\uC548\uB9AC", audience: ["12\uC0B4", "\uAC00\uC871"], weather: "clear" }] }
   };
   const result = runTripOrchestrator(changed);
-  const day18 = result.days[2];
-  assert.equal(day18.route.hub, "\uC1A1\uB3C4\u00B7\uAC10\uCC9C");
-  assert.deepEqual(day18.route.sequence, ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uAC10\uCC9C\uBB38\uD654\uB9C8\uC744", "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"]);
-  assert.equal(day18.blocks.some((block) => block.title === "\uAC10\uCC9C\uBB38\uD654\uB9C8\uC744"), true);
-  assert.equal(day18.meals.meals[0], "\uC1A1\uB3C4 \uD574\uC0B0\uBB3C");
-  assert.equal(day18.activities.chosen.some((item) => item.title === "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"), true);
+  const day16 = result.days[0];
+  assert.equal(day16.route.hub, "\uC1A1\uB3C4\u00B7\uAC10\uCC9C");
+  assert.deepEqual(day16.route.sequence, ["\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154", "\uAC10\uCC9C\uBB38\uD654\uB9C8\uC744", "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"]);
+  assert.equal(day16.blocks.some((block) => block.title === "\uAC10\uCC9C\uBB38\uD654\uB9C8\uC744"), true);
+  assert.equal(day16.meals.meals[0], "\uC1A1\uB3C4 \uD574\uC0B0\uBB3C");
+  assert.equal(day16.activities.chosen.some((item) => item.title === "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"), true);
 });
 
 test("custom destination overrides paid additions from the previous region", () => {
   const changed = {
     ...context,
     budgetMode: "comfort",
-    budgetPlans: { comfort: { addBlocks: { "2026-08-18": [{ title: "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0\u00B7\uC624\uC2DC\uB9AC\uC544 \uD0DD\uC2DC \uC774\uB3D9", type: "activity" }] }, routes: {}, activities: {} } },
-    dayFlows: context.dayFlows.map((day) => day.date === "2026-08-18" ? { ...day, intent: "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74\uC640 \uAC10\uCC9C\uBB38\uD654\uB9C8\uC744" } : day)
+    budgetPlans: { comfort: { addBlocks: { "2026-08-16": [{ title: "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0\u00B7\uC624\uC2DC\uB9AC\uC544 \uD0DD\uC2DC \uC774\uB3D9", type: "activity" }] }, routes: {}, activities: {} } },
+    dayFlows: context.dayFlows.map((day) => day.date === "2026-08-16" ? { ...day, intent: "\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74\uC640 \uAC10\uCC9C\uBB38\uD654\uB9C8\uC744" } : day)
   };
   const result = runTripOrchestrator(changed);
-  assert.equal(result.days[2].blocks.some((block) => block.title.includes("\uC2A4\uCE74\uC774\uB77C\uC778")), false);
-  assert.equal(result.days[2].route.sequence.includes("\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"), true);
+  assert.equal(result.days[0].blocks.some((block) => block.title.includes("\uC2A4\uCE74\uC774\uB77C\uC778")), false);
+  assert.equal(result.days[0].route.sequence.includes("\uC1A1\uB3C4 \uCF00\uC774\uBE14\uCE74"), true);
 });
 
 test("unknown budget mode falls back to balanced behavior", () => {
@@ -566,6 +566,33 @@ test("custom requests reject confirmed day 18 when no safe travel buffer remains
   assert.equal(day18.openSlot.status, "unavailable");
   assert.equal(day18.openSlot.reason, "no-safe-gap");
   assert.equal(day18.blocks.some((block) => block.type === "custom"), false);
+});
+
+test("day 18 ignores a Songdo intent profile and keeps the confirmed Centum flow", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  input.dayFlows.find((day) => day.date === "2026-08-18").intent = "송도 케이블카와 감천문화마을";
+
+  const result = runTripOrchestrator(input);
+  const day18 = result.days.find((day) => day.date === "2026-08-18");
+  const confirmedBlocks = itineraryFixture.defaultBlocks["2026-08-18"];
+
+  assert.deepEqual(day18.blocks.filter((block) => block.type !== "input"), confirmedBlocks);
+  assert.deepEqual(day18.route.sequence, itineraryFixture.routeSequences["2026-08-18"]);
+});
+
+test("food agent skips a malformed meal slot and returns an actionable warning", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  input.mealSlots["2026-08-19"].takeaway = [null];
+  let result;
+
+  assert.doesNotThrow(() => {
+    result = runTripOrchestrator(input);
+  });
+
+  const day19 = result.days.find((day) => day.date === "2026-08-19");
+  assert.equal(day19.meals.slots.some((slot) => slot.meal === "takeaway"), false);
+  assert.equal(day19.meals.slots.some((slot) => slot.meal === "lunch"), true);
+  assert.equal(result.warnings.some((warning) => warning.includes("2026-08-19 takeaway") && warning.includes("유효한 식사 후보")), true);
 });
 
 test("custom requests add accepted day 19 requests to the map route and reject off-route areas", () => {

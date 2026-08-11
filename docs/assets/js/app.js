@@ -80,7 +80,7 @@ function renderFlowEditor() {
   const context = contextFromTrip();
   document.getElementById("day-flow-editor").innerHTML = context.dayFlows.map((day) => {
     const request = context.customRequests[day.date]?.[0];
-    return `<section class="day-flow-card" aria-labelledby="flow-heading-${day.date}"><header class="day-flow-card__header"><h3 id="flow-heading-${day.date}">${escapeHtml(day.label)} 일정</h3><p>${escapeHtml(day.intent)}</p></header><div class="flow-row"><label for="flow-${day.date}">기본 일정</label><input id="flow-${day.date}" data-flow-date="${day.date}" value="${escapeHtml(day.intent)}" /></div><div class="flow-row flow-row--request"><label for="request-${day.date}">추가 요청</label><input id="request-${day.date}" data-custom-request-date="${day.date}" value="${escapeHtml(request?.title || "")}" placeholder="비어 있는 시간에 넣을 요청 1건" /><label for="request-${day.date}-area">권역</label><input id="request-${day.date}-area" data-custom-request-area="${day.date}" value="${escapeHtml(request?.area || "")}" placeholder="예: 오시리아" /></div></section>`;
+    return `<section class="day-flow-card" aria-labelledby="flow-heading-${day.date}"><header class="day-flow-card__header"><h3 id="flow-heading-${day.date}">${escapeHtml(day.label)} 일정</h3><p>${escapeHtml(day.intent)}</p></header><div class="flow-row"><label for="flow-${day.date}">기본 일정</label><input id="flow-${day.date}" data-flow-date="${day.date}" value="${escapeHtml(day.intent)}" /></div><div class="flow-row flow-row--request"><label for="request-${day.date}">추가 요청</label><input id="request-${day.date}" data-custom-request-date="${day.date}" value="${escapeHtml(request?.title || "")}" placeholder="비어 있는 시간에 넣을 요청 1건" /><label for="request-${day.date}-area">권역</label><input id="request-${day.date}-area" data-custom-request-area="${day.date}" value="${escapeHtml(request?.area || "")}" placeholder="예: 센텀시티" /></div></section>`;
   }).join("");
 }
 
@@ -109,7 +109,7 @@ function saveCustomRequestEditor() {
 }
 
 function mealLabel(meal) {
-  return meal === "breakfast" ? "Breakfast" : meal === "lunch" ? "Lunch" : "Dinner";
+  return meal === "breakfast" ? "Breakfast" : meal === "lunch" ? "Lunch" : meal === "takeaway" ? "KTX 탑승 전 포장" : "Dinner";
 }
 
 /**

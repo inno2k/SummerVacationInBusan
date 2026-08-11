@@ -1,4 +1,5 @@
 const DAY_ORDER = ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"];
+const IMMUTABLE_FLOW_DATES = new Set(["2026-08-18"]);
 const MEAL_LABELS = { breakfast: "아침", lunch: "점심", dinner: "저녁", takeaway: "KTX 탑승 전 포장" };
 const REQUIRED_ROUTE_STOPS = {
   "2026-08-17": ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "청사포", "해운대 렌터카 반납"],
@@ -66,7 +67,7 @@ function requestsForDate(context, date) {
 }
 
 function areasForDay(context, date, intent, plan) {
-  const profile = intentProfile(intent);
+  const profile = intentProfileForDate(date, intent);
   return [
     profile?.hub,
     context.routeHubs?.[date],
@@ -130,11 +131,15 @@ function intentProfile(intent) {
   return null;
 }
 
+function intentProfileForDate(date, intent) {
+  return IMMUTABLE_FLOW_DATES.has(date) ? null : intentProfile(intent);
+}
+
 function scheduleAgent(context) {
   const plan = budgetPlan(context);
   const days = DAY_ORDER.map((date) => {
     const flow = dayByDate(context, date);
-    const profile = intentProfile(flow.intent);
+    const profile = intentProfileForDate(date, flow.intent);
     const removeKeywords = plan.removeKeywords?.[date] || [];
     const blocks = profile ? [...(context.defaultBlocks[date] || [])].filter((block) => ["fixed", "lodging"].includes(block.type)) : [...(context.defaultBlocks[date] || [])].filter((block) => !removeKeywords.some((keyword) => block.title.includes(keyword)));
     if (profile) profile.blocks.forEach((block) => blocks.push(block));
@@ -151,7 +156,7 @@ function routeAgent(context, schedule) {
   const plan = budgetPlan(context);
   const recommendations = schedule.recommendations.map((day) => {
     const intent = day.intent || "";
-    const profile = intentProfile(intent);
+    const profile = intentProfileForDate(day.date, intent);
     const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : context.routeHubs[day.date]);
     const budgetSequence = plan.routes?.[day.date];
     const confirmedSequence = context.routeSequences[day.date] || [];
@@ -228,18 +233,26 @@ function transportAgent(context, route) {
 function foodAgent(context, route) {
   const plan = budgetPlan(context);
   const mode = selectedBudgetMode(context);
+  const warnings = [];
   const recommendations = route.recommendations.map((day) => {
     const slotEntries = Object.entries(context.mealSlots?.[day.date] || {});
     const slots = slotEntries.map(([meal, candidates]) => {
+      const validCandidates = Array.isArray(candidates)
+        ? candidates.filter((candidate) => candidate && typeof candidate === "object" && !Array.isArray(candidate))
+        : [];
+      if (validCandidates.length !== (Array.isArray(candidates) ? candidates.length : 0)) {
+        warnings.push(`${day.date} ${meal} 유효한 식사 후보만 사용합니다.`);
+      }
+      if (validCandidates.length === 0) return null;
       const priorities = plan.mealPriorities?.[day.date]?.[meal] || context.mealPriorities?.[mode]?.[day.date]?.[meal] || [];
       const selectedName = context.mealSelections?.[mode]?.[day.date]?.[meal] || priorities[0];
-      const primary = selectedMeal(candidates, selectedName);
-      const orderedCandidates = orderMealCandidates(candidates, [primary.name, ...priorities]);
+      const primary = selectedMeal(validCandidates, selectedName);
+      const orderedCandidates = orderMealCandidates(validCandidates, [primary.name, ...priorities]);
       return { meal, primary, alternatives: orderedCandidates.filter((candidate) => candidate !== primary), candidates: orderedCandidates };
-    });
+    }).filter(Boolean);
     const meals = slots.length
       ? slots.map((slot) => `${mealLabel(slot.meal)}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
-      : (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);
+      : (intentProfileForDate(day.date, day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);
     const fallbacks = Object.entries(context.mealFallbacks?.[day.date] || {}).map(([meal, candidates]) => ({
       meal,
       label: mealLabel(meal),
@@ -254,13 +267,13 @@ function foodAgent(context, route) {
       sourceHint: context.videoSources.filter((source) => source.days.includes(day.date)).slice(0, 2).map((source) => source.id)
     };
   });
-  return { agentId: "food", recommendations, constraints: ["영상 추천은 영업/예약 여부 재확인"], warnings: [] };
+  return { agentId: "food", recommendations, constraints: ["영상 추천은 영업/예약 여부 재확인"], warnings };
 }
 
 function activityAgent(context, route) {
   const plan = budgetPlan(context);
   const recommendations = route.recommendations.map((day) => {
-    const profile = intentProfile(day.intent);
+    const profile = intentProfileForDate(day.date, day.intent);
     const candidates = [...(context.activityCandidates[day.date] || []), ...(profile?.activities || [])];
     const preferredTitles = profile?.activities?.map((item) => item.title) || plan.activities?.[day.date];
     const chosen = preferredTitles ? candidates.filter((item) => preferredTitles.includes(item.title)) : day.hub === "광안리·센텀" ? candidates.filter((item) => ["광안리", "센텀"].includes(item.area)) : day.date === "2026-08-18" ? candidates.filter((item) => item.audience.includes("12살")) : candidates;
