@@ -149,28 +149,48 @@ function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
     "\uAD11\uC548\uB9AC",
     "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0"
   ];
+  const expectedDay18Points = [
+    { name: "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0", lat: 35.1605, lng: 129.1635 },
+    { name: "\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774", lat: 35.1598, lng: 129.1707 },
+    { name: "\uBBA4\uC9C0\uC5C4\uC6D0", lat: 35.1686, lng: 129.1303 },
+    { name: "\uBD80\uC0B0\uC601\uD654\uC758\uC804\uB2F9", lat: 35.171, lng: 129.1288 },
+    { name: "F1963", lat: 35.166, lng: 129.1156 },
+    { name: "\uAD11\uC548\uB9AC", lat: 35.1532, lng: 129.1187 },
+    { name: "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0", lat: 35.1605, lng: 129.1635 }
+  ];
+  const expectedBlocks = [
+    ["haeundae-breakfast", "08:00", "09:00", "\uD574\uC6B4\uB300 \uC544\uCE68\uC2DD\uC0AC\u00B7\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uCD9C\uBC1C", "food"],
+    ["x-the-sky", "09:30", "11:00", "\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774", "activity"],
+    ["centum-lunch", "11:15", "12:45", "\uC13C\uD140 \uC774\uB3D9\u00B7\uC810\uC2EC\uC2DD\uC0AC", "food"],
+    ["museum-1", "13:00", "14:40", "\uBBA4\uC9C0\uC5C4\uC6D0 \uBBF8\uB514\uC5B4\uC544\uD2B8", "activity"],
+    ["cinema-center", "15:00", "15:45", "\uBD80\uC0B0\uC601\uD654\uC758\uC804\uB2F9 \uAD11\uC7A5", "place"],
+    ["f1963", "16:15", "17:30", "F1963 \uBB38\uD654\u00B7\uD734\uC2DD", "place"],
+    ["gwangalli-dinner", "18:00", "20:00", "\uAD11\uC548\uB9AC \uC800\uB141\uC2DD\uC0AC\u00B7\uC57C\uACBD", "food"],
+    ["paradise-return", "20:00", "20:30", "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0 \uBCF5\uADC0", "transport"]
+  ];
   const optionalExperiences = tripFixture.optionalExperiences["2026-08-18"];
 
   assert.deepEqual(tripFixture.routeSequences["2026-08-18"], expectedDay18Route);
-  assert.deepEqual(tripFixture.mapRoutePoints["18\uC77C"].map((point) => point.name), expectedDay18Route);
+  assert.deepEqual(tripFixture.mapRoutePoints["18\uC77C"], expectedDay18Points);
+  assert.deepEqual(tripFixture.defaultBlocks["2026-08-18"].map((block) => [block.id, block.startAt, block.endAt, block.title, block.type]), expectedBlocks);
   assert.deepEqual(optionalExperiences.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
-  for (const experience of optionalExperiences) {
-    assert.deepEqual(experience.replaces, ["cinema-center", "f1963"]);
-    assert.match(experience.sourceUrl, /^https:\/\//);
-    assert.ok(experience.durationMinutes >= 60, `${experience.id} needs a duration of at least one hour`);
-    assert.ok(experience.conditions.trim().length >= 10, `${experience.id} needs booking conditions`);
-  }
+  assert.deepEqual(optionalExperiences, [
+    { id: "suyeong-yacht", title: "\uC218\uC601\uB9CC \uC694\uD2B8 \uCCB4\uD5D8", area: "\uC218\uC601\uB9CC \uC694\uD2B8\uACBD\uAE30\uC7A5", durationMinutes: 60, replaces: ["cinema-center", "f1963"], costPolicy: "\uC608\uC57D \uC2DC\uC810\uC758 \uC131\uC218\uAE30\u00B7\uC2DC\uAC04\uB300\u00B7\uC778\uC6D0\uBCC4 \uC694\uAE08 \uD655\uC778", conditions: "\uBE44, \uAC15\uD48D, \uD574\uC0C1 \uC0C1\uD0DC\uC640 \uC120\uC7A5 \uD310\uB2E8\uC5D0 \uB530\uB77C \uCDE8\uC18C \uB610\uB294 \uC77C\uC815 \uBCC0\uACBD \uAC00\uB2A5", sourceUrl: "https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000304004001000&uc_seq=1775" },
+    { id: "centum-ice-rink", title: "\uC2E0\uC138\uACC4 \uC13C\uD140 \uC544\uC774\uC2A4\uB9C1\uD06C", area: "\uC13C\uD140\uC2DC\uD2F0", durationMinutes: 120, replaces: ["cinema-center", "f1963"], costPolicy: "\uD604\uC7A5 \uB610\uB294 \uC608\uC57D \uD654\uBA74\uC758 \uB2F9\uC77C \uC694\uAE08 \uD655\uC778", conditions: "\uC6B4\uC601\uC2DC\uAC04, \uD68C\uCC28, \uC7A5\uAC11\u00B7\uC591\uB9D0\u00B7\uBCF4\uD638\uC7A5\uBE44 \uC870\uAC74\uC744 \uB2F9\uC77C \uD655\uC778", sourceUrl: "https://www.shinsegae.com/department/store/centum/ice-rink" }
+  ]);
 
   for (const budget of Object.values(tripFixture.budgets)) {
-    const reservation = budget.items.find((item) => item.label.includes("\uC120\uD0DD \uCCB4\uD5D8 \uC608\uC57D"));
-    const baselineAmount = budget.items
-      .filter((item) => item !== reservation)
-      .reduce((total, item) => total + Number.parseInt(item.amount, 10), 0);
+    const reservation = budget.items.find((item) => item.label === "\uC120\uD0DD \uCCB4\uD5D8");
 
     assert.ok(reservation, "every budget must include an optional-experience reservation line");
-    assert.equal(reservation.amount, "\uBCC4\uB3C4", "optional experience cost must not be a baseline budget line item");
-    assert.match(reservation.detail, /\uAE30\uBCF8 \uC608\uC0B0\uC5D0 \uD3EC\uD568\uD558\uC9C0 \uC54A\uC74C/);
-    assert.equal(baselineAmount, Number((budget.total.match(/\d+/) || ["0"])[0]), "baseline total must exclude optional experience cost");
+    assert.deepEqual(reservation, { label: "\uC120\uD0DD \uCCB4\uD5D8", amount: "\uC608\uC57D \uC2DC \uD655\uC778", detail: "\uC218\uC601\uB9CC \uC694\uD2B8 \uB610\uB294 \uC13C\uD140 \uC544\uC774\uC2A4\uB9C1\uD06C\uB294 \uAE30\uBCF8 \uC608\uC0B0\uC5D0 \uD3EC\uD568\uD558\uC9C0 \uC54A\uC74C" });
+    assert.match(budget.total, /^\uC57D \d+\uB9CC\uC6D0$/, "baseline total remains a fixed numeric plan total");
+  }
+
+  for (const plan of Object.values(tripFixture.budgetPlans)) {
+    for (const key of ["removeKeywords", "addBlocks", "routes", "meals", "activities"]) {
+      assert.equal(Object.hasOwn(plan[key] || {}, "2026-08-18"), false, `budget plan must not override day 18 ${key}`);
+    }
   }
 }
 

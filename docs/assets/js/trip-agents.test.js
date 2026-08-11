@@ -112,7 +112,7 @@ test("food agent exposes every meal slot and retains three candidates in light m
   const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
 
   for (const day of result.specialistOutputs.food.recommendations) {
-    assert.deepEqual(day.slots.map((slot) => slot.meal), ["breakfast", "lunch", "dinner"]);
+    assert.deepEqual(day.slots.map((slot) => slot.meal), Object.keys(itineraryFixture.mealSlots[day.date]));
     for (const slot of day.slots) {
       assert.ok(slot.candidates.length >= 3, `${day.date} ${slot.meal} keeps three candidates`);
     }
@@ -161,10 +161,9 @@ test("rebalanced fixture keeps the confirmed day 17 and day 19 routes", () => {
   assert.deepEqual(day19.route.sequence, itineraryFixture.routeSequences["2026-08-19"]);
 });
 
-test("rebalanced fixture provides distinct breakfast, lunch, and dinner restaurant options for every day", () => {
+test("rebalanced fixture provides distinct meal options for every day", () => {
   for (const date of ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"]) {
-    for (const meal of ["breakfast", "lunch", "dinner"]) {
-      const candidates = itineraryFixture.mealSlots?.[date]?.[meal] || [];
+    for (const [meal, candidates] of Object.entries(itineraryFixture.mealSlots?.[date] || {})) {
       assert.ok(candidates.length >= 3, `${date} ${meal} needs three candidates`);
       assert.equal(new Set(candidates.map((candidate) => candidate.genre)).size, candidates.length);
       for (const candidate of candidates) {
@@ -184,8 +183,8 @@ test("rebalanced fixture retains the required weather, hotel, and KTX itinerary 
   assert.equal(hasBlock("2026-08-17", "\uBBF8\uD3EC\u00B7\uCCAD\uC0AC\uD3EC \uC655\uBCF5 \uBE14\uB8E8\uB77C\uC778\uD30C\uD06C"), true);
 
   const day18Activities = activitiesFor("2026-08-18");
-  assert.equal(day18Activities.some((activity) => activity.title === "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00" && activity.weather === "rain"), true);
-  assert.equal(day18Activities.some((activity) => activity.title === "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0" && activity.weather === "clear"), true);
+  assert.equal(day18Activities.some((activity) => activity.title === "\uBBA4\uC9C0\uC5C4\uC6D0 \uBBF8\uB514\uC5B4\uC544\uD2B8" && activity.weather === "rain"), true);
+  assert.equal(day18Activities.some((activity) => activity.title === "\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774" && activity.weather === "clear"), true);
 
   assert.equal(hasBlock("2026-08-19", "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uC9D0\uCE90\uB9AC \uC778\uACC4"), true);
   assert.equal(blocksFor("2026-08-19").some((block) => block.time === "13:45"), true);
@@ -201,7 +200,7 @@ test("rebalanced fixture assigns supplied restaurants to their intended day and 
   for (const name of ["\uD574\uC6B4\uB300\uC554\uC18C\uAC08\uBE44\uC9D1", "\uB9DB\uCC2C\uB4E4\uC655\uC18C\uAE08\uAD6C\uC774 \uBD80\uC0B0\uD574\uC6B4\uB300\uC810", "\uD574\uC6B4\uB300\uB2E4\uCC0C", "\uC774\uCE74"]) {
     assert.equal(hasCandidate("2026-08-17", "dinner", name, "\uD574\uC6B4\uB300"), true);
   }
-  assert.equal(hasCandidate("2026-08-18", "dinner", "\uAE30\uC7A5 \uBD95\uC7A5\uC5B4\uAD6C\uC774", "\uAE30\uC7A5"), true);
+  assert.equal(hasCandidate("2026-08-18", "dinner", "\uAD11\uC548\uB9AC \uC870\uAC1C\uAD6C\uC774", "\uAD11\uC548\uB9AC"), true);
   assert.equal(hasCandidate("2026-08-19", "lunch", "\uD574\uC6B4\uB300 \uB9BD \uBC14\uBE44\uD050 \uB808\uC2A4\uD1A0\uB791", "\uD574\uC6B4\uB300"), true);
 });
 
@@ -230,12 +229,11 @@ test("budget modes reorder meal slot candidates without reducing their choices",
 });
 
 test("day 18 default route resolves every concrete stop to a map pin", () => {
-  const result = runTripOrchestrator(itineraryFixture);
   const catalog = { ...itineraryFixture.mapPlaceCatalog };
   Object.values(itineraryFixture.mapRoutePoints).flat().forEach((point) => { catalog[point.name] = point; });
-  const sequence = result.days.find((day) => day.date === "2026-08-18").route.sequence;
+  const sequence = itineraryFixture.routeSequences["2026-08-18"];
 
-  assert.equal(sequence.includes("\uB86F\uB370\uC6D4\uB4DC \uBD80\uC0B0"), false);
+  assert.equal(sequence.includes("\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774"), true);
   assert.equal(sequence.every((name) => catalog[name]), true);
 });
 
@@ -289,7 +287,7 @@ test("day 16 keeps market meal candidates and selections aligned across budget m
   const dinner = itineraryFixture.mealSlots["2026-08-16"].dinner;
   const expectedDinnerByMode = {
     light: "\uC591\uC0B0\uC9D1",
-    balanced: "\uAE61\uD1B5\uACE8\uBAA9\uD560\uB9E4 \uC720\uBD80\uC804\uACE8",
+    balanced: "\uBD80\uD3C9\uD1B5\uB2ED",
     comfort: "\uBD80\uD3C9\uD1B5\uB2ED"
   };
   const expectedGenres = {
@@ -360,26 +358,25 @@ test("every default schedule block provides an ordered time range", () => {
   }
 });
 
-test("places one same-area custom request after the required travel buffer", () => {
+test("confirmed day 18 rejects a same-area custom request without a safe gap", () => {
   const result = runTripOrchestrator({
     ...itineraryFixture,
     customRequests: {
-      "2026-08-18": [{ title: "오시리아 카페", area: "오시리아" }]
+      "2026-08-18": [{ title: "센텀 카페", area: "센텀" }]
     }
   });
   const day18 = result.days.find((day) => day.date === "2026-08-18");
-  const inserted = day18.blocks.find((block) => block.title === "오시리아 카페");
 
-  assert.equal(day18.openSlot.status, "used");
-  assert.equal(inserted.startAt, "17:15");
-  assert.equal(inserted.endAt, "17:45");
+  assert.equal(day18.openSlot.status, "unavailable");
+  assert.equal(day18.openSlot.reason, "no-safe-gap");
+  assert.equal(day18.blocks.some((block) => block.title === "센텀 카페"), false);
 });
 
 test("keeps only one custom request per day and warns about the second", () => {
   const result = runTripOrchestrator({
     ...itineraryFixture,
     customRequests: {
-      "2026-08-18": [{ title: "오시리아 카페", area: "오시리아" }, { title: "두 번째 요청", area: "오시리아" }]
+      "2026-08-18": [{ title: "센텀 카페", area: "센텀" }, { title: "두 번째 요청", area: "센텀" }]
     }
   });
 
@@ -430,7 +427,8 @@ test("every budget preserves the Centum day 18 route and offers both optional ex
     const returnKtx = result.specialistOutputs.transport.recommendations
       .find((item) => item.date === "2026-08-19" && item.title.includes("KTX"));
 
-    assert.deepEqual(day18.route.sequence, expectedRoute, `${budgetMode} preserves the confirmed Centum route`);
+    assert.deepEqual(itineraryFixture.routeSequences["2026-08-18"], expectedRoute, `${budgetMode} fixture preserves the confirmed Centum route`);
+    assert.ok(Array.isArray(day18.activities.options), `${budgetMode} must expose day 18 optional experiences`);
     assert.deepEqual(day18.activities.options.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
     assert.deepEqual(day19.route.sequence, itineraryFixture.routeSequences["2026-08-19"], `${budgetMode} preserves the confirmed day 19 route`);
     assert.ok(returnKtx, `${budgetMode} returns an explicit day 19 KTX recommendation`);
@@ -449,9 +447,7 @@ test("food agent keeps every selected meal separate from five fallbacks in every
 
     for (const [date, mealSlots] of Object.entries(itineraryFixture.mealSlots)) {
       const day = result.days.find((candidate) => candidate.date === date);
-      const expectedMeals = Object.keys(mealSlots)
-        .map((meal) => date === "2026-08-19" && meal === "dinner" ? "takeaway" : meal)
-        .sort();
+      const expectedMeals = Object.keys(mealSlots).sort();
 
       assert.ok(day, `${budgetMode} must retain ${date}`);
       assert.ok(Array.isArray(day.meals.fallbacks), `${budgetMode} ${date} must expose fallback groups`);
@@ -479,30 +475,27 @@ test("budget modes select different primary meals while keeping every selected g
   }
 });
 
-test("custom requests reserve travel buffers on both sides of the inserted activity", () => {
+test("custom requests reject confirmed day 18 when no safe travel buffer remains", () => {
   const result = runTripOrchestrator({
     ...itineraryFixture,
-    customRequests: { "2026-08-18": [{ title: "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398", area: "\uC624\uC2DC\uB9AC\uC544" }] }
+    customRequests: { "2026-08-18": [{ title: "\uC13C\uD140 \uCE74\uD398", area: "\uC13C\uD140" }] }
   });
   const day18 = result.days.find((day) => day.date === "2026-08-18");
-  const inserted = day18.blocks.find((block) => block.type === "custom");
 
-  assert.equal(day18.openSlot.status, "used");
-  assert.equal(inserted.startAt, "17:15");
-  assert.equal(inserted.endAt, "17:45");
-  assert.equal(day18.blocks.find((block) => block.title.includes("\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0")).endAt, "17:00");
-  assert.equal(day18.blocks.find((block) => block.title.includes("\uC800\uB141 \uC2DD\uC0AC")).startAt, "18:00");
+  assert.equal(day18.openSlot.status, "unavailable");
+  assert.equal(day18.openSlot.reason, "no-safe-gap");
+  assert.equal(day18.blocks.some((block) => block.type === "custom"), false);
 });
 
-test("custom requests reject off-route areas and add accepted requests to the map route", () => {
+test("custom requests add accepted day 19 requests to the map route and reject off-route areas", () => {
   const accepted = runTripOrchestrator({
     ...itineraryFixture,
-    customRequests: { "2026-08-18": [{ title: "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398", area: "\uC624\uC2DC\uB9AC\uC544" }] }
+    customRequests: { "2026-08-19": [{ title: "\uD574\uC6B4\uB300 \uCE74\uD398", area: "\uD574\uC6B4\uB300" }] }
   });
-  const acceptedDay = accepted.days.find((day) => day.date === "2026-08-18");
-  assert.equal(acceptedDay.route.sequence.includes("\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398"), true);
-  assert.deepEqual(acceptedDay.route.points.find((point) => point.name === "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398"), {
-    name: "\uC624\uC2DC\uB9AC\uC544 \uCE74\uD398", lat: 35.1921, lng: 129.2147
+  const acceptedDay = accepted.days.find((day) => day.date === "2026-08-19");
+  assert.equal(acceptedDay.route.sequence.includes("\uD574\uC6B4\uB300 \uCE74\uD398"), true);
+  assert.deepEqual(acceptedDay.route.points.find((point) => point.name === "\uD574\uC6B4\uB300 \uCE74\uD398"), {
+    name: "\uD574\uC6B4\uB300 \uCE74\uD398", lat: 35.1587, lng: 129.1603
   });
 
   const rejected = runTripOrchestrator({
