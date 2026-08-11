@@ -355,6 +355,8 @@ function testAppRendersOptionalExperiencesAndMealFallbacks() {
   assert.match(appSource, /당일 선택 체험/);
   assert.match(appSource, /renderOptionalExperiences\(day\)/);
   assert.match(appSource, /safeExternalUrl\(option\.sourceUrl\)/);
+  assert.match(appSource, /option\.title/);
+  assert.match(appSource, /option\.area/);
   assert.match(appSource, /option\.durationMinutes/);
   assert.match(appSource, /option\.replaces/);
   assert.match(appSource, /option\.conditions/);
@@ -368,6 +370,9 @@ function testAppRendersOptionalExperiencesAndMealFallbacks() {
   assert.match(fallbackRenderer, /candidate\.genre/);
   assert.match(fallbackRenderer, /candidate\.waitRisk/);
   assert.match(fallbackRenderer, /candidate\.note/);
+  assert.match(fallbackRenderer, /fallback\.selected/);
+  assert.match(fallbackRenderer, /day\.date/);
+  assert.match(fallbackRenderer, /fallback\.label/);
 }
 
 function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
