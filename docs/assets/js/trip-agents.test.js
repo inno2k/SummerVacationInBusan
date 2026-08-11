@@ -509,6 +509,30 @@ test("validation handles malformed meal fallback candidates", () => {
   assert.equal(result.warnings.some((warning) => warning.includes("2026-08-18 lunch 대체 식당")), true);
 });
 
+test("validation handles malformed optional experience entries", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  input.optionalExperiences["2026-08-18"] = [null];
+  let result;
+
+  assert.doesNotThrow(() => {
+    result = runTripOrchestrator(input);
+  });
+
+  assert.equal(result.warnings.some((warning) => warning.includes("2026-08-18 선택 체험")), true);
+});
+
+test("validation handles malformed optional experience containers", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  input.optionalExperiences["2026-08-18"] = {};
+  let result;
+
+  assert.doesNotThrow(() => {
+    result = runTripOrchestrator(input);
+  });
+
+  assert.equal(result.warnings.some((warning) => warning.includes("2026-08-18 선택 체험")), true);
+});
+
 test("validation warns when an optional experience has no replacement blocks", () => {
   const input = JSON.parse(JSON.stringify(itineraryFixture));
   input.optionalExperiences["2026-08-18"][0].replaces = [];

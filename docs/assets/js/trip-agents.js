@@ -264,7 +264,9 @@ function activityAgent(context, route) {
     const candidates = [...(context.activityCandidates[day.date] || []), ...(profile?.activities || [])];
     const preferredTitles = profile?.activities?.map((item) => item.title) || plan.activities?.[day.date];
     const chosen = preferredTitles ? candidates.filter((item) => preferredTitles.includes(item.title)) : day.hub === "광안리·센텀" ? candidates.filter((item) => ["광안리", "센텀"].includes(item.area)) : day.date === "2026-08-18" ? candidates.filter((item) => item.audience.includes("12살")) : candidates;
-    return { date: day.date, chosen: chosen.slice(0, 4), options: context.optionalExperiences?.[day.date] || [], rainyAlternative: candidates.find((item) => item.weather === "rain") };
+    const optionCandidates = context.optionalExperiences?.[day.date];
+    const options = Array.isArray(optionCandidates) ? optionCandidates.filter((option) => option && typeof option === "object" && !Array.isArray(option)) : [];
+    return { date: day.date, chosen: chosen.slice(0, 4), options, rainyAlternative: candidates.find((item) => item.weather === "rain") };
   });
   return { agentId: "activity", recommendations, constraints: ["18일 기본 동선은 센텀·수영·광안리 권역을 유지하고, 선택 체험은 별도 옵션으로 분리합니다."], warnings: [] };
 }
@@ -335,8 +337,16 @@ function validateMealAndRequests(context, outputs) {
     });
   });
   Object.entries(context.optionalExperiences || {}).forEach(([date, options]) => {
+    if (!Array.isArray(options)) {
+      warnings.push(`${date} 선택 체험 목록은 배열이어야 합니다.`);
+      return;
+    }
     const defaultBlockIds = new Set((context.defaultBlocks?.[date] || []).map((block) => block.id).filter(Boolean));
-    (options || []).forEach((option) => {
+    options.forEach((option) => {
+      if (!option || typeof option !== "object" || Array.isArray(option)) {
+        warnings.push(`${date} 선택 체험 항목은 객체여야 합니다.`);
+        return;
+      }
       const replacementIds = option.replaces || (option.replacementId ? [option.replacementId] : []);
       if (!Array.isArray(option.replaces) || option.replaces.length !== 2) warnings.push(`${date} 선택 체험 ${option.id}의 대체 블록은 정확히 2개가 필요합니다.`);
       replacementIds.forEach((replacementId) => {
