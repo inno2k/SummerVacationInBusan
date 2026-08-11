@@ -1,8 +1,19 @@
 const DAY_ORDER = ["2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19"];
-const MEAL_LABELS = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
+const MEAL_LABELS = { breakfast: "아침", lunch: "점심", dinner: "저녁", takeaway: "KTX 탑승 전 포장" };
+const REQUIRED_ROUTE_STOPS = {
+  "2026-08-17": ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "청사포", "해운대 렌터카 반납"],
+  "2026-08-18": ["파라다이스호텔 부산", "부산엑스더스카이", "뮤지엄원", "부산영화의전당", "F1963", "광안리"]
+};
 
 function mealLabel(meal) {
   return MEAL_LABELS[meal] || meal;
+}
+
+function selectRouteSequence(date, budgetSequence, confirmedSequence) {
+  const requiredStops = REQUIRED_ROUTE_STOPS[date] || [];
+  const budgetHasCore = requiredStops.every((stop) => budgetSequence?.includes(stop));
+  const confirmedHasCore = requiredStops.every((stop) => confirmedSequence.includes(stop));
+  return budgetSequence && (!confirmedHasCore || budgetHasCore) ? budgetSequence : confirmedSequence;
 }
 
 function clone(value) {
@@ -143,10 +154,8 @@ function routeAgent(context, schedule) {
     const customHub = profile?.hub || (intent.includes("광안리") || intent.includes("센텀") ? "광안리·센텀" : context.routeHubs[day.date]);
     const budgetSequence = plan.routes?.[day.date];
     const confirmedSequence = context.routeSequences[day.date] || [];
-    const hasDay17CoreRoute = ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "청사포", "해운대 렌터카 반납"].every((stop) => budgetSequence?.includes(stop));
-    const hasConfirmedDay17CoreRoute = ["SK렌터카 부산역지점", "해동용궁사", "미포주차장", "청사포", "해운대 렌터카 반납"].every((stop) => confirmedSequence.includes(stop));
-    const selectedSequence = day.date === "2026-08-17" && budgetSequence && !hasDay17CoreRoute && hasConfirmedDay17CoreRoute ? confirmedSequence : budgetSequence;
-    const customSequence = profile?.sequence || (customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : selectedSequence || context.routeSequences[day.date] || []);
+    const selectedSequence = selectRouteSequence(day.date, budgetSequence, confirmedSequence);
+    const customSequence = profile?.sequence || (selectedSequence.length ? selectedSequence : customHub === "광안리·센텀" ? ["파라다이스호텔", "센텀", "광안리"] : []);
     const request = day.blocks.find((block) => block.type === "custom");
     if (request) {
       const customPoint = mapPointForRequest(context, request);
@@ -230,10 +239,17 @@ function foodAgent(context, route) {
     const meals = slots.length
       ? slots.map((slot) => `${mealLabel(slot.meal)}: ${slot.candidates[0].name} 외 ${slot.candidates.length - 1}곳`)
       : (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3);
+    const fallbacks = Object.entries(context.mealFallbacks?.[day.date] || {}).map(([meal, candidates]) => ({
+      meal,
+      label: mealLabel(meal),
+      selected: slots.find((slot) => slot.meal === meal)?.primary || null,
+      candidates
+    }));
     return {
       date: day.date,
       slots,
       meals,
+      fallbacks,
       sourceHint: context.videoSources.filter((source) => source.days.includes(day.date)).slice(0, 2).map((source) => source.id)
     };
   });
@@ -247,13 +263,17 @@ function activityAgent(context, route) {
     const candidates = [...(context.activityCandidates[day.date] || []), ...(profile?.activities || [])];
     const preferredTitles = profile?.activities?.map((item) => item.title) || plan.activities?.[day.date];
     const chosen = preferredTitles ? candidates.filter((item) => preferredTitles.includes(item.title)) : day.hub === "광안리·센텀" ? candidates.filter((item) => ["광안리", "센텀"].includes(item.area)) : day.date === "2026-08-18" ? candidates.filter((item) => item.audience.includes("12살")) : candidates;
-    return { date: day.date, chosen: chosen.slice(0, 4), rainyAlternative: candidates.find((item) => item.weather === "rain") };
+    return { date: day.date, chosen: chosen.slice(0, 4), options: context.optionalExperiences?.[day.date] || [], rainyAlternative: candidates.find((item) => item.weather === "rain") };
   });
-  return { agentId: "activity", recommendations, constraints: ["18일은 해운대 반복을 피하고 오시리아 우선"], warnings: [] };
+  return { agentId: "activity", recommendations, constraints: ["18일 기본 동선은 센텀·수영·광안리 권역을 유지하고, 선택 체험은 별도 옵션으로 분리합니다."], warnings: [] };
 }
 
 function validate(context, outputs) {
   const warnings = [];
+  const contextText = JSON.stringify(context);
+  ["오시리아", "국립부산과학관", "스카이라인 루지", "롯데월드"].forEach((destination) => {
+    if (contextText.includes(destination)) warnings.push(`일정 컨텍스트에 제외 대상 ${destination}이 포함되어 있습니다.`);
+  });
   const day17 = outputs.schedule.recommendations.find((day) => day.date === "2026-08-17");
   const day18 = outputs.activity.recommendations.find((day) => day.date === "2026-08-18");
   if (!day17?.intent?.includes("해운대") && !day17?.intent?.includes("물놀이")) {
@@ -288,6 +308,24 @@ function validateMealAndRequests(context, outputs) {
   const warnings = [];
   const primaryMeals = outputs.food.recommendations.flatMap((day) => day.slots.map((slot) => slot.primary).filter(Boolean));
   if (new Set(primaryMeals.map((meal) => meal.genre)).size !== primaryMeals.length) warnings.push("대표 식사 장르가 전 일정에서 중복됩니다.");
+  Object.entries(context.mealFallbacks || {}).forEach(([date, mealFallbacks]) => {
+    Object.entries(mealFallbacks || {}).forEach(([meal, candidates]) => {
+      const hasFiveUniqueHttpsCandidates = Array.isArray(candidates)
+        && candidates.length === 5
+        && new Set(candidates.map((candidate) => candidate.name)).size === 5
+        && candidates.every((candidate) => /^https:\/\//.test(candidate.url || ""));
+      if (!hasFiveUniqueHttpsCandidates) warnings.push(`${date} ${meal} 대체 식당은 고유한 HTTPS 후보 5곳이 필요합니다.`);
+    });
+  });
+  Object.entries(context.optionalExperiences || {}).forEach(([date, options]) => {
+    const defaultBlockIds = new Set((context.defaultBlocks?.[date] || []).map((block) => block.id).filter(Boolean));
+    (options || []).forEach((option) => {
+      const replacementIds = option.replaces || (option.replacementId ? [option.replacementId] : []);
+      replacementIds.forEach((replacementId) => {
+        if (!defaultBlockIds.has(replacementId)) warnings.push(`${date} 선택 체험 ${option.id}의 대체 블록 ${replacementId}를 찾을 수 없습니다.`);
+      });
+    });
+  });
   DAY_ORDER.forEach((date) => {
     const requests = requestsForDate(context, date);
     const day = outputs.schedule.recommendations.find((item) => item.date === date);

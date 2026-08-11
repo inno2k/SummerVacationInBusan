@@ -515,13 +515,13 @@ test("custom requests add accepted day 19 requests to the map route and reject o
   assert.equal(rejectedDay.route.sequence.includes("\uC1A1\uB3C4 \uC0B0\uCC45"), false);
 });
 
-test("food agent labels breakfast summaries without hardcoded lunch and dinner labels", () => {
+test("food agent labels meal summaries in Korean", () => {
   const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "light" });
   const day16 = result.specialistOutputs.food.recommendations.find((day) => day.date === "2026-08-16");
 
-  assert.match(day16.meals[0], /^Breakfast:/);
-  assert.match(day16.meals[1], /^Lunch:/);
-  assert.match(day16.meals[2], /^Dinner:/);
+  assert.match(day16.meals[0], /^아침:/);
+  assert.match(day16.meals[1], /^점심:/);
+  assert.match(day16.meals[2], /^저녁:/);
 });
 
 test("transport agent exposes rental providers and Zim Carry logistics from the fixture", () => {
