@@ -11,9 +11,10 @@ function mealLabel(meal) {
 
 function selectRouteSequence(date, budgetSequence, confirmedSequence) {
   const requiredStops = REQUIRED_ROUTE_STOPS[date] || [];
-  const budgetHasCore = requiredStops.every((stop) => budgetSequence?.includes(stop));
   const confirmedHasCore = requiredStops.every((stop) => confirmedSequence.includes(stop));
-  return budgetSequence && (!confirmedHasCore || budgetHasCore) ? budgetSequence : confirmedSequence;
+  const budgetMatchesConfirmed = budgetSequence?.length === confirmedSequence.length
+    && confirmedSequence.every((stop, index) => stop === budgetSequence[index]);
+  return budgetSequence && (!confirmedHasCore || budgetMatchesConfirmed) ? budgetSequence : confirmedSequence;
 }
 
 function clone(value) {
@@ -317,10 +318,16 @@ function validateMealAndRequests(context, outputs) {
       if (!hasFiveUniqueHttpsCandidates) warnings.push(`${date} ${meal} 대체 식당은 고유한 HTTPS 후보 5곳이 필요합니다.`);
     });
   });
+  Object.entries(context.mealSlots || {}).forEach(([date, mealSlots]) => {
+    Object.keys(mealSlots || {}).forEach((meal) => {
+      if (!Object.hasOwn(context.mealFallbacks?.[date] || {}, meal)) warnings.push(`${date} ${meal} 대체 식당 그룹이 필요합니다.`);
+    });
+  });
   Object.entries(context.optionalExperiences || {}).forEach(([date, options]) => {
     const defaultBlockIds = new Set((context.defaultBlocks?.[date] || []).map((block) => block.id).filter(Boolean));
     (options || []).forEach((option) => {
       const replacementIds = option.replaces || (option.replacementId ? [option.replacementId] : []);
+      if (!Array.isArray(option.replaces) || option.replaces.length !== 2) warnings.push(`${date} 선택 체험 ${option.id}의 대체 블록은 정확히 2개가 필요합니다.`);
       replacementIds.forEach((replacementId) => {
         if (!defaultBlockIds.has(replacementId)) warnings.push(`${date} 선택 체험 ${option.id}의 대체 블록 ${replacementId}를 찾을 수 없습니다.`);
       });

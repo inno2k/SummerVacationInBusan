@@ -437,6 +437,25 @@ test("every budget preserves the confirmed Centum day 18 route", () => {
   }
 });
 
+test("protected routes reject reordered budget overrides", () => {
+  const confirmedRoute = itineraryFixture.routeSequences["2026-08-18"];
+  const reorderedRoute = [...confirmedRoute];
+  [reorderedRoute[2], reorderedRoute[3]] = [reorderedRoute[3], reorderedRoute[2]];
+  const result = runTripOrchestrator({
+    ...itineraryFixture,
+    budgetMode: "light",
+    budgetPlans: {
+      ...itineraryFixture.budgetPlans,
+      light: {
+        ...itineraryFixture.budgetPlans.light,
+        routes: { ...itineraryFixture.budgetPlans.light.routes, "2026-08-18": reorderedRoute }
+      }
+    }
+  });
+
+  assert.deepEqual(result.days.find((day) => day.date === "2026-08-18").route.sequence, confirmedRoute);
+});
+
 test("every budget exposes both day 18 optional experiences", () => {
   for (const budgetMode of ["light", "balanced", "comfort"]) {
     const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
@@ -467,6 +486,24 @@ test("food agent keeps every selected meal separate from five fallbacks in every
       }
     }
   }
+});
+
+test("validation warns when an active meal slot has no fallback group", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  delete input.mealFallbacks["2026-08-18"].lunch;
+
+  const result = runTripOrchestrator(input);
+
+  assert.equal(result.warnings.some((warning) => warning.includes("2026-08-18 lunch 대체 식당")), true);
+});
+
+test("validation warns when an optional experience has no replacement blocks", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  input.optionalExperiences["2026-08-18"][0].replaces = [];
+
+  const result = runTripOrchestrator(input);
+
+  assert.equal(result.warnings.some((warning) => warning.includes("suyeong-yacht") && warning.includes("대체 블록")), true);
 });
 
 test("budget modes select different primary meals while keeping every selected genre unique", () => {
