@@ -7,7 +7,8 @@ const { runTripOrchestrator } = require("./assets/js/trip-agents.js");
 const docsRoot = path.resolve(__dirname);
 const serverSource = fs.readFileSync(path.join(docsRoot, "qa-server.js"), "utf8");
 const appSource = fs.readFileSync(path.join(docsRoot, "assets", "js", "app.js"), "utf8");
-const tripFixture = JSON.parse(fs.readFileSync(path.join(docsRoot, "assets", "data", "busan-family-trip-2026.json"), "utf8"));
+const fixtureSource = fs.readFileSync(path.join(docsRoot, "assets", "data", "busan-family-trip-2026.json"), "utf8");
+const tripFixture = JSON.parse(fixtureSource);
 
 /**
  * Load the QA server module into a VM with a fake HTTP server and filesystem.
@@ -130,6 +131,68 @@ function testMealSlotsHaveDisplayableCandidateData() {
       }
     }
   }
+}
+
+function testCentumFixtureRemovesOsiriaDestinationCopy() {
+  for (const removedDestination of ["\uC624\uC2DC\uB9AC\uC544", "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00", "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", "\uB86F\uB370\uC6D4\uB4DC"]) {
+    assert.doesNotMatch(fixtureSource, new RegExp(removedDestination), `fixture must not contain ${removedDestination}`);
+  }
+}
+
+function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
+  const expectedDay18Route = [
+    "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0",
+    "\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774",
+    "\uBBA4\uC9C0\uC5C4\uC6D0",
+    "\uBD80\uC0B0\uC601\uD654\uC758\uC804\uB2F9",
+    "F1963",
+    "\uAD11\uC548\uB9AC",
+    "\uD30C\uB77C\uB2E4\uC774\uC2A4\uD638\uD154 \uBD80\uC0B0"
+  ];
+  const optionalExperiences = tripFixture.optionalExperiences["2026-08-18"];
+
+  assert.deepEqual(tripFixture.routeSequences["2026-08-18"], expectedDay18Route);
+  assert.deepEqual(tripFixture.mapRoutePoints["18\uC77C"].map((point) => point.name), expectedDay18Route);
+  assert.deepEqual(optionalExperiences.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
+  for (const experience of optionalExperiences) {
+    assert.deepEqual(experience.replaces, ["cinema-center", "f1963"]);
+    assert.match(experience.source, /^https:\/\//);
+    assert.ok(experience.durationMinutes >= 60, `${experience.id} needs a duration of at least one hour`);
+    assert.ok(experience.conditions.trim().length >= 10, `${experience.id} needs booking conditions`);
+  }
+
+  for (const budget of Object.values(tripFixture.budgets)) {
+    assert.ok(budget.items.some((item) => item.label.includes("\uC120\uD0DD \uCCB4\uD5D8 \uC608\uC57D")), "every budget must include an optional-experience reservation line");
+  }
+}
+
+function testMealFallbackFixtureProvidesFiveActionableAlternatives() {
+  const expectedGroups = Object.entries(tripFixture.mealSlots)
+    .flatMap(([date, meals]) => Object.keys(meals)
+      .filter((meal) => date !== "2026-08-19" || meal !== "dinner")
+      .map((meal) => `${date}:${meal}`))
+    .sort();
+  const fallbackGroups = Object.entries(tripFixture.mealFallbacks)
+    .flatMap(([date, meals]) => Object.keys(meals).map((meal) => `${date}:${meal}`))
+    .sort();
+
+  assert.deepEqual(fallbackGroups, expectedGroups, "meal fallbacks must cover every eligible meal group");
+  for (const [date, meals] of Object.entries(tripFixture.mealFallbacks)) {
+    for (const [meal, fallbacks] of Object.entries(meals)) {
+      assert.equal(fallbacks.length, 5, `${date} ${meal} needs exactly five fallbacks`);
+      assert.equal(new Set(fallbacks.map((fallback) => fallback.name)).size, 5, `${date} ${meal} fallbacks must be unique`);
+      for (const fallback of fallbacks) {
+        assert.match(fallback.url, /^https:\/\//, `${date} ${meal} fallback needs an HTTPS URL`);
+        assert.ok(["go-now", "check-wait", "operation-check"].includes(fallback.waitRisk), `${date} ${meal} fallback needs a recognized wait risk`);
+        assert.ok(fallback.note.trim().length >= 10, `${date} ${meal} fallback needs an actionable note`);
+      }
+    }
+  }
+
+  const day19Fallbacks = tripFixture.mealFallbacks["2026-08-19"];
+  assert.equal(day19Fallbacks.dinner, undefined, "19 Aug must not provide dinner fallbacks");
+  assert.ok(Array.isArray(day19Fallbacks.lunch), "19 Aug lunch fallbacks must be present");
+  assert.equal(day19Fallbacks.lunch.every((fallback) => fallback.takeaway === true), true, "19 Aug lunch fallbacks must support takeaway");
 }
 
 function testBreakfastRentalAndLuggageFixture() {
@@ -411,6 +474,9 @@ try {
   testMalformedEncoding();
   testSiblingTraversal();
   testMealSlotsHaveDisplayableCandidateData();
+  testCentumFixtureRemovesOsiriaDestinationCopy();
+  testCentumFixtureDefinesDay18RouteAndOptionalExperiences();
+  testMealFallbackFixtureProvidesFiveActionableAlternatives();
   testBreakfastRentalAndLuggageFixture();
   testAppRendersMealSlotsAndConciseItineraryMeals();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
