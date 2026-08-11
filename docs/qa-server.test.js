@@ -354,10 +354,20 @@ function testAppRendersOptionalExperiencesAndMealFallbacks() {
   assert.match(appSource, /day\.activities\.options/);
   assert.match(appSource, /당일 선택 체험/);
   assert.match(appSource, /renderOptionalExperiences\(day\)/);
+  assert.match(appSource, /safeExternalUrl\(option\.sourceUrl\)/);
+  assert.match(appSource, /option\.durationMinutes/);
+  assert.match(appSource, /option\.replaces/);
+  assert.match(appSource, /option\.conditions/);
+  assert.match(appSource, /option\.costPolicy/);
   assert.match(appSource, /day\.meals\.fallbacks/);
   assert.match(appSource, /대기 시 대체/);
   assert.match(appSource, /KTX 탑승 전 포장/);
   assert.match(appSource, /safeExternalUrl\(candidate\.url\)/);
+  const fallbackRenderer = appSource.slice(appSource.indexOf("const fallbackFoodCards"), appSource.indexOf("document.getElementById(\"food-list\")"));
+  assert.match(fallbackRenderer, /candidate\.name/);
+  assert.match(fallbackRenderer, /candidate\.genre/);
+  assert.match(fallbackRenderer, /candidate\.waitRisk/);
+  assert.match(fallbackRenderer, /candidate\.note/);
 }
 
 function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
