@@ -431,9 +431,10 @@ test("every budget preserves the Centum day 18 route and offers both optional ex
       .find((item) => item.date === "2026-08-19" && item.title.includes("KTX"));
 
     assert.deepEqual(day18.route.sequence, expectedRoute, `${budgetMode} preserves the confirmed Centum route`);
-    assert.deepEqual(day18.optionalExperiences.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
+    assert.deepEqual(day18.activities.options.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
     assert.deepEqual(day19.route.sequence, itineraryFixture.routeSequences["2026-08-19"], `${budgetMode} preserves the confirmed day 19 route`);
-    assert.equal(returnKtx?.detail.includes("14:31") || day19.route.sequence.some((stop) => stop.includes("KTX") && stop.includes("14:31")), true, `${budgetMode} retains the 14:31 return KTX`);
+    assert.ok(returnKtx, `${budgetMode} returns an explicit day 19 KTX recommendation`);
+    assert.equal((returnKtx?.detail ?? "").includes("14:31") || day19.route.sequence.some((stop) => stop.includes("KTX") && stop.includes("14:31")), true, `${budgetMode} retains the 14:31 return KTX`);
     for (const removedDestination of ["\uC624\uC2DC\uB9AC\uC544", "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00", "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", "\uB86F\uB370\uC6D4\uB4DC"]) {
       assert.equal(day18.blocks.some((block) => block.title.includes(removedDestination)), false, `${budgetMode} removes ${removedDestination} from day 18 blocks`);
     }
@@ -441,24 +442,22 @@ test("every budget preserves the Centum day 18 route and offers both optional ex
 });
 
 test("food agent keeps every selected meal separate from five fallbacks in every budget", () => {
-  const fallbackGroups = new Set(Object.entries(itineraryFixture.mealSlots)
-    .flatMap(([date, meals]) => Object.keys(meals)
-      .filter((meal) => date !== "2026-08-19" || meal !== "dinner")
-      .map((meal) => `${date}:${meal}`)));
+  assert.ok(itineraryFixture.mealFallbacks, "fixture must define meal fallback groups");
 
   for (const budgetMode of ["light", "balanced", "comfort"]) {
     const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
 
-    for (const day of result.specialistOutputs.food.recommendations) {
-      for (const slot of day.slots) {
-        const group = `${day.date}:${slot.meal}`;
-        if (!fallbackGroups.has(group)) continue;
+    for (const [date, fixtureGroups] of Object.entries(itineraryFixture.mealFallbacks || {})) {
+      const day = result.days.find((candidate) => candidate.date === date);
+      const expectedMeals = Object.keys(fixtureGroups).sort();
 
-        assert.ok(Array.isArray(slot.fallbacks), `${budgetMode} ${group} must expose fallback choices`);
-        assert.equal(slot.fallbacks.length, 5, `${budgetMode} ${group} needs five fallbacks`);
-        assert.equal(new Set(slot.fallbacks.map((fallback) => fallback.name)).size, 5, `${budgetMode} ${group} fallbacks must be unique`);
-        assert.equal(slot.fallbacks.includes(slot.primary), false, `${budgetMode} ${group} must not reuse the selected meal object`);
-        assert.equal(slot.fallbacks.some((fallback) => fallback.name === slot.primary.name), false, `${budgetMode} ${group} must not list the selected restaurant as a fallback`);
+      assert.ok(day, `${budgetMode} must retain ${date}`);
+      assert.ok(Array.isArray(day.meals.fallbacks), `${budgetMode} ${date} must expose fallback groups`);
+      assert.deepEqual(day.meals.fallbacks.map((group) => group.meal).sort(), expectedMeals, `${budgetMode} ${date} fallback meals must match the fixture`);
+      for (const group of day.meals.fallbacks) {
+        assert.equal(group.candidates.length, 5, `${budgetMode} ${date} ${group.meal} needs five fallbacks`);
+        assert.equal(new Set(group.candidates.map((candidate) => candidate.name)).size, 5, `${budgetMode} ${date} ${group.meal} fallbacks must be unique`);
+        assert.equal(group.candidates.some((candidate) => candidate.name === group.selected.name), false, `${budgetMode} ${date} ${group.meal} must not list the selected restaurant as a fallback`);
       }
     }
   }
