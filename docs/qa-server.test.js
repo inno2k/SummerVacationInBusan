@@ -162,7 +162,15 @@ function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
   }
 
   for (const budget of Object.values(tripFixture.budgets)) {
-    assert.ok(budget.items.some((item) => item.label.includes("\uC120\uD0DD \uCCB4\uD5D8 \uC608\uC57D")), "every budget must include an optional-experience reservation line");
+    const reservation = budget.items.find((item) => item.label.includes("\uC120\uD0DD \uCCB4\uD5D8 \uC608\uC57D"));
+    const baselineAmount = budget.items
+      .filter((item) => item !== reservation)
+      .reduce((total, item) => total + Number.parseInt(item.amount, 10), 0);
+
+    assert.ok(reservation, "every budget must include an optional-experience reservation line");
+    assert.equal(reservation.amount, "\uBCC4\uB3C4", "optional experience cost must not be a baseline budget line item");
+    assert.match(reservation.detail, /\uAE30\uBCF8 \uC608\uC0B0\uC5D0 \uD3EC\uD568\uD558\uC9C0 \uC54A\uC74C/);
+    assert.equal(baselineAmount, Number.parseInt(budget.total, 10), "baseline total must exclude optional experience cost");
   }
 }
 

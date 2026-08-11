@@ -426,25 +426,42 @@ test("every budget preserves the Centum day 18 route and offers both optional ex
   for (const budgetMode of ["light", "balanced", "comfort"]) {
     const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
     const day18 = result.days.find((day) => day.date === "2026-08-18");
+    const day19 = result.days.find((day) => day.date === "2026-08-19");
+    const returnKtx = result.specialistOutputs.transport.recommendations
+      .find((item) => item.date === "2026-08-19" && item.title.includes("KTX"));
 
     assert.deepEqual(day18.route.sequence, expectedRoute, `${budgetMode} preserves the confirmed Centum route`);
     assert.deepEqual(day18.optionalExperiences.map((experience) => experience.id), ["suyeong-yacht", "centum-ice-rink"]);
+    assert.deepEqual(day19.route.sequence, itineraryFixture.routeSequences["2026-08-19"], `${budgetMode} preserves the confirmed day 19 route`);
+    assert.equal(returnKtx?.detail.includes("14:31") || day19.route.sequence.some((stop) => stop.includes("KTX") && stop.includes("14:31")), true, `${budgetMode} retains the 14:31 return KTX`);
     for (const removedDestination of ["\uC624\uC2DC\uB9AC\uC544", "\uAD6D\uB9BD\uBD80\uC0B0\uACFC\uD559\uAD00", "\uC2A4\uCE74\uC774\uB77C\uC778 \uB8E8\uC9C0", "\uB86F\uB370\uC6D4\uB4DC"]) {
       assert.equal(day18.blocks.some((block) => block.title.includes(removedDestination)), false, `${budgetMode} removes ${removedDestination} from day 18 blocks`);
     }
   }
 });
 
-test("food agent exposes five day 18 lunch fallbacks separately from the selected meal", () => {
-  const result = runTripOrchestrator({ ...itineraryFixture, budgetMode: "balanced" });
-  const day18Food = result.specialistOutputs.food.recommendations.find((day) => day.date === "2026-08-18");
-  const lunch = day18Food.slots.find((slot) => slot.meal === "lunch");
+test("food agent keeps every selected meal separate from five fallbacks in every budget", () => {
+  const fallbackGroups = new Set(Object.entries(itineraryFixture.mealSlots)
+    .flatMap(([date, meals]) => Object.keys(meals)
+      .filter((meal) => date !== "2026-08-19" || meal !== "dinner")
+      .map((meal) => `${date}:${meal}`)));
 
-  assert.ok(Array.isArray(lunch.fallbacks), "day 18 lunch must expose fallback choices");
-  assert.equal(lunch.fallbacks.length, 5);
-  assert.equal(new Set(lunch.fallbacks.map((fallback) => fallback.name)).size, 5);
-  assert.equal(lunch.fallbacks.includes(lunch.primary), false);
-  assert.equal(lunch.fallbacks.some((fallback) => fallback.name === lunch.primary.name), false);
+  for (const budgetMode of ["light", "balanced", "comfort"]) {
+    const result = runTripOrchestrator({ ...itineraryFixture, budgetMode });
+
+    for (const day of result.specialistOutputs.food.recommendations) {
+      for (const slot of day.slots) {
+        const group = `${day.date}:${slot.meal}`;
+        if (!fallbackGroups.has(group)) continue;
+
+        assert.ok(Array.isArray(slot.fallbacks), `${budgetMode} ${group} must expose fallback choices`);
+        assert.equal(slot.fallbacks.length, 5, `${budgetMode} ${group} needs five fallbacks`);
+        assert.equal(new Set(slot.fallbacks.map((fallback) => fallback.name)).size, 5, `${budgetMode} ${group} fallbacks must be unique`);
+        assert.equal(slot.fallbacks.includes(slot.primary), false, `${budgetMode} ${group} must not reuse the selected meal object`);
+        assert.equal(slot.fallbacks.some((fallback) => fallback.name === slot.primary.name), false, `${budgetMode} ${group} must not list the selected restaurant as a fallback`);
+      }
+    }
+  }
 });
 
 test("budget modes select different primary meals while keeping every selected genre unique", () => {
