@@ -137,8 +137,25 @@ function openSlotSummary(day) {
   return `<div class="pill request-warning">요청 배치 경고: 안전한 빈 시간이 없습니다.</div>`;
 }
 
+/**
+ * Render optional experiences separately from the scheduled itinerary blocks.
+ * @param {{activities: {options?: Array<{title: string, area: string, durationMinutes: number, replaces?: string[], conditions: string, costPolicy: string, sourceUrl: string}>}}} day
+ * @returns {string}
+ */
+function renderOptionalExperiences(day) {
+  const options = day.activities.options || [];
+  if (!options.length) return "";
+
+  return `<section class="optional-experience-list" aria-label="당일 선택 체험"><h4>당일 선택 체험</h4>${options.map((option) => {
+    const sourceUrl = safeExternalUrl(option.sourceUrl);
+    const replacements = (option.replaces || []).join(" · ");
+    const sourceLink = sourceUrl === "#" ? "" : `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">공식 정보 열기 ↗</a>`;
+    return `<article class="optional-experience"><strong>${escapeHtml(option.title)}</strong><p>${escapeHtml(option.area)} · ${escapeHtml(option.durationMinutes)}분</p><p>대체 블록: ${escapeHtml(replacements)}</p><p>조건: ${escapeHtml(option.conditions)}</p><p>비용: ${escapeHtml(option.costPolicy)}</p>${sourceLink}</article>`;
+  }).join("")}</section>`;
+}
+
 function renderItinerary() {
-  document.getElementById("itinerary-list").innerHTML = orchestration.days.map((day) => `<article class="day-card"><div class="day-header"><div><span>${escapeHtml(day.date)}</span><h3>${escapeHtml(day.intent)}</h3></div><span>${escapeHtml(day.route.hub)}</span></div>${day.blocks.map((block) => `<div class="block"><time>${escapeHtml(block.time)}</time><div><strong>${escapeHtml(block.title)}</strong><small>${block.type === "water" ? "물놀이·휴식" : block.type === "fixed" ? "고정 교통" : block.type === "custom" ? "자동 배치 요청" : "권장 블록"}</small></div></div>`).join("")}${openSlotSummary(day)}<div class="pill">식사: ${escapeHtml(conciseMealSummary(day))}</div><div class="pill">추천: ${escapeHtml(day.activities.chosen.map((item) => item.title).join(" · "))}</div></article>`).join("");
+  document.getElementById("itinerary-list").innerHTML = orchestration.days.map((day) => `<article class="day-card"><div class="day-header"><div><span>${escapeHtml(day.date)}</span><h3>${escapeHtml(day.intent)}</h3></div><span>${escapeHtml(day.route.hub)}</span></div>${day.blocks.map((block) => `<div class="block"><time>${escapeHtml(block.time)}</time><div><strong>${escapeHtml(block.title)}</strong><small>${block.type === "water" ? "물놀이·휴식" : block.type === "fixed" ? "고정 교통" : block.type === "custom" ? "자동 배치 요청" : "권장 블록"}</small></div></div>`).join("")}${openSlotSummary(day)}<div class="pill">식사: ${escapeHtml(conciseMealSummary(day))}</div><div class="pill">추천: ${escapeHtml(day.activities.chosen.map((item) => item.title).join(" · "))}</div>${renderOptionalExperiences(day)}</article>`).join("");
   document.getElementById("decisions").innerHTML = orchestration.decisions.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   document.getElementById("warnings").innerHTML = orchestration.warnings.length ? orchestration.warnings.map((item) => `<li>${escapeHtml(item)}</li>`).join("") : "<li>현재 입력에서 큰 충돌이 없습니다.</li>";
 }
@@ -180,12 +197,20 @@ function renderRoutes() {
 }
 
 function renderFood() {
-  document.getElementById("food-list").innerHTML = orchestration.days.flatMap((day) => (day.meals.slots || []).map((slot) => {
+  const selectedFoodCards = orchestration.days.flatMap((day) => (day.meals.slots || []).map((slot) => {
     const primary = slot.primary || slot.candidates?.[0];
     const alternatives = slot.alternatives || (slot.candidates || []).filter((candidate) => candidate !== primary);
     const restaurant = (candidate) => `<div><strong>${escapeHtml(candidate.name)}</strong><p>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.area)}</p><p>${escapeHtml(candidate.note)}</p><a href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer">지도 열기 ↗</a></div>`;
     return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(mealLabel(slot.meal))} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(`${mealLabel(slot.meal)} selected`)}</h3>${primary ? `<div class="food-primary"><strong>대표 선택</strong>${restaurant(primary)}</div>` : ""}<h4>다른 선택지</h4>${alternatives.map(restaurant).join("")}</article>`;
-  })).join("");
+  }));
+  const fallbackFoodCards = orchestration.days.flatMap((day) => (day.meals.fallbacks || []).map((fallback) => {
+    const label = fallback.meal === "takeaway" ? "KTX 탑승 전 포장" : fallback.label;
+    const selected = fallback.selected;
+    const selectedMeal = selected ? `<div class="food-primary"><strong>현재 선택</strong><p>${escapeHtml(selected.name)} · ${escapeHtml(selected.genre)} · ${escapeHtml(selected.area)}</p></div>` : "";
+    const candidates = (fallback.candidates || []).map((candidate) => `<a class="meal-fallback-link" href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer"><strong>${escapeHtml(candidate.name)}</strong><span>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.waitRisk)}</span><small>${escapeHtml(candidate.note)}</small></a>`).join("");
+    return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(label)} · 대기 시 대체</span><h3>${escapeHtml(label)}</h3>${selectedMeal}<div class="meal-fallback-list">${candidates}</div></article>`;
+  }));
+  document.getElementById("food-list").innerHTML = [...selectedFoodCards, ...fallbackFoodCards].join("");
 }
 
 function renderBudget() {

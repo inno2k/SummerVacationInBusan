@@ -349,6 +349,17 @@ function testAppRendersMealSlotsAndConciseItineraryMeals() {
   assert.match(appSource, /safeExternalUrl\(candidate\.url\)/);
 }
 
+function testAppRendersOptionalExperiencesAndMealFallbacks() {
+  assert.match(appSource, /function renderOptionalExperiences\(day\)/);
+  assert.match(appSource, /day\.activities\.options/);
+  assert.match(appSource, /당일 선택 체험/);
+  assert.match(appSource, /renderOptionalExperiences\(day\)/);
+  assert.match(appSource, /day\.meals\.fallbacks/);
+  assert.match(appSource, /대기 시 대체/);
+  assert.match(appSource, /KTX 탑승 전 포장/);
+  assert.match(appSource, /safeExternalUrl\(candidate\.url\)/);
+}
+
 function testAppUsesReturnTransportInsteadOfDay19CimerCopy() {
   const result = runTripOrchestrator(tripFixture);
   const returnTransport = result.specialistOutputs.transport.recommendations.find((item) => item.date === "2026-08-19");
@@ -533,6 +544,7 @@ try {
   testMealFallbackFixtureProvidesFiveActionableAlternatives();
   testBreakfastRentalAndLuggageFixture();
   testAppRendersMealSlotsAndConciseItineraryMeals();
+  testAppRendersOptionalExperiencesAndMealFallbacks();
   testAppUsesReturnTransportInsteadOfDay19CimerCopy();
   testVisibleTripCopyUsesZimCarryHandoffAndCollection();
   testAppLabelsBreakfastAndRendersRentalLogisticsLinks();
