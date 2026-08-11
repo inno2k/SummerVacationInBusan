@@ -30,7 +30,7 @@ base itinerary or its budget.
 7. The route agent validates that the route does not backtrack to a removed
    east-coast destination and that any option replaces, rather than appends to,
    its assigned base-time window.
-8. A new "area-matched meal candidates" tab supplies at least five researched
+8. The existing "area-matched meal candidates" tab supplies at least five researched
    backup restaurants for every scheduled breakfast, lunch, and dinner slot.
    These backups are separate from the selected itinerary meal and can be used
    immediately when the selected restaurant has a long wait or is unavailable.
@@ -65,7 +65,8 @@ links or day-of warnings where appropriate.
 
 ## Area-Matched Meal Candidates
 
-The selected itinerary restaurants remain the first choice. The new tab is a
+The selected itinerary restaurants remain the first choice. The existing meal
+candidate tab is a
 practical fallback list, not a second set of automatically scheduled meals.
 It provides five additional researched candidates for each active meal slot:
 
@@ -163,10 +164,10 @@ confirmed base block on its own.
 - The activities tab exposes the yacht and rink with their constraints. The
   food tab shows the selected Centum lunch and Gwangalli dinner for the active
   budget mode.
-- The area-matched meal-candidates tab lets the family open a date, then a
-  breakfast, lunch, dinner, or KTX-takeaway group. It keeps the chosen meal
-  visually separate from five backup choices and never mutates the itinerary
-  unless the user makes a later explicit selection.
+- The existing area-matched meal-candidates tab lets the family open a date,
+  then a breakfast, lunch, dinner, or KTX-takeaway group. It keeps the chosen
+  meal visually separate from five backup choices and never mutates the
+  itinerary unless the user makes a later explicit selection.
 - The budget tab includes the base day in every plan and shows the two optional
   activities as excluded, booking-time additions.
 
@@ -189,8 +190,8 @@ operator or boarding source.
 4. Add food-data tests requiring five fallback records for each displayed meal
    group, area alignment, unique restaurant names within a group, usable links,
    and the 19 August KTX-takeaway exception.
-5. Extend static UI QA to require the optional card labels, the new meal
-   candidates tab, and day 18 route labels. Run project unit tests, static QA,
+5. Extend static UI QA to require the optional card labels, expanded existing
+   meal-candidates tab, and day 18 route labels. Run project unit tests, static QA,
    syntax checks, JSON parsing, and the production build before deployment.
 6. Manually verify desktop, tablet, and mobile views: a day 18 map selection
    highlights the base route in order, and no option card changes the default
