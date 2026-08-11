@@ -170,7 +170,7 @@ function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
     assert.ok(reservation, "every budget must include an optional-experience reservation line");
     assert.equal(reservation.amount, "\uBCC4\uB3C4", "optional experience cost must not be a baseline budget line item");
     assert.match(reservation.detail, /\uAE30\uBCF8 \uC608\uC0B0\uC5D0 \uD3EC\uD568\uD558\uC9C0 \uC54A\uC74C/);
-    assert.equal(baselineAmount, Number.parseInt(budget.total, 10), "baseline total must exclude optional experience cost");
+    assert.equal(baselineAmount, Number((budget.total.match(/\d+/) || ["0"])[0]), "baseline total must exclude optional experience cost");
   }
 }
 
