@@ -198,6 +198,28 @@ function testCentumFixtureDefinesDay18RouteAndOptionalExperiences() {
   }
 }
 
+function testCentumFixtureRechecksAllConfirmedDay18Sources() {
+  const expectedSources = {
+    "\uBBA4\uC9C0\uC5C4\uC6D0": "https://museum1.co.kr/",
+    "\uBD80\uC0B0\uC601\uD654\uC758\uC804\uB2F9": "https://www.visitbusan.net/en/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=421",
+    "F1963": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=187060",
+    "\uBD80\uC0B0\uC5D1\uC2A4\uB354\uC2A4\uCE74\uC774": "https://www.busanxthesky.com/",
+    "\uC218\uC601\uB9CC \uC694\uD2B8 \uCCB4\uD5D8": "https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000304004001000&uc_seq=1775",
+    "\uC2E0\uC138\uACC4 \uC13C\uD140 \uC544\uC774\uC2A4\uB9C1\uD06C": "https://www.shinsegae.com/department/store/centum/ice-rink"
+  };
+  const recheckByTitle = Object.fromEntries(tripFixture.recheckSources.map((source) => [source.title, source]));
+
+  for (const [title, url] of Object.entries(expectedSources)) {
+    const source = recheckByTitle[title];
+    assert.ok(source, `recheck sources need ${title}`);
+    assert.equal(source.url, url, `${title} needs its authoritative URL`);
+    assert.match(source.url, /^https:\/\//, `${title} needs an HTTPS URL`);
+    assert.match(source.note, /[\uAC00-\uD7A3]/, `${title} needs a Korean operations note`);
+  }
+
+  assert.equal(tripFixture.recheckSources.some((source) => source.title.includes("\uC2A4\uD30C\uB79C\uB4DC")), false, "Centum Spa Land must not remain a day 18 recheck source");
+}
+
 function testMealFallbackFixtureProvidesFiveActionableAlternatives() {
   assert.ok(tripFixture.mealFallbacks, "fixture must define meal fallbacks");
   assert.deepEqual(Object.keys(tripFixture.mealFallbacks).sort(), Object.keys(tripFixture.mealSlots).sort(), "meal fallback dates must match meal slot dates");
@@ -507,6 +529,7 @@ try {
   testMealSlotsHaveDisplayableCandidateData();
   testCentumFixtureRemovesOsiriaDestinationCopy();
   testCentumFixtureDefinesDay18RouteAndOptionalExperiences();
+  testCentumFixtureRechecksAllConfirmedDay18Sources();
   testMealFallbackFixtureProvidesFiveActionableAlternatives();
   testBreakfastRentalAndLuggageFixture();
   testAppRendersMealSlotsAndConciseItineraryMeals();
