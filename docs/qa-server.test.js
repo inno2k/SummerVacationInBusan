@@ -537,6 +537,41 @@ function testIndexAndAppExcludeStaleOsiriaCopy() {
   assert.doesNotMatch(visibleSources, /오시리아/);
 }
 
+function testContextFromTripPrefersConfirmedCentumDay18FlowOverStaleStorage() {
+  const fixtureDay18 = tripFixture.dayFlows.find((day) => day.date === "2026-08-18");
+  const savedFlows = [
+    { date: "2026-08-17", intent: "저장한 해운대 일정" },
+    { date: "2026-08-18", intent: "오시리아에서 이전에 저장한 일정" }
+  ];
+  const customRequests = {
+    "2026-08-17": [{ title: "저장한 추가 요청", area: "해운대" }]
+  };
+  const sourceEnd = appSource.indexOf("function renderHero()");
+
+  assert.ok(fixtureDay18, "fixture must define the confirmed day 18 flow");
+  assert.notEqual(sourceEnd, -1);
+
+  const context = {
+    testTrip: tripFixture,
+    localStorage: {
+      getItem(key) {
+        if (key === "busan-trip-day-flows") return JSON.stringify(savedFlows);
+        if (key === "busan-trip-custom-requests") return JSON.stringify(customRequests);
+        return null;
+      }
+    }
+  };
+
+  vm.runInNewContext(`${appSource.slice(0, sourceEnd)}\ntrip = testTrip; globalThis.tripContext = contextFromTrip();`, context, { filename: "app.js" });
+
+  const day17 = context.tripContext.dayFlows.find((day) => day.date === "2026-08-17");
+  const day18 = context.tripContext.dayFlows.find((day) => day.date === "2026-08-18");
+  assert.equal(day17.intent, "저장한 해운대 일정", "saved flows for other dates remain available");
+  assert.equal(context.tripContext.customRequests["2026-08-17"][0].title, "저장한 추가 요청", "saved custom requests remain available");
+  assert.equal(day18.intent, fixtureDay18.intent, "confirmed day 18 fixture intent wins over stale storage");
+  assert.doesNotMatch(day18.intent, /오시리아/, "day 18 must not restore stale Osiria text");
+}
+
 function testAppEscapesAndSanitizesFallbackFoodCards() {
   const html = renderFoodFixture([{
     meal: "lunch",
@@ -653,6 +688,7 @@ try {
   testVisibleTripCopyUsesZimCarryHandoffAndCollection();
   testAppLabelsBreakfastAndTakeawayAndRendersRentalLogisticsLinks();
   testIndexAndAppExcludeStaleOsiriaCopy();
+  testContextFromTripPrefersConfirmedCentumDay18FlowOverStaleStorage();
   testAppRendersOpsFromAgentProviderAndLogisticsData();
   testAppEscapesAndSanitizesFallbackFoodCards();
   testAppHandlesMalformedFallbackFoodGroups();

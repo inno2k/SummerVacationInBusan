@@ -55,13 +55,14 @@ async function loadTrip() {
 
 function contextFromTrip() {
   let saved = [];
+  const confirmedDayFlowDate = "2026-08-18";
   try { const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); saved = Array.isArray(parsed) ? parsed : []; } catch { saved = []; }
   const savedByDate = Object.fromEntries(saved.map((item) => [item.date, item.intent]));
   return {
     ...trip,
     budgetMode: selectedBudgetMode(),
     customRequests: savedCustomRequests(),
-    dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: savedByDate[day.date] || day.intent }))
+    dayFlows: trip.dayFlows.map((day) => ({ ...day, intent: day.date === confirmedDayFlowDate ? day.intent : savedByDate[day.date] || day.intent }))
   };
 }
 
