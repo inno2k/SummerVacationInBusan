@@ -311,11 +311,22 @@ function validateMealAndRequests(context, outputs) {
   if (new Set(primaryMeals.map((meal) => meal.genre)).size !== primaryMeals.length) warnings.push("대표 식사 장르가 전 일정에서 중복됩니다.");
   Object.entries(context.mealFallbacks || {}).forEach(([date, mealFallbacks]) => {
     Object.entries(mealFallbacks || {}).forEach(([meal, candidates]) => {
+      const isValidFallbackCandidate = (candidate) => candidate
+        && typeof candidate === "object"
+        && !Array.isArray(candidate)
+        && typeof candidate.name === "string"
+        && candidate.name.trim()
+        && typeof candidate.url === "string"
+        && /^https:\/\//.test(candidate.url)
+        && typeof candidate.waitRisk === "string"
+        && candidate.waitRisk.trim()
+        && typeof candidate.note === "string"
+        && candidate.note.trim();
       const hasFiveUniqueHttpsCandidates = Array.isArray(candidates)
         && candidates.length === 5
+        && candidates.every(isValidFallbackCandidate)
         && new Set(candidates.map((candidate) => candidate.name)).size === 5
-        && candidates.every((candidate) => /^https:\/\//.test(candidate.url || ""));
-      if (!hasFiveUniqueHttpsCandidates) warnings.push(`${date} ${meal} 대체 식당은 고유한 HTTPS 후보 5곳이 필요합니다.`);
+      if (!hasFiveUniqueHttpsCandidates) warnings.push(`${date} ${meal} 대체 식당은 이름, HTTPS URL, 대기 위험, 안내문을 갖춘 고유 후보 5곳이 필요합니다.`);
     });
   });
   Object.entries(context.mealSlots || {}).forEach(([date, mealSlots]) => {

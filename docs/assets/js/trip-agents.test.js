@@ -497,6 +497,18 @@ test("validation warns when an active meal slot has no fallback group", () => {
   assert.equal(result.warnings.some((warning) => warning.includes("2026-08-18 lunch 대체 식당")), true);
 });
 
+test("validation handles malformed meal fallback candidates", () => {
+  const input = JSON.parse(JSON.stringify(itineraryFixture));
+  input.mealFallbacks["2026-08-18"].lunch = Array(5).fill(null);
+  let result;
+
+  assert.doesNotThrow(() => {
+    result = runTripOrchestrator(input);
+  });
+
+  assert.equal(result.warnings.some((warning) => warning.includes("2026-08-18 lunch 대체 식당")), true);
+});
+
 test("validation warns when an optional experience has no replacement blocks", () => {
   const input = JSON.parse(JSON.stringify(itineraryFixture));
   input.optionalExperiences["2026-08-18"][0].replaces = [];
