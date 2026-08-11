@@ -486,6 +486,80 @@ function testAppRendersOpsFromAgentProviderAndLogisticsData() {
   assert.doesNotMatch(html, /부산역 짐 보관|역내 짐 보관/);
 }
 
+/**
+ * Render fallback food cards through the app renderer in an isolated VM.
+ * @param {Array<unknown>} fallbacks
+ * @returns {string}
+ */
+function renderFoodFixture(fallbacks) {
+  const foodList = { innerHTML: "" };
+  const sourceStart = appSource.indexOf("function escapeHtml(");
+  const sourceEnd = appSource.indexOf("function renderBudget()");
+
+  assert.notEqual(sourceStart, -1);
+  assert.notEqual(sourceEnd, -1);
+
+  const context = {
+    URL,
+    window: { location: { href: "https://trip.example/" } },
+    orchestration: {
+      days: [{
+        date: "2026-08-19",
+        route: { hub: "Busan Station" },
+        meals: { slots: [], fallbacks }
+      }]
+    },
+    document: {
+      getElementById(id) {
+        assert.equal(id, "food-list");
+        return foodList;
+      }
+    }
+  };
+
+  vm.runInNewContext(appSource.slice(sourceStart, sourceEnd), context, { filename: "app.js" });
+  context.renderFood();
+  return foodList.innerHTML;
+}
+
+function testAppEscapesAndSanitizesFallbackFoodCards() {
+  const html = renderFoodFixture([{
+    meal: "lunch",
+    label: "Lunch",
+    selected: { name: "Selected meal", genre: "Korean", area: "Centum" },
+    candidates: [{
+      name: "Fallback <b> & Co",
+      genre: "Noodles <script>",
+      waitRisk: "check-wait",
+      note: "Ask <staff> before joining",
+      url: "javascript:alert(1)"
+    }]
+  }]);
+
+  assert.match(html, /Fallback &lt;b&gt; &amp; Co/);
+  assert.match(html, /Noodles &lt;script&gt;/);
+  assert.match(html, /Ask &lt;staff&gt; before joining/);
+  assert.match(html, /href="#" target="_blank" rel="noopener noreferrer"/);
+  assert.doesNotMatch(html, /javascript:/);
+}
+
+function testAppHandlesMalformedFallbackFoodGroups() {
+  let html = "";
+
+  assert.doesNotThrow(() => {
+    html = renderFoodFixture([{
+      meal: "lunch",
+      label: "Lunch",
+      selected: "not a selected meal object",
+      candidates: [null]
+    }]);
+  });
+
+  assert.match(html, /meal-fallback-empty/);
+  assert.doesNotMatch(html, /meal-fallback-link|href=/);
+  assert.doesNotMatch(html, /not a selected meal object/);
+}
+
 function testAppBuildsMapRoutesFromOrchestratedSequences() {
   assert.match(appSource, /orchestration\.days\.map\(\(day\) =>/);
   assert.match(appSource, /day\.route\.points/);
@@ -564,6 +638,8 @@ try {
   testVisibleTripCopyUsesZimCarryHandoffAndCollection();
   testAppLabelsBreakfastAndRendersRentalLogisticsLinks();
   testAppRendersOpsFromAgentProviderAndLogisticsData();
+  testAppEscapesAndSanitizesFallbackFoodCards();
+  testAppHandlesMalformedFallbackFoodGroups();
   testAppBuildsMapRoutesFromOrchestratedSequences();
   testAppRendersOneDailyRequestControlAndOpenSlotState();
   testAppDistinguishesPrimaryMealsFromAlternatives();

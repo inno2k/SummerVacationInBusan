@@ -203,13 +203,20 @@ function renderFood() {
     const restaurant = (candidate) => `<div><strong>${escapeHtml(candidate.name)}</strong><p>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.area)}</p><p>${escapeHtml(candidate.note)}</p><a href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer">지도 열기 ↗</a></div>`;
     return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(mealLabel(slot.meal))} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(`${mealLabel(slot.meal)} selected`)}</h3>${primary ? `<div class="food-primary"><strong>대표 선택</strong>${restaurant(primary)}</div>` : ""}<h4>다른 선택지</h4>${alternatives.map(restaurant).join("")}</article>`;
   }));
-  const fallbackFoodCards = orchestration.days.flatMap((day) => (day.meals.fallbacks || []).map((fallback) => {
-    const label = fallback.meal === "takeaway" ? "KTX 탑승 전 포장" : fallback.label;
-    const selected = fallback.selected;
-    const selectedMeal = selected ? `<div class="food-primary"><strong>현재 선택</strong><p>${escapeHtml(selected.name)} · ${escapeHtml(selected.genre)} · ${escapeHtml(selected.area)}</p></div>` : "";
-    const candidates = (fallback.candidates || []).map((candidate) => `<a class="meal-fallback-link" href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer"><strong>${escapeHtml(candidate.name)}</strong><span>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.waitRisk)}</span><small>${escapeHtml(candidate.note)}</small></a>`).join("");
-    return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(label)} · 대기 시 대체</span><h3>${escapeHtml(label)}</h3>${selectedMeal}<div class="meal-fallback-list">${candidates}</div></article>`;
-  }));
+  const fallbackFoodCards = orchestration.days.flatMap((day) => {
+    const fallbackGroups = Array.isArray(day.meals.fallbacks) ? day.meals.fallbacks.filter((fallback) => fallback && typeof fallback === "object" && !Array.isArray(fallback)) : [];
+    return fallbackGroups.map((fallback) => {
+      const label = fallback.meal === "takeaway" ? "KTX 탑승 전 포장" : fallback.label;
+      const selected = fallback.selected && typeof fallback.selected === "object" && !Array.isArray(fallback.selected) ? fallback.selected : null;
+      const selectedMeal = selected ? `<div class="food-primary"><strong>현재 선택</strong><p>${escapeHtml(selected.name)} · ${escapeHtml(selected.genre)} · ${escapeHtml(selected.area)}</p></div>` : "";
+      const candidates = (Array.isArray(fallback.candidates) ? fallback.candidates : [])
+        .filter((candidate) => candidate && typeof candidate === "object" && !Array.isArray(candidate))
+        .map((candidate) => `<a class="meal-fallback-link" href="${escapeHtml(safeExternalUrl(candidate.url))}" target="_blank" rel="noopener noreferrer"><strong>${escapeHtml(candidate.name)}</strong><span>${escapeHtml(candidate.genre)} · ${escapeHtml(candidate.waitRisk)}</span><small>${escapeHtml(candidate.note)}</small></a>`)
+        .join("");
+      const fallbackContent = candidates || `<p class="meal-fallback-empty">대체 식당 정보가 없습니다.</p>`;
+      return `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(label)} · 대기 시 대체</span><h3>${escapeHtml(label)}</h3>${selectedMeal}<div class="meal-fallback-list">${fallbackContent}</div></article>`;
+    });
+  });
   document.getElementById("food-list").innerHTML = [...selectedFoodCards, ...fallbackFoodCards].join("");
 }
 
