@@ -79,6 +79,7 @@ function foodAgent(context, route) {
   const recommendations = route.recommendations.map((day) => ({
     date: day.date,
     meals: (intentProfile(day.intent)?.meals || plan.meals?.[day.date] || context.mealCandidates[day.date] || []).slice(0, plan.mealLimit || 3),
+    candidates: context.foodCandidates?.[day.date] || [],
     sourceHint: context.videoSources.filter((source) => source.days.includes(day.date)).slice(0, 2).map((source) => source.id)
   }));
   return { agentId: "food", recommendations, constraints: ["영상 추천은 영업/예약 여부 재확인"], warnings: [] };

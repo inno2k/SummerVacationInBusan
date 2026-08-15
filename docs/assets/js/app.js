@@ -88,7 +88,10 @@ function renderRoutes() {
 }
 
 function renderFood() {
-  document.getElementById("food-list").innerHTML = orchestration.days.flatMap((day) => day.meals.meals.map((meal) => `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(day.route.hub)}</span><h3>${escapeHtml(meal)}</h3><p>동선과 영상 출처를 참고한 후보. 영업·대기·예약은 출발 전 확인.</p></article>`)).join("");
+  document.getElementById("food-list").innerHTML = orchestration.days.flatMap((day) => {
+    const candidates = day.meals.candidates || day.meals.meals.map((name) => ({ name, area: day.route.hub, routeStatus: "동선 일치", sourceIds: [] }));
+    return candidates.map((candidate) => `<article class="food-card"><span class="tag">${escapeHtml(day.date.slice(5))} · ${escapeHtml(candidate.area || day.route.hub)}</span><h3>${escapeHtml(candidate.name)}</h3><p>${escapeHtml(candidate.routeStatus || "동선 일치")} · ${escapeHtml(candidate.menu || "영상 추천 후보")} · 출처: ${escapeHtml((candidate.sourceIds || []).join(", ") || "여행 식사 후보")}</p></article>`);
+  }).join("");
 }
 
 function renderBudget() {

@@ -102,3 +102,24 @@ test("unknown budget mode falls back to balanced behavior", () => {
   assert.equal(result.days[2].route.hub, context.routeHubs["2026-08-18"]);
   assert.deepEqual(result.days[2].meals.meals, []);
 });
+
+test("food agent retains every route-matched food candidate while keeping the itinerary meal limit", () => {
+  const candidates = [
+    { name: "초량밀면", area: "초량", routeStatus: "동선 일치" },
+    { name: "만리향", area: "중앙동", routeStatus: "동선 일치" },
+    { name: "영도 해산물", area: "영도", routeStatus: "동선 일치" },
+    { name: "남포 분식", area: "남포", routeStatus: "동선 일치" }
+  ];
+  const changed = {
+    ...context,
+    budgetMode: "balanced",
+    budgetPlans: { balanced: { mealLimit: 3, routes: {}, removeKeywords: {}, addBlocks: {}, activities: {} } },
+    mealCandidates: { ...context.mealCandidates, "2026-08-16": candidates.map((candidate) => candidate.name) },
+    foodCandidates: { "2026-08-16": candidates }
+  };
+
+  const day16 = runTripOrchestrator(changed).days[0];
+
+  assert.deepEqual(day16.meals.meals, ["초량밀면", "만리향", "영도 해산물"]);
+  assert.deepEqual(day16.meals.candidates, candidates);
+});
