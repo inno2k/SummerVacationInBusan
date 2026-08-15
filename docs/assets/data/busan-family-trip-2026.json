@@ -1,20 +1,279 @@
 {
-  "hero": { "kicker": "BUSAN SUMMER MEMORY TRIP · 2026", "title": "여름 부산, 바다와 아이의 하루를 설계하다", "summary": "KTX로 도착해 원도심과 영도를 걷고, 해운대에서 물놀이한 뒤 오시리아 체험과 씨메르로 마무리하는 3박 4일 운영판", "meta": ["2026.08.16–08.19", "KTX 서울역 ↔ 부산역", "아스티호텔 → 파라다이스호텔"], "stats": [{ "value": "3박 4일", "label": "여행 기간" }, { "value": "2곳", "label": "숙소 이동" }, { "value": "20개", "label": "영상 출처" }] },
-  "tripLens": ["16일은 부산역·초량·남포·영도를 한 권역으로 묶는다.", "17일은 해운대 관광과 호텔 물놀이를 한 번에 완결한다.", "18일은 해운대를 반복하지 않고 오시리아 체험과 실내 대안을 둔다.", "19일은 씨메르 후 KTX 버퍼를 가장 먼저 지킨다."],
+  "hero": { "kicker": "BUSAN SUMMER MEMORY TRIP · 2026", "title": "여름 부산, 바다와 아이의 하루를 설계하다", "summary": "KTX로 도착해 원도심과 영도를 걷고, 17일 해운대 물놀이·씨메르와 18일 센텀 문화 동선을 즐긴 뒤 19일 짐캐리 호텔 인계·부산역 수령과 KTX 버퍼로 마무리하는 3박 4일 운영판", "meta": ["2026.08.16–08.19", "KTX 서울역 ↔ 부산역", "아스티호텔 → 파라다이스호텔"], "stats": [{ "value": "3박 4일", "label": "여행 기간" }, { "value": "2곳", "label": "숙소 이동" }, { "value": "20개", "label": "영상 출처" }] },
+  "tripLens": ["16일은 부산역·초량·남포·영도를 한 권역으로 묶는다.", "17일은 해운대 관광·호텔 물놀이·씨메르를 한 번에 완결한다.", "18일은 해운대에서 센텀 문화 공간과 광안리 야경으로 이어 간다.", "19일은 짐캐리 호텔 인계와 부산역 수령 후 KTX 버퍼를 가장 먼저 지킨다."],
   "memoryAngle": "아이에게는 바다에서 놀고, 직접 고르고, 움직이는 여행으로 남기고 어른에게는 이동과 휴식이 균형 잡힌 부산 운영표로 남기는 일정입니다.",
   "team": [{ "name": "총괄 에이전트", "role": "입력된 일자 흐름을 기준으로 전체 일정 재계산" }, { "name": "동선·교통 에이전트", "role": "권역 이동과 KTX 버퍼 검증" }, { "name": "아이 경험 에이전트", "role": "12살 남자아이 기준 체험·휴식·우천 대안" }],
   "comms": ["일자별 흐름을 수정한 뒤 재계산 버튼을 누르면 모든 전문 에이전트가 다시 판단합니다.", "운영시간과 예약 가능 여부는 공식 링크를 출발 전 재확인합니다."],
-  "photos": [{ "title": "이번 여행의 대표 장면", "detail": "부산역 도착, 해운대 물놀이, 오시리아 체험, 씨메르" }],
-  "dayFlows": [{ "date": "2026-08-16", "label": "16일", "intent": "부산역·초량·남포·영도", "mustDo": "부산다운 첫 식사와 바다 전망", "avoid": "도착 직후 먼 동쪽 이동" }, { "date": "2026-08-17", "label": "17일", "intent": "해운대 관광과 물놀이", "mustDo": "블루라인파크와 파라다이스 물놀이", "avoid": "권역을 여러 번 왕복" }, { "date": "2026-08-18", "label": "18일", "intent": "오시리아 체험·휴식·식사", "mustDo": "12살 아이가 고르는 체험", "avoid": "해운대 반복" }, { "date": "2026-08-19", "label": "19일", "intent": "씨메르 후 부산역 귀환", "mustDo": "오전 씨메르", "avoid": "KTX 직전 먼 일정" }],
+  "photos": [{ "title": "이번 여행의 대표 장면", "detail": "부산역 도착, 17일 해운대 물놀이·씨메르, 18일 센텀 문화 공간, 19일 짐캐리 호텔 인계·부산역 수령과 KTX 버퍼" }],
+  "dayFlows": [{ "date": "2026-08-16", "label": "16일", "intent": "부산역·초량·부평깡통시장", "mustDo": "아스티호텔 짐 보관 후 과학체험관과 두 시장 탐방", "avoid": "도착 직후 먼 동쪽 이동" }, { "date": "2026-08-17", "label": "17일", "intent": "해운대 관광과 물놀이", "mustDo": "블루라인파크·청사포와 파라다이스 오션풀 또는 씨메르", "avoid": "권역을 여러 번 왕복" }, { "date": "2026-08-18", "label": "18일", "intent": "해운대·센텀 문화·광안리 야경", "mustDo": "부산엑스더스카이와 센텀 문화 공간, 광안리 저녁", "avoid": "동쪽 권역 장거리 왕복" }, { "date": "2026-08-19", "label": "19일", "intent": "부산역 귀환과 KTX 탑승 버퍼", "mustDo": "11시 체크아웃 후 짐캐리 호텔 인계와 부산역 수령 뒤 여유 있는 점심", "avoid": "KTX 직전 먼 일정" }],
   "fixedTransport": { "outbound": { "title": "서울역 → 부산역", "departAt": "07:58", "arriveAt": "10:46" }, "return": { "title": "부산역 → 서울역", "departAt": "14:31", "arriveAtStation": "14:00", "arriveAt": "17:14" } },
+  "rentalOptions": {
+    "date": "2026-08-17",
+    "pickup": "부산역 인근에서 오전 렌터카 수령",
+    "returnPlan": "해운대 지역 반납은 반드시 예약 단계에서 반납 가능 지점, 추가 비용, 반납 시간을 확인하세요.",
+    "providers": [
+      { "name": "SK렌터카 부산역지점", "address": "중앙대로180번길 12", "url": "https://www.skdirect.co.kr/", "note": "부산역 인근 수령 후보; 17일 오전 차량과 보험 조건을 예약 화면에서 재확인" },
+      { "name": "롯데렌터카 부산역지점", "address": "중앙대로248번길 7-7", "url": "https://www.lotterentacar.net/", "note": "부산역 인근 대체 수령 후보; 차량 재고와 영업시간을 예약 화면에서 재확인" }
+    ]
+  },
+  "luggageTransfer": {
+    "date": "2026-08-19",
+    "name": "짐캐리",
+    "origin": "파라다이스호텔 부산",
+    "destination": "부산역 1층 미팅홀",
+    "collection": "부산역 1층 미팅홀에서 짐캐리 수령",
+    "url": "https://zimcarry.net/",
+    "note": "호텔 수거 가능 여부와 부산역 1층 미팅홀 전달·수령 시간을 출발 전 다시 확인",
+    "confirmed": false
+  },
   "lodgings": [{ "name": "아스티호텔 부산", "area": "부산역", "dates": "8/16–8/17", "role": "도착·원도심 거점" }, { "name": "파라다이스호텔 부산", "area": "해운대", "dates": "8/17–8/19", "role": "해운대·물놀이·씨메르 거점" }],
-  "defaultBlocks": { "2026-08-16": [{ "time": "10:46", "title": "부산역 도착·아스티호텔 짐 보관", "type": "fixed" }, { "time": "점심", "title": "초량밀면·신발원 후보", "type": "food" }, { "time": "오후", "title": "흰여울문화마을 또는 국립해양박물관", "type": "place" }], "2026-08-17": [{ "time": "오전", "title": "아스티호텔 체크아웃·파라다이스호텔 짐 전달", "type": "lodging" }, { "time": "낮", "title": "블루라인파크·청사포", "type": "place" }, { "time": "오후", "title": "파라다이스호텔 오션풀·해운대해수욕장", "type": "water" }], "2026-08-18": [{ "time": "오전", "title": "롯데월드 부산 또는 국립부산과학관", "type": "activity" }, { "time": "오후", "title": "스카이라인 루지·오시리아 휴식", "type": "activity" }, { "time": "저녁", "title": "광안리 또는 기장권 식사", "type": "food" }], "2026-08-19": [{ "time": "오전", "title": "오션스파 씨메르", "type": "spa" }, { "time": "정오 전", "title": "체크아웃·짐 수령·부산역 이동", "type": "transport" }, { "time": "14:31", "title": "부산역 KTX 출발", "type": "fixed" }] },
-  "routeHubs": { "2026-08-16": "부산역·초량·남포·영도", "2026-08-17": "해운대·청사포", "2026-08-18": "오시리아·기장", "2026-08-19": "해운대·부산역" },
-  "routeSequences": { "2026-08-16": ["부산역", "초량", "남포·자갈치", "영도"], "2026-08-17": ["아스티호텔", "파라다이스호텔", "미포", "청사포", "해운대"], "2026-08-18": ["파라다이스호텔", "롯데월드 부산", "오시리아", "광안리"], "2026-08-19": ["파라다이스호텔", "씨메르", "부산역"] },
-  "mealCandidates": { "2026-08-16": ["초량밀면", "신발원", "자갈치시장"], "2026-08-17": ["청사포 해산물", "해운대 전통시장", "호텔 식사"], "2026-08-18": ["오시리아 식당가", "기장 해산물", "광안리 저녁"], "2026-08-19": ["호텔 조식", "부산역 간단 식사"] },
-  "activityCandidates": { "2026-08-16": [{ "title": "흰여울문화마을", "area": "영도", "audience": ["가족"], "weather": "clear" }, { "title": "국립해양박물관", "area": "영도", "audience": ["12살", "가족"], "weather": "rain" }], "2026-08-17": [{ "title": "블루라인파크", "area": "해운대", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "파라다이스호텔 물놀이", "area": "해운대", "audience": ["12살", "가족"], "weather": "clear" }], "2026-08-18": [{ "title": "롯데월드 부산", "area": "오시리아", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "스카이라인 루지", "area": "오시리아", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "국립부산과학관", "area": "오시리아", "audience": ["12살", "가족"], "weather": "rain" }, { "title": "센텀 스파랜드", "area": "센텀", "audience": ["가족"], "weather": "rain" }, { "title": "광안리 산책·민락수변 휴식", "area": "광안리", "audience": ["12살", "가족"], "weather": "clear" }], "2026-08-19": [{ "title": "오션스파 씨메르", "area": "해운대", "audience": ["가족"], "weather": "clear" }] },
-  "budgets": { "light": { "name": "알뜰", "total": "약 150만원", "note": "대중교통·무료 명소 중심, 체험 1개 선택", "basis": "3인 기준 계획용 예상치", "items": [{ "label": "KTX 왕복", "amount": "27만원", "detail": "서울역 ↔ 부산역" }, { "label": "숙박", "amount": "75만원", "detail": "아스티 1박 + 파라다이스 2박 예약액 입력" }, { "label": "식사", "amount": "24만원", "detail": "간단한 아침·시장·일반 식당" }, { "label": "현지 교통", "amount": "8만원", "detail": "지하철·버스·택시 최소 이용" }, { "label": "체험·입장", "amount": "8만원", "detail": "무료 해변·공원 중심" }, { "label": "예비비", "amount": "8만원", "detail": "간식·물·추가 교통" }] }, "balanced": { "name": "균형", "total": "약 220만원", "note": "17일 물놀이와 18일 오시리아 체험 포함", "basis": "3인 기준 계획용 예상치", "items": [{ "label": "KTX 왕복", "amount": "27만원", "detail": "서울역 ↔ 부산역" }, { "label": "숙박", "amount": "95만원", "detail": "두 호텔 예약액과 객실 옵션 반영" }, { "label": "식사", "amount": "39만원", "detail": "돼지국밥·밀면·해산물·카페" }, { "label": "현지 교통", "amount": "15만원", "detail": "호텔 이동·택시 일부 포함" }, { "label": "체험·입장", "amount": "30만원", "detail": "물놀이·오시리아 체험 1~2개" }, { "label": "예비비", "amount": "14만원", "detail": "간식·기념품·추가 비용" }] }, "comfort": { "name": "여유", "total": "약 320만원", "note": "택시·예약 식사·호텔 시설을 넉넉히 사용하는 방식", "basis": "3인 기준 계획용 예상치", "items": [{ "label": "KTX 왕복", "amount": "27만원", "detail": "서울역 ↔ 부산역" }, { "label": "숙박", "amount": "125만원", "detail": "객실 업그레이드·호텔 부대시설 고려" }, { "label": "식사", "amount": "60만원", "detail": "예약 식사·해산물·카페·호텔 식사" }, { "label": "현지 교통", "amount": "30만원", "detail": "권역 이동 택시 중심" }, { "label": "체험·입장", "amount": "55만원", "detail": "물놀이·오시리아·씨메르 부대비용" }, { "label": "예비비", "amount": "23만원", "detail": "쇼핑·간식·우천 대체 일정" }] } },
-  "budgetPlans": { "light": { "mealLimit": 2, "removeKeywords": { "2026-08-17": ["블루라인파크"], "2026-08-18": ["롯데월드 부산", "스카이라인 루지"] }, "addBlocks": { "2026-08-17": [{ "time": "낮", "title": "해운대해수욕장 산책·무료 물놀이", "type": "water" }], "2026-08-18": [{ "time": "오후", "title": "광안리 산책·민락수변 휴식", "type": "free" }] }, "routes": { "2026-08-17": ["파라다이스호텔", "해운대해수욕장", "동백섬"], "2026-08-18": ["파라다이스호텔", "광안리"] }, "meals": { "2026-08-17": ["해운대 전통시장", "편의점·간식"], "2026-08-18": ["광안리 분식·간식", "민락수변 포장 식사"] }, "activities": { "2026-08-17": ["파라다이스호텔 물놀이"], "2026-08-18": ["광안리 산책·민락수변 휴식"] } }, "balanced": { "mealLimit": 3, "removeKeywords": {}, "addBlocks": {}, "routes": {}, "activities": {} }, "comfort": { "mealLimit": 3, "removeKeywords": {}, "addBlocks": { "2026-08-18": [{ "time": "오후", "title": "스카이라인 루지·오시리아 택시 이동", "type": "activity" }] }, "routes": { "2026-08-18": ["파라다이스호텔", "롯데월드 부산", "스카이라인 루지", "오시리아", "광안리"] }, "activities": { "2026-08-17": ["블루라인파크", "파라다이스호텔 물놀이"], "2026-08-18": ["롯데월드 부산", "스카이라인 루지", "국립부산과학관"] } } },
+  "defaultBlocks": {
+    "2026-08-16": [{ "time": "10:46", "startAt": "10:46", "endAt": "11:30", "title": "부산역 도착·아스티호텔 짐 보관", "type": "fixed" }, { "time": "점심", "startAt": "12:00", "endAt": "13:10", "title": "이재모피자 점심", "type": "food" }, { "time": "오후", "startAt": "13:40", "endAt": "15:30", "title": "부산과학체험관 체험", "type": "activity" }, { "time": "오후", "startAt": "15:40", "endAt": "17:10", "title": "초량전통시장 탐방·간식", "type": "place" }, { "time": "저녁", "startAt": "18:00", "endAt": "20:20", "title": "부평깡통시장 저녁·야시장 탐방", "type": "food" }, { "time": "밤", "startAt": "20:20", "endAt": "20:50", "title": "아스티호텔 부산 복귀", "type": "transport" }],
+    "2026-08-17": [
+      { "time": "08:00", "startAt": "08:00", "endAt": "08:25", "title": "아스티호텔 부산 인근 조식", "type": "food" },
+      { "time": "08:30", "startAt": "08:30", "endAt": "08:40", "title": "아스티호텔 체크아웃", "type": "lodging" },
+      { "time": "08:45", "startAt": "08:45", "endAt": "09:00", "title": "SK렌터카 부산역지점 렌터카 수령", "type": "transport" },
+      { "time": "09:50", "startAt": "09:50", "endAt": "10:05", "title": "파라다이스호텔 부산 짐 전달", "type": "lodging" },
+      { "time": "10:45", "startAt": "10:45", "endAt": "11:45", "title": "해동용궁사", "type": "place" },
+      { "time": "12:20", "startAt": "12:20", "endAt": "12:35", "title": "미포주차장 주차", "type": "transport" },
+      { "time": "12:40", "startAt": "12:40", "endAt": "14:10", "title": "미포·청사포 왕복 블루라인파크", "type": "place" },
+      { "time": "14:30", "startAt": "14:30", "endAt": "16:15", "title": "파라다이스호텔 물놀이", "type": "water" },
+      { "time": "16:30", "startAt": "16:30", "endAt": "17:30", "title": "해운대해수욕장 물놀이·휴식", "type": "water" },
+      { "time": "17:40", "startAt": "17:40", "endAt": "18:00", "title": "해운대 렌터카 반납", "type": "transport" },
+      { "time": "18:30", "startAt": "18:30", "endAt": "20:00", "title": "해운대 저녁 식사", "type": "food" }
+    ],
+    "2026-08-18": [{ "id": "haeundae-breakfast", "time": "08:00", "startAt": "08:00", "endAt": "09:00", "title": "해운대 아침식사·파라다이스호텔 출발", "type": "food" }, { "id": "x-the-sky", "time": "09:30", "startAt": "09:30", "endAt": "11:00", "title": "부산엑스더스카이", "type": "activity" }, { "id": "centum-lunch", "time": "11:15", "startAt": "11:15", "endAt": "12:45", "title": "센텀 이동·점심식사", "type": "food" }, { "id": "museum-1", "time": "13:00", "startAt": "13:00", "endAt": "14:40", "title": "뮤지엄원 미디어아트", "type": "activity" }, { "id": "cinema-center", "time": "15:00", "startAt": "15:00", "endAt": "15:45", "title": "부산영화의전당 광장", "type": "place" }, { "id": "f1963", "time": "16:15", "startAt": "16:15", "endAt": "17:30", "title": "F1963 문화·휴식", "type": "place" }, { "id": "gwangalli-dinner", "time": "18:00", "startAt": "18:00", "endAt": "20:00", "title": "광안리 저녁식사·야경", "type": "food" }, { "id": "paradise-return", "time": "20:00", "startAt": "20:00", "endAt": "20:30", "title": "파라다이스호텔 부산 복귀", "type": "transport" }],
+    "2026-08-19": [
+      { "time": "08:00", "startAt": "08:00", "endAt": "08:45", "title": "해운대 로컬 조식", "type": "food" },
+      { "time": "10:00", "startAt": "10:00", "endAt": "10:10", "title": "파라다이스호텔 체크아웃", "type": "lodging" },
+      { "time": "10:15", "startAt": "10:15", "endAt": "10:25", "title": "파라다이스호텔 짐캐리 인계", "type": "transport" },
+      { "time": "10:30", "startAt": "10:30", "endAt": "11:35", "title": "해운대 립 바비큐 레스토랑 점심", "type": "food" },
+      { "time": "11:40", "startAt": "11:40", "endAt": "12:35", "title": "부산역 이동", "type": "transport" },
+      { "time": "12:35", "startAt": "12:35", "endAt": "12:50", "title": "부산역 짐 수령", "type": "transport" },
+      { "time": "13:45", "startAt": "13:45", "endAt": "14:20", "title": "부산역 승강장 이동·탑승 버퍼", "type": "transport" },
+      { "time": "14:31", "startAt": "14:31", "endAt": "17:14", "title": "부산역 KTX 출발", "type": "fixed" }
+    ]
+  },
+  "routeHubs": { "2026-08-16": "부산역·초량·남포·영도", "2026-08-17": "해운대·청사포", "2026-08-18": "해운대·센텀·광안리", "2026-08-19": "부산역 귀환" },
+  "routeSequences": { "2026-08-16": ["부산역", "아스티호텔 부산", "이재모피자", "부산과학체험관", "초량전통시장", "부평깡통시장", "아스티호텔 부산"], "2026-08-17": ["아스티호텔 부산", "SK렌터카 부산역지점", "파라다이스호텔 부산", "해동용궁사", "미포주차장", "미포", "청사포", "미포", "파라다이스호텔 부산", "해운대해수욕장", "해운대 렌터카 반납"], "2026-08-18": ["파라다이스호텔 부산", "부산엑스더스카이", "뮤지엄원", "부산영화의전당", "F1963", "광안리", "파라다이스호텔 부산"], "2026-08-19": ["파라다이스호텔 체크아웃", "파라다이스호텔 짐캐리 인계", "해운대 립 바비큐 레스토랑", "부산역 짐캐리 수령·탑승 버퍼", "부산역 KTX 출발 14:31"] },
+  "mealCandidates": { "2026-08-16": ["이재모피자", "양산집", "부평통닭"], "2026-08-17": ["청사포 해산물", "해운대 전통시장", "호텔 식사"], "2026-08-18": ["해운대 아침식사", "센텀 점심", "광안리 저녁"], "2026-08-19": ["호텔 조식", "부산역 포장"] },
+  "mealSlots": {
+    "2026-08-16": {
+      "breakfast": [
+        { "name": "서울역 모닝토스트", "genre": "토스트", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EB%AA%A8%EB%8B%9D%ED%86%A0%EC%8A%A4%ED%8A%B8", "note": "07:58 KTX 출발 전 서울역에서 가볍게 먹는 조식", "primary": true },
+        { "name": "서울역 아침국밥", "genre": "아침국밥", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EC%95%84%EC%B9%A8%EA%B5%AD%EB%B0%A5", "note": "07:58 KTX 출발 전 서울역에서 든든하게 먹는 조식" },
+        { "name": "서울역 베이커리", "genre": "베이커리", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EB%B2%A0%EC%9D%B4%EC%BB%A4%EB%A6%AC", "note": "07:58 KTX 출발 전 서울역에서 포장 가능한 조식" }
+      ],
+      "lunch": [
+        { "name": "이재모피자", "genre": "피자", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%9D%B4%EC%9E%AC%EB%AA%A8%ED%94%BC%EC%9E%90", "note": "아스티호텔 짐 보관 뒤 부산역 인근에서 시작하는 점심", "primary": true },
+        { "name": "신발원", "genre": "만두", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%8B%A0%EB%B0%9C%EC%9B%90", "note": "초량전통시장 전 간단한 식사" },
+        { "name": "초량 이바구길 카페", "genre": "카페 브런치", "area": "초량", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%B4%88%EB%9F%89%20%EC%9D%B4%EB%B0%94%EA%B5%AC%EA%B8%B8%20%EC%B9%B4%ED%8E%98", "note": "초량 권역에서 선택할 수 있는 가벼운 식사" }
+      ],
+      "dinner": [
+        { "name": "양산집", "genre": "돼지국밥", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/%EC%96%91%EC%82%B0%EC%A7%91%20%EB%B6%80%ED%8F%89%EA%B9%A1%ED%86%B5%EC%8B%9C%EC%9E%A5", "note": "야시장 탐방 전후에 든든하게 먹는 돼지국밥", "primary": true },
+        { "name": "깡통골목할매 유부전골", "genre": "유부전골", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B9%A1%ED%86%B5%EA%B3%A8%EB%AA%A9%ED%95%A0%EB%A7%A4%20%EC%9C%A0%EB%B6%80%EC%A0%84%EA%B3%A8", "note": "부평깡통시장 골목에서 함께 나누기 좋은 전골", "primary": false },
+        { "name": "부평통닭", "genre": "통닭", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/%EB%B6%80%ED%8F%89%ED%86%B5%EB%8B%AD", "note": "야시장 간식과 함께 즐기는 시장 통닭", "primary": false }
+      ]
+    },
+    "2026-08-17": {
+      "breakfast": [
+        { "name": "부산역 김밥", "genre": "김밥", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EA%B9%80%EB%B0%A5", "note": "아스티호텔 체크아웃과 렌터카 수령 전 빠른 조식" },
+        { "name": "부산역 샌드위치", "genre": "샌드위치", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EC%83%8C%EB%93%9C%EC%9C%84%EC%B9%98", "note": "렌터카 수령 전 포장 가능한 조식" },
+        { "name": "부산역 샐러드", "genre": "샐러드", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EC%83%90%EB%9F%AC%EB%93%9C", "note": "해운대 이동 전 가볍게 먹는 조식" },
+        { "name": "부산역 베이커리", "genre": "부산역 베이커리", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EB%B2%A0%EC%9D%B4%EC%BB%A4%EB%A6%AC", "note": "렌터카 수령 전 매장에서 바로 먹거나 차 안에서 먹기 좋은 조식", "primary": true },
+        { "name": "본전돼지국밥", "genre": "부산역 돼지국밥", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EB%B3%B8%EC%A0%84%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5", "note": "아스티호텔 체크아웃 후 부산역 렌터카 수령 전에 든든히 먹는 조식" },
+        { "name": "부산역 커피", "genre": "커피", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EC%BB%A4%ED%94%BC", "note": "해운대 이동 전 간단한 빵과 함께 빠르게 챙길 수 있는 조식" }
+      ],
+      "lunch": [
+        { "name": "해운대가야밀면", "genre": "밀면", "area": "좌동", "meal": "lunch", "url": "https://place.map.kakao.com/15555120", "note": "호텔 짐 전달 뒤 블루라인파크 전 식사" },
+        { "name": "해운대 소문난 돼지국밥", "genre": "돼지국밥", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%86%8C%EB%AC%B8%EB%82%9C%20%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5", "note": "해운대 이동 뒤 든든한 국밥 선택지" },
+        { "name": "해운대 전통시장", "genre": "분식", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%A0%84%ED%86%B5%EC%8B%9C%EC%9E%A5", "note": "미포 이동 전 빠른 식사", "primary": true }
+      ],
+      "dinner": [
+        { "name": "해운대다찌", "genre": "해산물", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1528294592", "note": "물놀이 후 해산물 저녁" },
+        { "name": "맛찬들왕소금구이 부산해운대점", "genre": "돼지고기", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/18161911", "note": "가족 식사에 맞는 구이 선택지" },
+        { "name": "이카", "genre": "이자카야", "area": "해운대", "meal": "dinner", "url": "https://place.map.kakao.com/1305748619", "note": "저녁 시간대 오징어회·일식 선택지" },
+        { "name": "해운대암소갈비집", "genre": "소갈비", "area": "해운대", "meal": "dinner", "url": "https://naver.me/5LHsNhM3", "note": "대기 가능 시간을 고려한 예약형 저녁 후보", "primary": true }
+      ]
+    },
+    "2026-08-18": {
+      "breakfast": [
+        { "name": "해운대 죽집", "genre": "죽", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%A3%BD%EC%A7%91", "note": "파라다이스호텔에서 출발해 부산엑스더스카이로 이동하기 전 속을 편히 채우는 조식", "primary": true },
+        { "name": "해운대 요거트", "genre": "요거트", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EC%9A%94%EA%B1%B0%ED%8A%B8", "note": "센텀 문화 공간으로 이어지는 오전 일정 전에 빠르게 먹을 수 있는 조식" },
+        { "name": "해운대 국수", "genre": "아침국수", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EA%B5%AD%EC%88%98", "note": "전망대 입장 전 가족이 나눠 먹기 좋은 따뜻한 아침 식사" }
+      ],
+      "lunch": [
+        { "name": "센텀시티 한식 정식", "genre": "한식 정식", "area": "센텀시티", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0%20%ED%95%9C%EC%8B%9D%20%EC%A0%95%EC%8B%9D", "note": "부산엑스더스카이에서 뮤지엄원으로 이동하기 전 센텀 권역에서 여유 있게 먹는 점심", "primary": true },
+        { "name": "센텀시티 덮밥", "genre": "덮밥", "area": "센텀시티", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0%20%EB%8D%AE%EB%B0%A5", "note": "영화의전당 광장 방문 전 식사 시간을 짧게 조절하기 좋은 센텀 점심" },
+        { "name": "센텀시티 샐러드", "genre": "샐러드", "area": "센텀시티", "meal": "lunch", "url": "https://map.naver.com/p/search/%EC%84%BC%ED%85%80%EC%8B%9C%ED%8B%B0%20%EC%83%90%EB%9F%AC%EB%93%9C", "note": "F1963까지 이어지는 오후 문화 일정 전에 가볍게 먹는 센텀 점심" }
+      ],
+      "dinner": [
+        { "name": "광안리 바다국밥", "genre": "맑은국밥", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B4%91%EC%95%88%EB%A6%AC%20%EB%B0%94%EB%8B%A4%EA%B5%AD%EB%B0%A5", "note": "F1963에서 광안리 해변으로 이동한 뒤 야경 산책 전에 든든히 먹는 저녁", "primary": true },
+        { "name": "광안리 조개구이", "genre": "조개구이", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B4%91%EC%95%88%EB%A6%AC%20%EC%A1%B0%EA%B0%9C%EA%B5%AC%EC%9D%B4", "note": "광안대교 야경을 보기 좋은 시간에 맞춰 천천히 이어 가는 해변 저녁" },
+        { "name": "광안리 파스타", "genre": "파스타", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/%EA%B4%91%EC%95%88%EB%A6%AC%20%ED%8C%8C%EC%8A%A4%ED%83%80", "note": "호텔 복귀 전 가족 취향에 맞춰 선택할 수 있는 광안리 해변 저녁" }
+      ]
+    },
+    "2026-08-19": {
+      "breakfast": [
+        { "name": "해운대 브런치 카페", "genre": "브런치", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EB%B8%8C%EB%9F%B0%EC%B9%98", "note": "파라다이스호텔 체크아웃 전 가까운 로컬 조식", "primary": true },
+        { "name": "해운대 베이글", "genre": "베이글", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EB%B2%A0%EC%9D%B4%EA%B8%80", "note": "짐캐리 전달 전 포장 가능한 조식" },
+        { "name": "해운대 과일주스", "genre": "주스", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EA%B3%BC%EC%9D%BC%EC%A3%BC%EC%8A%A4", "note": "점심 바비큐 전 가볍게 시작하는 조식" }
+      ],
+      "lunch": [
+        { "name": "해운대 립 바비큐 레스토랑", "genre": "립 바비큐", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EB%A6%BD%20%EB%B0%94%EB%B9%84%ED%81%90", "note": "짐캐리 전달 뒤 부산역으로 출발하기 전 먹는 점심", "primary": true },
+        { "name": "해운대 그릴 레스토랑", "genre": "그릴", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%EA%B7%B8%EB%A6%B4%20%EB%A0%88%EC%8A%A4%ED%86%A0%EB%9E%91", "note": "짐캐리 전달 뒤 선택할 수 있는 해운대 점심" },
+        { "name": "해운대 파스타", "genre": "파스타", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/%ED%95%B4%EC%9A%B4%EB%8C%80%20%ED%8C%8C%EC%8A%A4%ED%83%80", "note": "부산역 이동 전에 식사 시간을 조절하기 좋은 대안" }
+      ],
+      "takeaway": [
+        { "name": "부산역 도시락", "genre": "도시락", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EB%8F%84%EC%8B%9C%EB%9D%BD", "note": "짐캐리 수령 뒤 14:31 KTX 탑승 버퍼 안에서 챙겨 갈 수 있는 포장 식사", "primary": true },
+        { "name": "부산역 편의점 샌드위치", "genre": "편의점 샌드위치", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%ED%8E%B8%EC%9D%98%EC%A0%90%20%EC%83%8C%EB%93%9C%EC%9C%84%EC%B9%98", "note": "승강장 이동 전에 빠르게 골라 열차 안에서 먹기 좋은 부산역 포장 대안" },
+        { "name": "부산역 과일컵", "genre": "과일컵", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%97%AD%20%EA%B3%BC%EC%9D%BC%EC%BB%B5", "note": "점심 뒤 가볍게 챙겨 KTX 안에서 먹을 수 있는 부산역 포장 대안" }
+      ]
+    }
+  },
+  "mealSelections": {
+    "light": {
+      "2026-08-16": { "breakfast": "서울역 모닝토스트", "lunch": "이재모피자", "dinner": "양산집" },
+      "2026-08-17": { "breakfast": "부산역 베이커리", "lunch": "해운대 전통시장", "dinner": "맛찬들왕소금구이 부산해운대점" },
+      "2026-08-18": { "breakfast": "해운대 죽집", "lunch": "센텀시티 한식 정식", "dinner": "광안리 조개구이" },
+      "2026-08-19": { "breakfast": "해운대 브런치 카페", "lunch": "해운대 립 바비큐 레스토랑", "takeaway": "부산역 도시락" }
+    },
+    "balanced": {
+      "2026-08-16": { "breakfast": "서울역 베이커리", "lunch": "이재모피자", "dinner": "부평통닭" },
+      "2026-08-17": { "breakfast": "부산역 베이커리", "lunch": "해운대가야밀면", "dinner": "해운대암소갈비집" },
+      "2026-08-18": { "breakfast": "해운대 죽집", "lunch": "센텀시티 덮밥", "dinner": "광안리 파스타" },
+      "2026-08-19": { "breakfast": "해운대 베이글", "lunch": "해운대 립 바비큐 레스토랑", "takeaway": "부산역 편의점 샌드위치" }
+    },
+    "comfort": {
+      "2026-08-16": { "breakfast": "서울역 아침국밥", "lunch": "이재모피자", "dinner": "부평통닭" },
+      "2026-08-17": { "breakfast": "부산역 커피", "lunch": "해운대가야밀면", "dinner": "해운대암소갈비집" },
+      "2026-08-18": { "breakfast": "해운대 요거트", "lunch": "센텀시티 샐러드", "dinner": "광안리 바다국밥" },
+      "2026-08-19": { "breakfast": "해운대 과일주스", "lunch": "해운대 립 바비큐 레스토랑", "takeaway": "부산역 과일컵" }
+    }
+  },
+  "mealPriorities": {
+    "light": {
+      "2026-08-16": { "breakfast": ["서울역 모닝토스트"], "lunch": ["이재모피자"], "dinner": ["양산집"] },
+      "2026-08-17": { "breakfast": ["부산역 베이커리"], "lunch": ["해운대 전통시장"], "dinner": ["맛찬들왕소금구이 부산해운대점"] },
+      "2026-08-18": { "breakfast": ["해운대 죽집"], "lunch": ["센텀시티 한식 정식"], "dinner": ["광안리 조개구이"] },
+      "2026-08-19": { "breakfast": ["해운대 브런치 카페"], "lunch": ["해운대 립 바비큐 레스토랑"], "takeaway": ["부산역 도시락"] }
+    },
+    "balanced": {
+      "2026-08-16": { "breakfast": ["서울역 베이커리"], "lunch": ["이재모피자"], "dinner": ["부평통닭"] },
+      "2026-08-17": { "breakfast": ["부산역 베이커리"], "lunch": ["해운대가야밀면"], "dinner": ["해운대암소갈비집"] },
+      "2026-08-18": { "breakfast": ["해운대 죽집"], "lunch": ["센텀시티 덮밥"], "dinner": ["광안리 파스타"] },
+      "2026-08-19": { "breakfast": ["해운대 베이글"], "lunch": ["해운대 립 바비큐 레스토랑"], "takeaway": ["부산역 편의점 샌드위치"] }
+    },
+    "comfort": {
+      "2026-08-16": { "breakfast": ["서울역 아침국밥"], "lunch": ["이재모피자"], "dinner": ["부평통닭"] },
+      "2026-08-17": { "breakfast": ["부산역 커피"], "lunch": ["해운대가야밀면"], "dinner": ["해운대암소갈비집"] },
+      "2026-08-18": { "breakfast": ["해운대 요거트"], "lunch": ["센텀시티 샐러드"], "dinner": ["광안리 바다국밥"] },
+      "2026-08-19": { "breakfast": ["해운대 과일주스"], "lunch": ["해운대 립 바비큐 레스토랑"], "takeaway": ["부산역 과일컵"] }
+    }
+  },
+  "activityCandidates": { "2026-08-16": [{ "title": "흰여울문화마을", "area": "영도", "audience": ["가족"], "weather": "clear" }, { "title": "국립해양박물관", "area": "영도", "audience": ["12살", "가족"], "weather": "rain" }], "2026-08-17": [{ "title": "해운대 블루라인파크", "area": "해운대", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "청사포 다릿돌전망대", "area": "청사포", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "파라다이스호텔 오션풀", "area": "해운대", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "파라다이스호텔 씨메르", "area": "해운대", "audience": ["12살", "가족"], "weather": "rain" }, { "title": "해운대해수욕장 물놀이", "area": "해운대", "audience": ["12살", "가족"], "weather": "clear" }], "2026-08-18": [{ "title": "부산엑스더스카이", "area": "해운대", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "뮤지엄원 미디어아트", "area": "센텀", "audience": ["12살", "가족"], "weather": "rain" }, { "title": "부산영화의전당 광장", "area": "센텀", "audience": ["12살", "가족"], "weather": "clear" }, { "title": "F1963 문화·휴식", "area": "센텀", "audience": ["12살", "가족"], "weather": "rain" }], "2026-08-19": [] },
+  "budgets": { "light": { "name": "알뜰", "total": "약 170만원", "note": "대중교통·무료 명소 중심, 선택 체험은 예약 시 별도 확인", "basis": "3인 기준 계획용 예상치", "items": [{ "label": "KTX 왕복", "amount": "27만원", "detail": "서울역 ↔ 부산역" }, { "label": "숙박", "amount": "75만원", "detail": "아스티 1박 + 파라다이스 2박 예약액 입력" }, { "label": "조식", "amount": "6만원", "detail": "4일 로컬 조식 후보 기준" }, { "label": "식사", "amount": "24만원", "detail": "시장·일반 식당" }, { "label": "렌터카", "amount": "12만원", "detail": "17일 부산역 수령·해운대 반납 예상" }, { "label": "짐캐리", "amount": "2만원", "detail": "19일 호텔-부산역 1층 미팅홀 전달 예상" }, { "label": "현지 교통", "amount": "8만원", "detail": "지하철·버스·택시 최소 이용" }, { "label": "체험·입장", "amount": "8만원", "detail": "무료 해변·공원 중심" }, { "label": "예비비", "amount": "8만원", "detail": "간식·물·추가 교통" }, { "label": "선택 체험", "amount": "예약 시 확인", "detail": "수영만 요트 또는 센텀 아이스링크는 기본 예산에 포함하지 않음" }] }, "balanced": { "name": "균형", "total": "약 250만원", "note": "17일 물놀이와 18일 센텀 문화 동선 포함", "basis": "3인 기준 계획용 예상치", "items": [{ "label": "KTX 왕복", "amount": "27만원", "detail": "서울역 ↔ 부산역" }, { "label": "숙박", "amount": "95만원", "detail": "두 호텔 예약액과 객실 옵션 반영" }, { "label": "조식", "amount": "9만원", "detail": "4일 로컬 조식 후보 기준" }, { "label": "식사", "amount": "39만원", "detail": "돼지국밥·밀면·해산물·카페" }, { "label": "렌터카", "amount": "18만원", "detail": "17일 부산역 수령·해운대 반납 예상" }, { "label": "짐캐리", "amount": "3만원", "detail": "19일 호텔-부산역 1층 미팅홀 전달 예상" }, { "label": "현지 교통", "amount": "15만원", "detail": "호텔 이동·택시 일부 포함" }, { "label": "체험·입장", "amount": "30만원", "detail": "물놀이·전망대·문화 공간 방문" }, { "label": "예비비", "amount": "14만원", "detail": "간식·기념품·추가 비용" }, { "label": "선택 체험", "amount": "예약 시 확인", "detail": "수영만 요트 또는 센텀 아이스링크는 기본 예산에 포함하지 않음" }] }, "comfort": { "name": "여유", "total": "약 360만원", "note": "택시·예약 식사·호텔 시설을 넉넉히 사용하는 방식", "basis": "3인 기준 계획용 예상치", "items": [{ "label": "KTX 왕복", "amount": "27만원", "detail": "서울역 ↔ 부산역" }, { "label": "숙박", "amount": "125만원", "detail": "객실 업그레이드·호텔 부대시설 고려" }, { "label": "조식", "amount": "12만원", "detail": "4일 로컬 조식 후보 기준" }, { "label": "식사", "amount": "60만원", "detail": "예약 식사·해산물·카페·호텔 식사" }, { "label": "렌터카", "amount": "25만원", "detail": "17일 부산역 수령·해운대 반납 예상" }, { "label": "짐캐리", "amount": "4만원", "detail": "19일 호텔-부산역 1층 미팅홀 전달 예상" }, { "label": "현지 교통", "amount": "30만원", "detail": "권역 이동 택시 중심" }, { "label": "체험·입장", "amount": "55만원", "detail": "물놀이·전망대·문화 공간 부대비용" }, { "label": "예비비", "amount": "22만원", "detail": "쇼핑·간식·우천 대체 일정" }, { "label": "선택 체험", "amount": "예약 시 확인", "detail": "수영만 요트 또는 센텀 아이스링크는 기본 예산에 포함하지 않음" }] } },
+  "budgetPlans": { "light": { "mealLimit": 2, "removeKeywords": { "2026-08-17": [] }, "addBlocks": { "2026-08-17": [{ "time": "낮", "title": "해운대해수욕장 산책·무료 물놀이", "type": "water" }] }, "routes": { "2026-08-17": ["파라다이스호텔", "해운대해수욕장", "동백섬"] }, "meals": { "2026-08-17": ["해운대 전통시장", "편의점·간식"] }, "activities": { "2026-08-17": ["파라다이스호텔 물놀이"] } }, "balanced": { "mealLimit": 3, "removeKeywords": {}, "addBlocks": {}, "routes": {}, "activities": {} }, "comfort": { "mealLimit": 3, "removeKeywords": {}, "addBlocks": {}, "routes": {}, "activities": { "2026-08-17": ["블루라인파크", "파라다이스호텔 물놀이"] } } },
+  "optionalExperiences": {
+    "2026-08-18": [
+      { "id": "suyeong-yacht", "title": "수영만 요트 체험", "area": "수영만 요트경기장", "durationMinutes": 60, "replaces": ["cinema-center", "f1963"], "costPolicy": "예약 시점의 성수기·시간대·인원별 요금 확인", "conditions": "비, 강풍, 해상 상태와 선장 판단에 따라 취소 또는 일정 변경 가능", "sourceUrl": "https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000304004001000&uc_seq=1775" },
+      { "id": "centum-ice-rink", "title": "신세계 센텀 아이스링크", "area": "센텀시티", "durationMinutes": 120, "replaces": ["cinema-center", "f1963"], "costPolicy": "현장 또는 예약 화면의 당일 요금 확인", "conditions": "운영시간, 회차, 장갑·양말·보호장비 조건을 당일 확인", "sourceUrl": "https://www.shinsegae.com/department/store/centum/ice-rink" }
+    ]
+  },
+  "mealFallbacks": {
+    "2026-08-16": {
+      "breakfast": [
+        { "name": "서울역 파리크라상", "genre": "베이커리", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/서울역%20파리크라상", "note": "07:58 KTX 출발 전 서울역 대합실 동선에서 바로 들르기 좋은 빵과 음료 선택지", "waitRisk": "go-now" },
+        { "name": "던킨 서울역", "genre": "도넛", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/던킨%20서울역", "note": "출발 시각이 가까우면 포장 대기 줄을 확인한 뒤 빠르게 챙길 수 있는 조식", "waitRisk": "check-wait" },
+        { "name": "롯데리아 서울역", "genre": "버거", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/롯데리아%20서울역", "note": "KTX 승강장 이동 전에 따뜻한 메뉴를 바로 받아 갈 수 있는 서울역 대안", "waitRisk": "operation-check" },
+        { "name": "맥도날드 서울역", "genre": "패스트푸드", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/맥도날드%20서울역", "note": "아침 혼잡 시 주문 화면과 준비 시간을 먼저 확인하고 선택하는 출발 전 식사", "waitRisk": "check-wait" },
+        { "name": "이삭토스트 서울역", "genre": "토스트", "area": "서울역", "meal": "breakfast", "url": "https://map.naver.com/p/search/이삭토스트%20서울역", "note": "열차 안에서도 먹기 쉬운 포장 토스트를 서울역 출발 동선에서 챙기는 선택지", "waitRisk": "go-now" }
+      ],
+      "lunch": [
+        { "name": "원조18번완당", "genre": "완당", "area": "남포동", "meal": "lunch", "url": "https://map.naver.com/p/search/원조18번완당", "note": "부산역 도착 후 남포 권역으로 이동한 뒤 시장 탐방 전 가볍게 먹기 좋은 점심", "waitRisk": "check-wait" },
+        { "name": "홍성방 본점", "genre": "중식만두", "area": "남포동", "meal": "lunch", "url": "https://map.naver.com/p/search/홍성방%20본점", "note": "원도심 산책과 부평 방향 이동 사이에 가족이 나눠 먹기 좋은 남포동 대안", "waitRisk": "check-wait" },
+        { "name": "신창국밥", "genre": "돼지국밥", "area": "남포동", "meal": "lunch", "url": "https://map.naver.com/p/search/신창국밥", "note": "오후 과학체험관과 시장 일정 전 속도를 내기 좋은 남포동 국밥 점심", "waitRisk": "go-now" },
+        { "name": "개미집 남포동", "genre": "낙곱새", "area": "남포동", "meal": "lunch", "url": "https://map.naver.com/p/search/개미집%20남포동", "note": "부평깡통시장으로 이어질 때 남포동 안에서 식사 위치를 바꾸지 않아도 되는 선택지", "waitRisk": "check-wait" },
+        { "name": "할매가야밀면 남포", "genre": "밀면", "area": "남포동", "meal": "lunch", "url": "https://map.naver.com/p/search/할매가야밀면%20남포", "note": "더운 오후 영도 이동 전 남포동 중심에서 빠르게 식사하고 출발하기 좋은 대안", "waitRisk": "operation-check" }
+      ],
+      "dinner": [
+        { "name": "깡통골목할매 유부전골", "genre": "유부전골", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/깡통골목할매%20유부전골", "note": "야시장 구경을 시작하기 전 부평깡통시장 골목에서 가족이 함께 나눠 먹기 좋은 저녁", "waitRisk": "check-wait" },
+        { "name": "이가네떡볶이", "genre": "떡볶이", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/이가네떡볶이", "note": "야시장 간식과 함께 소량으로 먹고 다음 시장 동선으로 이어 가기 좋은 선택지", "waitRisk": "check-wait" },
+        { "name": "원조비빔당면", "genre": "비빔당면", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/원조비빔당면", "note": "시장 안에서 줄이 짧은 곳을 확인해 간식처럼 곁들이기 좋은 부평 저녁 대안", "waitRisk": "check-wait" },
+        { "name": "부평시장 어묵", "genre": "어묵", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/부평시장%20어묵", "note": "야시장 혼잡이 커지면 이동 없이 따뜻한 국물 간식으로 바꿀 수 있는 선택지", "waitRisk": "go-now" },
+        { "name": "부평양곱창", "genre": "양곱창", "area": "부평깡통시장", "meal": "dinner", "url": "https://map.naver.com/p/search/부평양곱창", "note": "저녁 시간을 넉넉히 쓸 수 있을 때 시장 탐방 전후로 앉아 먹는 부평 골목 대안", "waitRisk": "operation-check" }
+      ]
+    },
+    "2026-08-17": {
+      "breakfast": [
+        { "name": "본전돼지국밥", "genre": "돼지국밥", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/본전돼지국밥", "note": "아스티호텔 체크아웃과 렌터카 수령 사이에 부산역 인근에서 든든히 먹는 조식", "waitRisk": "check-wait" },
+        { "name": "초량밀면", "genre": "밀면", "area": "초량", "meal": "breakfast", "url": "https://map.naver.com/p/search/초량밀면", "note": "부산역에서 차를 받기 전 초량 권역에 머물며 더위를 피하기 좋은 아침 대안", "waitRisk": "operation-check" },
+        { "name": "부산역 김밥", "genre": "김밥", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/부산역%20김밥", "note": "렌터카 수령 시각이 촉박하면 포장해 해운대 이동 중 먹기 좋은 선택지", "waitRisk": "go-now" },
+        { "name": "부산역 샌드위치", "genre": "샌드위치", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/부산역%20샌드위치", "note": "주차와 차량 수령을 먼저 처리해야 할 때 이동 중에도 먹기 좋은 부산역 조식", "waitRisk": "go-now" },
+        { "name": "부산역 샐러드", "genre": "샐러드", "area": "부산역", "meal": "breakfast", "url": "https://map.naver.com/p/search/부산역%20샐러드", "note": "해동용궁사와 해운대 일정 전에 가볍게 시작하려는 경우의 부산역 대안", "waitRisk": "operation-check" }
+      ],
+      "lunch": [
+        { "name": "해동용궁사 해물짜장", "genre": "해물짜장", "area": "해동용궁사", "meal": "lunch", "url": "https://map.naver.com/p/search/해동용궁사%20해물짜장", "note": "해동용궁사 방문을 마친 뒤 미포로 이동하기 전 동쪽 해안 동선에서 바로 먹는 점심", "waitRisk": "operation-check" },
+        { "name": "연화리 해녀촌", "genre": "해녀촌", "area": "기장", "meal": "lunch", "url": "https://map.naver.com/p/search/연화리%20해녀촌", "note": "용궁사 인근에서 해산물 식사를 원할 때 해안길을 따라 짧게 이동해 들르는 대안", "waitRisk": "operation-check" },
+        { "name": "송정3대국밥", "genre": "송정국밥", "area": "송정", "meal": "lunch", "url": "https://map.naver.com/p/search/송정3대국밥", "note": "청사포와 미포 사이 동쪽 해안길에서 차량 이동 시간을 크게 늘리지 않는 점심", "waitRisk": "check-wait" },
+        { "name": "미포 가야밀면", "genre": "미포밀면", "area": "미포", "meal": "lunch", "url": "https://map.naver.com/p/search/미포%20가야밀면", "note": "블루라인파크 탑승 전 미포 주차장과 가까워 일정 재개가 빠른 면 요리 대안", "waitRisk": "check-wait" },
+        { "name": "송정 문토스트", "genre": "문토스트", "area": "송정", "meal": "lunch", "url": "https://map.naver.com/p/search/송정%20문토스트", "note": "해운대 복귀 전에 간단히 포장해 물놀이 시작 시간을 지키기 좋은 동쪽 해안 대안", "waitRisk": "go-now" }
+      ],
+      "dinner": [
+        { "name": "금수복국 해운대", "genre": "복국", "area": "해운대", "meal": "dinner", "url": "https://map.naver.com/p/search/금수복국%20해운대", "note": "호텔 물놀이 뒤 해운대해수욕장과 파라다이스호텔 사이에서 편하게 앉아 먹는 저녁", "waitRisk": "check-wait" },
+        { "name": "해운대 기와집 대구탕", "genre": "대구탕", "area": "해운대", "meal": "dinner", "url": "https://map.naver.com/p/search/해운대%20기와집%20대구탕", "note": "해변 산책 전 따뜻한 국물 식사를 원할 때 해운대 중심에서 바로 연결되는 대안", "waitRisk": "check-wait" },
+        { "name": "해운대 가야밀면", "genre": "해운대밀면", "area": "해운대", "meal": "dinner", "url": "https://map.naver.com/p/search/해운대%20가야밀면", "note": "물놀이 후 대기가 길면 호텔 복귀 동선에서 가볍게 식사 시간을 줄일 수 있는 선택지", "waitRisk": "check-wait" },
+        { "name": "해운대 소문난암소갈비", "genre": "암소갈비", "area": "해운대", "meal": "dinner", "url": "https://map.naver.com/p/search/해운대%20소문난암소갈비", "note": "예약 가능 여부가 맞을 때 해운대 저녁 시간을 넉넉하게 쓸 수 있는 가족 식사 대안", "waitRisk": "operation-check" },
+        { "name": "상국이네 해운대", "genre": "분식", "area": "해운대", "meal": "dinner", "url": "https://map.naver.com/p/search/상국이네%20해운대", "note": "해변 야간 산책을 우선할 때 포장 또는 간단 식사로 빠르게 전환할 수 있는 선택지", "waitRisk": "go-now" }
+      ]
+    },
+    "2026-08-18": {
+      "breakfast": [
+        { "name": "금수복국 해운대", "genre": "복국", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/금수복국%20해운대", "note": "파라다이스호텔에서 출발해 전망대로 갈 때 해운대 안에서 든든히 시작하는 조식", "waitRisk": "check-wait" },
+        { "name": "해운대 기와집 대구탕", "genre": "대구탕", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/해운대%20기와집%20대구탕", "note": "부산엑스더스카이 입장 전에 따뜻한 국물로 아침을 해결하고 이동하는 선택지", "waitRisk": "check-wait" },
+        { "name": "밀양순대돼지국밥 해운대", "genre": "순대국밥", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/밀양순대돼지국밥%20해운대", "note": "오전 전망대 예약 전 식사 시간을 예측하기 쉬운 해운대 중심 조식 대안", "waitRisk": "check-wait" },
+        { "name": "고래사어묵 해운대", "genre": "어묵", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/고래사어묵%20해운대", "note": "출발을 서두를 때 포장해 해운대에서 센텀으로 이동하며 먹기 좋은 대안", "waitRisk": "go-now" },
+        { "name": "옵스 해운대", "genre": "빵", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/옵스%20해운대", "note": "전망대 대기 시간 전에 빵과 음료를 챙겨 가볍게 시작할 수 있는 선택지", "waitRisk": "go-now" }
+      ],
+      "lunch": [
+        { "name": "수변최고돼지국밥 센텀", "genre": "돼지국밥", "area": "센텀", "meal": "lunch", "url": "https://map.naver.com/p/search/수변최고돼지국밥%20센텀", "note": "전망대 뒤 뮤지엄원으로 이동하기 전 센텀 권역에서 든든히 먹고 출발하는 점심", "waitRisk": "check-wait" },
+        { "name": "창타이누들 센텀", "genre": "태국국수", "area": "센텀", "meal": "lunch", "url": "https://map.naver.com/p/search/창타이누들%20센텀", "note": "영화의전당 광장까지 이어지는 오후 일정 전에 센텀 안에서 빠르게 먹는 면 요리 대안", "waitRisk": "check-wait" },
+        { "name": "해담소 곱창순대국", "genre": "곱창순대국", "area": "센텀", "meal": "lunch", "url": "https://map.naver.com/p/search/해담소%20곱창순대국", "note": "비가 오면 실내 이동을 줄이며 뮤지엄원과 가까운 권역에서 식사하는 대안", "waitRisk": "operation-check" },
+        { "name": "비학산보리밥생칼국수", "genre": "보리밥칼국수", "area": "센텀", "meal": "lunch", "url": "https://map.naver.com/p/search/비학산보리밥생칼국수", "note": "F1963로 향하기 전 센텀 주변에서 가족 취향을 나눠 맞추기 좋은 한식 대안", "waitRisk": "check-wait" },
+        { "name": "신세계 센텀 푸드홀", "genre": "푸드홀", "area": "센텀시티", "meal": "lunch", "url": "https://map.naver.com/p/search/신세계%20센텀%20푸드홀", "note": "아이스링크 선택 여부를 확인한 뒤 한 건물 안에서 식사와 다음 동선을 함께 조정하는 선택지", "waitRisk": "operation-check" }
+      ],
+      "dinner": [
+        { "name": "엄용백돼지국밥 광안리", "genre": "맑은돼지국밥", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/엄용백돼지국밥%20광안리", "note": "F1963에서 광안리 해변으로 이동한 뒤 야경 산책 전에 든든히 먹기 좋은 저녁", "waitRisk": "check-wait" },
+        { "name": "갈삼구이", "genre": "갈비삼겹", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/갈삼구이%20광안리", "note": "광안대교가 보이는 저녁 시간에 맞춰 가족 식사를 길게 잡을 수 있는 해변 대안", "waitRisk": "check-wait" },
+        { "name": "톤쇼우 광안리", "genre": "돈카츠", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/톤쇼우%20광안리", "note": "대기 줄이 짧을 때 광안리 야경 전에 일찍 식사하고 해변 산책으로 이어 가는 선택지", "waitRisk": "check-wait" },
+        { "name": "민락회타운", "genre": "회", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/민락회타운", "note": "해변 야경을 우선할 때 포장 또는 매장 식사를 상황에 맞춰 바꿀 수 있는 대안", "waitRisk": "operation-check" },
+        { "name": "광안리 언양불고기", "genre": "언양불고기", "area": "광안리", "meal": "dinner", "url": "https://map.naver.com/p/search/광안리%20언양불고기", "note": "파라다이스호텔 복귀 전에 따뜻한 고기 식사를 원하는 가족에게 맞는 광안리 대안", "waitRisk": "operation-check" }
+      ]
+    },
+    "2026-08-19": {
+      "breakfast": [
+        { "name": "해운대 기와집 대구탕", "genre": "대구탕", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/해운대%20기와집%20대구탕", "note": "파라다이스호텔 체크아웃 전에 가까운 해운대에서 따뜻하게 먹고 짐 인계로 이어지는 조식", "waitRisk": "check-wait" },
+        { "name": "금수복국 해운대", "genre": "복국", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/금수복국%20해운대", "note": "짐캐리 인계 전 아침 시간을 넉넉히 쓸 수 있을 때 선택하는 해운대 국물 식사", "waitRisk": "check-wait" },
+        { "name": "해운대 가야밀면", "genre": "밀면", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/해운대%20가야밀면", "note": "더운 날 체크아웃 전 빠르게 식사하고 호텔로 돌아가기 좋은 해운대 대안", "waitRisk": "operation-check" },
+        { "name": "고래사어묵 해운대", "genre": "어묵", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/고래사어묵%20해운대", "note": "체크아웃 준비가 길어지면 포장해 부산역 이동 전에도 먹을 수 있는 선택지", "waitRisk": "go-now" },
+        { "name": "옵스 해운대", "genre": "빵", "area": "해운대", "meal": "breakfast", "url": "https://map.naver.com/p/search/옵스%20해운대", "note": "짐 정리를 우선해야 할 때 빵과 음료를 들고 호텔로 바로 돌아갈 수 있는 대안", "waitRisk": "go-now" }
+      ],
+      "lunch": [
+        { "name": "거대갈비", "genre": "갈비", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/거대갈비", "note": "짐캐리 인계 후 부산역 출발 전에 해운대에서 예약 시간을 맞출 수 있을 때의 점심 대안", "waitRisk": "operation-check" },
+        { "name": "해운대 소문난암소갈비", "genre": "암소갈비", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/해운대%20소문난암소갈비", "note": "부산역 이동 전 충분한 식사 시간이 있을 때 대기와 예약 여부를 먼저 확인하는 선택지", "waitRisk": "operation-check" },
+        { "name": "해운대 기와집 대구탕", "genre": "대구탕", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/해운대%20기와집%20대구탕", "note": "부산역 이동 시간을 지키기 위해 해운대 중심에서 비교적 빠르게 식사하는 대안", "waitRisk": "check-wait" },
+        { "name": "금수복국 해운대", "genre": "복국", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/금수복국%20해운대", "note": "짐 인계 직후 가까운 곳에서 식사하고 택시로 부산역에 바로 향하기 좋은 선택지", "waitRisk": "check-wait" },
+        { "name": "해운대 가야밀면", "genre": "밀면", "area": "해운대", "meal": "lunch", "url": "https://map.naver.com/p/search/해운대%20가야밀면", "note": "14:31 KTX 버퍼를 넉넉히 남기려면 빠르게 식사하고 부산역으로 출발하는 대안", "waitRisk": "go-now" }
+      ],
+      "takeaway": [
+        { "name": "삼진어묵 부산역", "genre": "어묵", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/삼진어묵%20부산역", "note": "짐캐리 수령 뒤 승강장으로 이동하기 전 포장해 KTX 안에서 먹기 좋은 부산역 선택지", "waitRisk": "check-wait" },
+        { "name": "고래사어묵 부산역", "genre": "프리미엄어묵", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/고래사어묵%20부산역", "note": "탑승 버퍼가 줄어들면 부산역 안에서 바로 포장해 열차에 가져갈 수 있는 대안", "waitRisk": "go-now" },
+        { "name": "부산역 김밥", "genre": "김밥", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/부산역%20김밥", "note": "14:31 출발 전 간단히 포장해 지정석에서 먹기 좋고 이동 동선도 짧은 선택지", "waitRisk": "go-now" },
+        { "name": "부산역 베이커리", "genre": "베이커리", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/부산역%20베이커리", "note": "부산역 수령 장소와 승강장 사이에서 빵과 음료를 빠르게 챙길 수 있는 대안", "waitRisk": "go-now" },
+        { "name": "부산역 커피 샌드위치", "genre": "커피샌드위치", "area": "부산역", "meal": "takeaway", "url": "https://map.naver.com/p/search/부산역%20커피%20샌드위치", "note": "탑승 대기 중 음료와 가벼운 식사를 함께 해결해 KTX 버퍼를 지키는 선택지", "waitRisk": "operation-check" }
+      ]
+    }
+  },
   "videoSources": [
     { "id": "short-syspFDh0jmg", "format": "shorts", "title": "여름 부산 여행 1일차", "url": "https://www.youtube.com/shorts/syspFDh0jmg", "role": "route", "days": ["2026-08-16"] },
     { "id": "short-WIvePKtYbHE", "format": "shorts", "title": "부산 전포동 당일치기 데이트 코스", "url": "https://www.youtube.com/shorts/WIvePKtYbHE", "role": "hotplace", "days": ["2026-08-18"] },
@@ -37,10 +296,10 @@
     { "id": "long-medNU1Ut5s8", "format": "longform", "title": "부산 여행 브이로그 2박 3일 10끼", "url": "https://www.youtube.com/watch?v=medNU1Ut5s8", "role": "food", "days": ["2026-08-16", "2026-08-17"] },
     { "id": "long-fVAVb1S3NfI", "format": "longform", "title": "영도정복·전포·광안리 부산여행 통합본", "url": "https://www.youtube.com/watch?v=fVAVb1S3NfI", "role": "route", "days": ["2026-08-16", "2026-08-18"] }
   ],
-  "places": [{ "name": "부산역", "lat": 35.1151, "lng": 129.0414, "day": "16일" }, { "name": "아스티호텔 부산", "lat": 35.1156, "lng": 129.0418, "day": "16일" }, { "name": "흰여울문화마을", "lat": 35.0786, "lng": 129.0457, "day": "16일" }, { "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635, "day": "17일" }, { "name": "청사포", "lat": 35.1617, "lng": 129.2002, "day": "17일" }, { "name": "롯데월드 부산", "lat": 35.1595, "lng": 129.0952, "day": "18일" }, { "name": "광안리", "lat": 35.1532, "lng": 129.1187, "day": "18일" }],
-  "mapRoutePoints": { "16일": [{ "name": "부산역", "lat": 35.1151, "lng": 129.0414 }, { "name": "초량", "lat": 35.1167, "lng": 129.0397 }, { "name": "남포·자갈치", "lat": 35.0978, "lng": 129.0301 }, { "name": "영도", "lat": 35.0786, "lng": 129.0457 }], "17일": [{ "name": "아스티호텔", "lat": 35.1156, "lng": 129.0418 }, { "name": "파라다이스호텔", "lat": 35.1605, "lng": 129.1635 }, { "name": "미포", "lat": 35.1612, "lng": 129.1786 }, { "name": "청사포", "lat": 35.1617, "lng": 129.2002 }, { "name": "해운대", "lat": 35.1587, "lng": 129.1603 }], "18일": [{ "name": "파라다이스호텔", "lat": 35.1605, "lng": 129.1635 }, { "name": "롯데월드 부산", "lat": 35.1595, "lng": 129.0952 }, { "name": "오시리아", "lat": 35.1921, "lng": 129.2147 }, { "name": "광안리", "lat": 35.1532, "lng": 129.1187 }], "19일": [{ "name": "파라다이스호텔", "lat": 35.1605, "lng": 129.1635 }, { "name": "씨메르", "lat": 35.1608, "lng": 129.1639 }, { "name": "부산역", "lat": 35.1151, "lng": 129.0414 }] },
-  "mapPlaceCatalog": { "해운대해수욕장": { "lat": 35.1587, "lng": 129.1603 }, "동백섬": { "lat": 35.1532, "lng": 129.1528 }, "스카이라인 루지": { "lat": 35.1911, "lng": 129.2113 }, "광안리": { "lat": 35.1532, "lng": 129.1187 }, "센텀": { "lat": 35.1691, "lng": 129.1299 }, "감천문화마을": { "lat": 35.0975, "lng": 129.0106 }, "송도 케이블카": { "lat": 35.0762, "lng": 129.0171 } },
-  "recheckSources": [{ "title": "파라다이스호텔 부산 씨메르", "url": "https://www.busanparadisehotel.co.kr/front/facility/spaparacimer?F_CATE1=SPA&F_CATE2=CIMER&F_CATE3=CIMER_REST", "note": "운영시간·휴무일·투숙객 이용 조건 재확인" }, { "title": "Visit Busan 센텀 스파랜드", "url": "https://www.visitbusan.net/index.do?lang_cd=ko&menuCd=DOM_000000302008001000&uc_seq=1753", "note": "운영요일·입장 조건 재확인" }, { "title": "부산도시공사 오시리아", "url": "https://www.bmc.busan.kr/index.do?menuCd=DOM_000000301004000000", "note": "권역 시설과 운영 정보 재확인" }],
+  "places": [{ "name": "부산역", "lat": 35.1151, "lng": 129.0414, "day": "16일" }, { "name": "아스티호텔 부산", "lat": 35.1156, "lng": 129.0418, "day": "16일" }, { "name": "이재모피자", "lat": 35.1021, "lng": 129.0322, "day": "16일" }, { "name": "부산과학체험관", "lat": 35.1186, "lng": 129.0388, "day": "16일" }, { "name": "초량전통시장", "lat": 35.1168, "lng": 129.0394, "day": "16일" }, { "name": "부평깡통시장", "lat": 35.1011, "lng": 129.0262, "day": "16일" }, { "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635, "day": "17일" }, { "name": "청사포", "lat": 35.1617, "lng": 129.2002, "day": "17일" }, { "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635, "day": "18일" }, { "name": "부산엑스더스카이", "lat": 35.1598, "lng": 129.1707, "day": "18일" }, { "name": "뮤지엄원", "lat": 35.1686, "lng": 129.1303, "day": "18일" }, { "name": "부산영화의전당", "lat": 35.171, "lng": 129.1288, "day": "18일" }, { "name": "F1963", "lat": 35.166, "lng": 129.1156, "day": "18일" }, { "name": "광안리", "lat": 35.1532, "lng": 129.1187, "day": "18일" }],
+  "mapRoutePoints": { "16일": [{ "name": "부산역", "lat": 35.1151, "lng": 129.0414 }, { "name": "아스티호텔 부산", "lat": 35.1156, "lng": 129.0418 }, { "name": "이재모피자", "lat": 35.1021, "lng": 129.0322 }, { "name": "부산과학체험관", "lat": 35.1186, "lng": 129.0388 }, { "name": "초량전통시장", "lat": 35.1168, "lng": 129.0394 }, { "name": "부평깡통시장", "lat": 35.1011, "lng": 129.0262 }, { "name": "아스티호텔 부산", "lat": 35.1156, "lng": 129.0418 }], "17일": [{ "name": "아스티호텔 부산", "lat": 35.1156, "lng": 129.0418 }, { "name": "SK렌터카 부산역지점", "lat": 35.1134, "lng": 129.0403 }, { "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635 }, { "name": "해동용궁사", "lat": 35.1887, "lng": 129.2232 }, { "name": "미포주차장", "lat": 35.1612, "lng": 129.1786 }, { "name": "미포", "lat": 35.1612, "lng": 129.1786 }, { "name": "청사포", "lat": 35.1617, "lng": 129.2002 }, { "name": "미포", "lat": 35.1612, "lng": 129.1786 }, { "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635 }, { "name": "해운대해수욕장", "lat": 35.1587, "lng": 129.1603 }, { "name": "해운대 렌터카 반납", "lat": 35.1587, "lng": 129.1603 }], "18일": [{ "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635 }, { "name": "부산엑스더스카이", "lat": 35.1598, "lng": 129.1707 }, { "name": "뮤지엄원", "lat": 35.1686, "lng": 129.1303 }, { "name": "부산영화의전당", "lat": 35.171, "lng": 129.1288 }, { "name": "F1963", "lat": 35.166, "lng": 129.1156 }, { "name": "광안리", "lat": 35.1532, "lng": 129.1187 }, { "name": "파라다이스호텔 부산", "lat": 35.1605, "lng": 129.1635 }], "19일": [{ "name": "파라다이스호텔 체크아웃", "lat": 35.1605, "lng": 129.1635 }, { "name": "파라다이스호텔 짐캐리 인계", "lat": 35.1605, "lng": 129.1635 }, { "name": "해운대 립 바비큐 레스토랑", "lat": 35.1606, "lng": 129.1614 }, { "name": "부산역 짐캐리 수령·탑승 버퍼", "lat": 35.1151, "lng": 129.0414 }, { "name": "부산역 KTX 출발 14:31", "lat": 35.1151, "lng": 129.0414 }] },
+  "mapPlaceCatalog": { "이재모피자": { "lat": 35.1021, "lng": 129.0322 }, "부산과학체험관": { "lat": 35.1186, "lng": 129.0388 }, "초량전통시장": { "lat": 35.1168, "lng": 129.0394 }, "부평깡통시장": { "lat": 35.1011, "lng": 129.0262 }, "해운대해수욕장": { "lat": 35.1587, "lng": 129.1603 }, "동백섬": { "lat": 35.1532, "lng": 129.1528 }, "파라다이스호텔 부산": { "lat": 35.1605, "lng": 129.1635 }, "부산엑스더스카이": { "lat": 35.1598, "lng": 129.1707 }, "뮤지엄원": { "lat": 35.1686, "lng": 129.1303 }, "부산영화의전당": { "lat": 35.171, "lng": 129.1288 }, "F1963": { "lat": 35.166, "lng": 129.1156 }, "광안리": { "lat": 35.1532, "lng": 129.1187 }, "센텀": { "lat": 35.1691, "lng": 129.1299 }, "감천문화마을": { "lat": 35.0975, "lng": 129.0106 }, "송도 케이블카": { "lat": 35.0762, "lng": 129.0171 } },
+  "recheckSources": [{ "title": "파라다이스호텔 부산 씨메르", "url": "https://www.busanparadisehotel.co.kr/front/facility/spaparacimer?F_CATE1=SPA&F_CATE2=CIMER&F_CATE3=CIMER_REST", "note": "운영시간·휴무일·투숙객 이용 조건 재확인" }, { "title": "SK렌터카", "url": "https://www.skdirect.co.kr/", "note": "부산역지점 수령 가능 차량·보험·해운대 반납 조건 재확인" }, { "title": "롯데렌터카", "url": "https://www.lotterentacar.net/", "note": "부산역지점 수령 가능 차량·보험·해운대 반납 조건 재확인" }, { "title": "짐캐리", "url": "https://zimcarry.net/", "note": "파라다이스호텔 수거와 부산역 1층 미팅홀 전달·수령 시간 재확인" }, { "title": "해동용궁사", "url": "https://visitbusan.net/archive/dataSearch/view.nm?dataSid=METADATA009915", "note": "방문 가능 시간·주차·혼잡도 재확인" }, { "title": "해운대암소갈비집", "url": "https://www.haeundaegalbi.com/", "note": "17일 저녁 예약·대기·영업시간 재확인" }, { "title": "부산엑스더스카이", "url": "https://www.busanxthesky.com/", "note": "18일 전망대 입장 시간과 현장 대기, 날씨 영향을 재확인" }, { "title": "뮤지엄원", "url": "https://museum1.co.kr/", "note": "미디어아트 전시 운영시간과 휴관일, 당일 입장 조건을 재확인" }, { "title": "부산영화의전당", "url": "https://www.visitbusan.net/en/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=421", "note": "광장과 시설 운영시간, 행사 여부와 관람 동선을 출발 전에 재확인" }, { "title": "F1963", "url": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=187060", "note": "문화공간 운영시간과 휴무일, 전시·매장 운영 여부를 당일 재확인" }, { "title": "수영만 요트 체험", "url": "https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000304004001000&uc_seq=1775", "note": "출항 시간과 해상 상태, 기상 취소 기준 및 예약 가능 인원을 재확인" }, { "title": "신세계 센텀 아이스링크", "url": "https://www.shinsegae.com/department/store/centum/ice-rink", "note": "당일 운영시간과 회차, 장비 대여 및 입장 조건을 출발 전에 재확인" }],
   "recheckNote": "영상은 아이디어와 동선 후보를 찾는 참고 자료입니다. 2026년 8월 운영시간, 휴무, 예약, 날씨, 해수욕장 안전정보는 출발 전에 공식 채널에서 다시 확인하세요."
 ,
   "foodCandidates": {
